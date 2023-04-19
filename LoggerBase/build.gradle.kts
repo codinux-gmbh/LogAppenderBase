@@ -69,3 +69,25 @@ kotlin {
         val nativeTest by getting
     }
 }
+
+
+ext["groupId"] = group
+ext["artifactId"] = "logger-base" // is overwritten by Gradle anyway, therefore we need to set in in settings.gradle
+ext["artifactVersion"] = version
+ext["libraryName"] = ext["artifactId"]
+
+ext["sourceCodeRepositoryBaseUrl"] = "https://github.com/codinux/LoggerBase"
+
+ext["useNewSonatypeRepo"] = true
+ext["packageGroup"] = "net.codinux"
+
+ext["projectDescription"] = "Common implementation for loggers like ElasticSearchLogger and LokiLogger"
+
+ext["developerId"] = "codinux"
+ext["developerName"] = "codinux GmbH & Co. KG"
+ext["developerMail"] = "git@codinux.net"
+
+ext["licenseName"] = "The Apache License, Version 2.0"
+ext["licenseUrl"] = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+
+apply(from = "../publish.gradle.kts")
