@@ -48,16 +48,23 @@ kotlin {
 
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
             }
         }
+
         val jvmMain by getting
         val jvmTest by getting
+
         val jsMain by getting
         val jsTest by getting
+
         val nativeMain by getting
         val nativeTest by getting
     }
