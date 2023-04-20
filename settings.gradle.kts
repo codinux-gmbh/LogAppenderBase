@@ -24,3 +24,6 @@ project(":LogbackAppenderBase").name = "logback-appender-base"
 
 include("JBossLoggingAppender")
 project(":JBossLoggingAppender").name = "jboss-logging-appender"
+
+include("JavaUtilLogAppenderBase")
+project(":JavaUtilLogAppenderBase").name = "java-util-log-appender"
