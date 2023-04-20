@@ -1,7 +1,7 @@
 package net.codinux.log
 
 
-open class LoggerSettings(
+open class LogAppenderConfig(
     open var enabled: Boolean = EnabledDefaultValue,
 
     open var host: String = HostNotSetValue,

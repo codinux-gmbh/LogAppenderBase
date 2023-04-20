@@ -72,11 +72,11 @@ kotlin {
 
 
 ext["groupId"] = group
-ext["artifactId"] = "logger-base" // is overwritten by Gradle anyway, therefore we need to set in in settings.gradle
+ext["artifactId"] = "log-appender-base" // is overwritten by Gradle anyway, therefore we need to set in in settings.gradle
 ext["artifactVersion"] = version
 ext["libraryName"] = ext["artifactId"]
 
-ext["sourceCodeRepositoryBaseUrl"] = "https://github.com/codinux/LoggerBase"
+ext["sourceCodeRepositoryBaseUrl"] = "https://github.com/codinux/LogAppenderBase"
 
 ext["useNewSonatypeRepo"] = true
 ext["packageGroup"] = "net.codinux"

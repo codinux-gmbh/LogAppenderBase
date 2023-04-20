@@ -12,9 +12,9 @@ pluginManagement {
 }
 
 
-rootProject.name = "LoggerBase"
+rootProject.name = "LogAppenderBase"
 
 
-include("LoggerBase")
-project(":LoggerBase").name = "logger-base"
+include("LogAppenderBase")
+project(":LogAppenderBase").name = "log-appender-base"
 
