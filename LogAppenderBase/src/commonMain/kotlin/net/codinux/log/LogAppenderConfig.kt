@@ -78,6 +78,7 @@ open class LogAppenderConfig(
         val PasswordDefaultValue: String? = null
         const val PasswordDefaultValueString = "null"
 
+
         const val MessageDefaultFieldName = "message"
 
         const val IncludeLogLevelDefaultValue = True
@@ -96,7 +97,7 @@ open class LogAppenderConfig(
         const val IncludeThreadNameDefaultValueString = IncludeThreadNameDefaultValue.toString()
         const val ThreadNameDefaultFieldName = "thread"
 
-        const val IncludeHostDefaultValue = True
+        const val IncludeHostDefaultValue = False
         const val IncludeHostDefaultValueString = IncludeHostDefaultValue.toString()
         const val HostDefaultFieldName = "host"
 
@@ -108,7 +109,7 @@ open class LogAppenderConfig(
 
         val AppNameDefaultValue: String? = null
         const val AppNameDefaultValueString = "null"
-        const val IncludeAppNameDefaultValue = True
+        const val IncludeAppNameDefaultValue = False
         const val IncludeAppNameDefaultValueString = IncludeAppNameDefaultValue.toString()
         const val AppNameDefaultFieldName = "app"
 
