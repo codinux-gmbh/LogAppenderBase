@@ -63,13 +63,12 @@ open class LogAppenderConfig(
 
     companion object {
         
-        const val True= true
-        const val TrueString= "true"
-        const val False= false
-        const val FalseString= "false"
+        private const val True = true
+        private const val False = false
 
-        const val EnabledDefaultValue= True
-        const val EnabledDefaultValueString= TrueString
+
+        const val EnabledDefaultValue = True
+        val EnabledDefaultValueString = EnabledDefaultValue.toString()
 
         const val HostNotSetValue = "null"
 
@@ -81,66 +80,66 @@ open class LogAppenderConfig(
 
         const val MessageDefaultFieldName = "message"
 
-        const val IncludeLogLevelDefaultValue= True
-        const val IncludeLogLevelDefaultValueString= TrueString
+        const val IncludeLogLevelDefaultValue = True
+        const val IncludeLogLevelDefaultValueString = IncludeLogLevelDefaultValue.toString()
         const val LogLevelDefaultFieldName = "level"
 
-        const val IncludeLoggerNameDefaultValue= True
-        const val IncludeLoggerNameDefaultValueString= TrueString
+        const val IncludeLoggerNameDefaultValue = True
+        const val IncludeLoggerNameDefaultValueString = IncludeLoggerNameDefaultValue.toString()
         const val LoggerNameDefaultFieldName = "logger"
 
-        const val IncludeLoggerClassNameDefaultValue= False
-        const val IncludeLoggerClassNameDefaultValueString= FalseString
+        const val IncludeLoggerClassNameDefaultValue = False
+        const val IncludeLoggerClassNameDefaultValueString = IncludeLoggerClassNameDefaultValue.toString()
         const val LoggerClassNameDefaultFieldName = "loggerClass"
 
-        const val IncludeThreadNameDefaultValue= True
-        const val IncludeThreadNameDefaultValueString= TrueString
+        const val IncludeThreadNameDefaultValue = True
+        const val IncludeThreadNameDefaultValueString = IncludeThreadNameDefaultValue.toString()
         const val ThreadNameDefaultFieldName = "thread"
 
-        const val IncludeHostDefaultValue= True
-        const val IncludeHostDefaultValueString= TrueString
+        const val IncludeHostDefaultValue = True
+        const val IncludeHostDefaultValueString = IncludeHostDefaultValue.toString()
         const val HostDefaultFieldName = "host"
 
         val DeviceNameDefaultValue: String? = null
         const val DeviceNameDefaultValueString = "null"
-        const val IncludeDeviceNameDefaultValue= False
-        const val IncludeDeviceNameDefaultValueString= FalseString
+        const val IncludeDeviceNameDefaultValue = False
+        const val IncludeDeviceNameDefaultValueString = IncludeDeviceNameDefaultValue.toString()
         const val DeviceNameDefaultFieldName = "device"
 
         val AppNameDefaultValue: String? = null
         const val AppNameDefaultValueString = "null"
-        const val IncludeAppNameDefaultValue= True
-        const val IncludeAppNameDefaultValueString= TrueString
+        const val IncludeAppNameDefaultValue = True
+        const val IncludeAppNameDefaultValueString = IncludeAppNameDefaultValue.toString()
         const val AppNameDefaultFieldName = "app"
 
-        const val IncludeStacktraceDefaultValue= True
-        const val IncludeStacktraceDefaultValueString= TrueString
+        const val IncludeStacktraceDefaultValue = True
+        const val IncludeStacktraceDefaultValueString = IncludeStacktraceDefaultValue.toString()
         const val StacktraceDefaultFieldName = "stacktrace"
         const val StacktraceMaxFieldLengthDefaultValue = 32766 - 100 // subtract a little buffer
         const val StacktraceMaxFieldLengthDefaultValueString = StacktraceMaxFieldLengthDefaultValue.toString()
 
-        const val IncludeMdcDefaultValue= True
-        const val IncludeMdcDefaultValueString= TrueString
+        const val IncludeMdcDefaultValue = True
+        const val IncludeMdcDefaultValueString = IncludeMdcDefaultValue.toString()
         const val MdcFieldsPrefixDefaultValue: String = "mdc"
 
-        const val IncludeMarkerDefaultValue= False
-        const val IncludeMarkerDefaultValueString= FalseString
+        const val IncludeMarkerDefaultValue = False
+        const val IncludeMarkerDefaultValueString = IncludeMarkerDefaultValue.toString()
         const val MarkerDefaultFieldName: String = "marker"
 
-        const val IncludeNdcDefaultValue= False
-        const val IncludeNdcDefaultValueString= FalseString
+        const val IncludeNdcDefaultValue = False
+        const val IncludeNdcDefaultValueString = IncludeNdcDefaultValue.toString()
         const val NdcDefaultFieldName: String = "ndc"
 
-        const val IncludeKubernetesInfoDefaultValue= False
-        const val IncludeKubernetesInfoDefaultValueString= FalseString
+        const val IncludeKubernetesInfoDefaultValue = False
+        const val IncludeKubernetesInfoDefaultValueString = IncludeKubernetesInfoDefaultValue.toString()
         const val KubernetesFieldsPrefixDefaultValue: String = "k8s"
 
-        const val IncludeKubernetesLabelsDefaultValue= False
-        const val IncludeKubernetesLabelsDefaultValueString= FalseString
+        const val IncludeKubernetesLabelsDefaultValue = False
+        const val IncludeKubernetesLabelsDefaultValueString = IncludeKubernetesLabelsDefaultValue.toString()
         const val KubernetesLabelsPrefixDefaultValue: String = "label"
 
-        const val IncludeKubernetesAnnotationsDefaultValue= False
-        const val IncludeKubernetesAnnotationsDefaultValueString= FalseString
+        const val IncludeKubernetesAnnotationsDefaultValue = False
+        const val IncludeKubernetesAnnotationsDefaultValueString = IncludeKubernetesAnnotationsDefaultValue.toString()
         const val KubernetesAnnotationsPrefixDefaultValue: String = "annotation"
 
         const val MaxLogRecordsPerBatchDefaultValue = 100
