@@ -68,7 +68,7 @@ open class LogAppenderConfig(
 
 
         const val EnabledDefaultValue = True
-        val EnabledDefaultValueString = EnabledDefaultValue.toString()
+        const val EnabledDefaultValueString = EnabledDefaultValue.toString()
 
         const val HostNotSetValue = "null"
 
