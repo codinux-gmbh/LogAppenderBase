@@ -23,8 +23,8 @@ open class LogAppenderConfig(
     open var includeThreadName: Boolean = IncludeThreadNameDefaultValue,
     open var threadNameFieldName: String = ThreadNameDefaultFieldName,
 
-    open var includeHost: Boolean = IncludeHostDefaultValue,
-    open var hostFieldName: String = HostDefaultFieldName,
+    open var includeHostName: Boolean = IncludeHostNameDefaultValue,
+    open var hostNameFieldName: String = HostNameDefaultFieldName,
 
     open var deviceName: String? = DeviceNameDefaultValue,
     open var includeDeviceName: Boolean = IncludeDeviceNameDefaultValue,
@@ -97,9 +97,9 @@ open class LogAppenderConfig(
         const val IncludeThreadNameDefaultValueString = IncludeThreadNameDefaultValue.toString()
         const val ThreadNameDefaultFieldName = "thread"
 
-        const val IncludeHostDefaultValue = False
-        const val IncludeHostDefaultValueString = IncludeHostDefaultValue.toString()
-        const val HostDefaultFieldName = "host"
+        const val IncludeHostNameDefaultValue = False
+        const val IncludeHostNameDefaultValueString = IncludeHostNameDefaultValue.toString()
+        const val HostNameDefaultFieldName = "host"
 
         val DeviceNameDefaultValue: String? = null
         const val DeviceNameDefaultValueString = "null"
