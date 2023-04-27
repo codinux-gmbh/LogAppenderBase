@@ -26,6 +26,9 @@ open class LogAppenderConfig(
     open var includeHostName: Boolean = IncludeHostNameDefaultValue,
     open var hostNameFieldName: String = HostNameDefaultFieldName,
 
+    open var includeHostIp: Boolean = IncludeHostIpDefaultValue,
+    open var hostIpFieldName: String = HostIpDefaultFieldName,
+
     open var deviceName: String? = DeviceNameDefaultValue,
     open var includeDeviceName: Boolean = IncludeDeviceNameDefaultValue,
     open var deviceNameFieldName: String = DeviceNameDefaultFieldName,
@@ -100,6 +103,10 @@ open class LogAppenderConfig(
         const val IncludeHostNameDefaultValue = False
         const val IncludeHostNameDefaultValueString = IncludeHostNameDefaultValue.toString()
         const val HostNameDefaultFieldName = "host"
+
+        const val IncludeHostIpDefaultValue = False
+        const val IncludeHostIpDefaultValueString = IncludeHostIpDefaultValue.toString()
+        const val HostIpDefaultFieldName = "hostIP"
 
         val DeviceNameDefaultValue: String? = null
         const val DeviceNameDefaultValueString = "null"
