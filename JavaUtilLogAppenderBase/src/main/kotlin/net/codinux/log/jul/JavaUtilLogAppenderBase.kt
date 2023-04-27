@@ -3,15 +3,12 @@ package net.codinux.log.jul
 import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogRecord
 import net.codinux.log.LogWriter
-import java.net.InetAddress
 import java.util.logging.Handler
 
 open class JavaUtilLogAppenderBase(
     protected open val isAppenderEnabled: Boolean,
     protected open val logWriter: LogWriter
 ) : Handler() {
-
-    protected open val hostName: String? = InetAddress.getLocalHost().hostName
 
     override fun publish(record: java.util.logging.LogRecord?) {
         if (isAppenderEnabled && record != null && isLoggable(record)) {
@@ -28,7 +25,7 @@ open class JavaUtilLogAppenderBase(
         }
 
         return LogRecord(message, record.instant.toKotlinInstant(), record.level.name, record.loggerName,
-            threadName, record.thrown, hostName)
+            threadName, record.thrown)
     }
 
     override fun flush() {

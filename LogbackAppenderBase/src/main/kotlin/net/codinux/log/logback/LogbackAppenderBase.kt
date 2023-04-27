@@ -7,15 +7,12 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase
 import kotlinx.datetime.Instant
 import net.codinux.log.LogRecord
 import net.codinux.log.LogWriter
-import java.net.InetAddress
 
 open class LogbackAppenderBase(
     protected open val isAppenderEnabled: Boolean,
     protected open val logExceptions: Boolean = true,
     protected open val logWriter: LogWriter
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
-
-    protected open val hostName: String? = InetAddress.getLocalHost().hostName
 
     override fun append(eventObject: ILoggingEvent?) {
         if (isAppenderEnabled && eventObject != null) {
@@ -25,7 +22,7 @@ open class LogbackAppenderBase(
 
     protected open fun mapRecord(event: ILoggingEvent): LogRecord {
         return LogRecord(event.formattedMessage, Instant.fromEpochMilliseconds(event.timeStamp), event.level.levelStr, event.loggerName,
-            event.threadName, getThrowable(event), hostName, event.mdcPropertyMap, event.marker?.name)
+            event.threadName, getThrowable(event), event.mdcPropertyMap, event.marker?.name)
     }
 
 

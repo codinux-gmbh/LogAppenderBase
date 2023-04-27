@@ -32,7 +32,7 @@ open class JBossLoggingAppenderBase(
         val ndc = if (record.ndc.isNullOrBlank()) null else record.ndc
 
         return LogRecord(message, record.instant.toKotlinInstant(), record.level.name, record.loggerName,
-            record.threadName, record.thrown, record.hostName, record.mdcCopy, record.marker?.toString(), ndc)
+            record.threadName, record.thrown, record.mdcCopy, record.marker?.toString(), ndc)
     }
 
     override fun flush() {
