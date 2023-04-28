@@ -1,6 +1,6 @@
 package net.codinux.log.data
 
-expect class ProcessDataRetriever {
+expect class ProcessDataRetriever() {
 
     fun retrieveProcessData(): ProcessData
 

@@ -50,12 +50,18 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+
                 api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+
+                implementation("org.jetbrains.kotlinx:atomicfu:0.20.2")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
             }
         }
 

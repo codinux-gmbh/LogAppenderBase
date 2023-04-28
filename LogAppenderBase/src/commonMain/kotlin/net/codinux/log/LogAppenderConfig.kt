@@ -59,6 +59,8 @@ open class LogAppenderConfig(
     open var includeKubernetesAnnotations: Boolean = IncludeKubernetesAnnotationsDefaultValue,
     open var kubernetesAnnotationsPrefix: String? = KubernetesAnnotationsPrefixDefaultValue,
 
+    open var appendLogsAsync: Boolean = WriteLogsAsyncDefaultValue,
+
     open var maxLogRecordsPerBatch: Int = MaxLogRecordsPerBatchDefaultValue,
     open var maxBufferedLogRecords: Int = MaxBufferedLogRecordsDefaultValue,
     open var sendLogRecordsPeriodMillis: Long = SendLogRecordsPeriodMillisDefaultValue
@@ -149,6 +151,8 @@ open class LogAppenderConfig(
         const val IncludeKubernetesAnnotationsDefaultValue = False
         const val IncludeKubernetesAnnotationsDefaultValueString = IncludeKubernetesAnnotationsDefaultValue.toString()
         const val KubernetesAnnotationsPrefixDefaultValue: String = "annotation"
+
+        const val WriteLogsAsyncDefaultValue = true
 
         const val MaxLogRecordsPerBatchDefaultValue = 100
         const val MaxBufferedLogRecordsDefaultValue = 2000
