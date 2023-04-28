@@ -53,15 +53,7 @@ abstract class LogWriterBase(
                     else calculateRecordsToWrite()
                 }
 
-                if (recordsToWrite.isNotEmpty()) {
-                    val failedRecords = writeRecords(recordsToWrite)
-
-                    if (failedRecords.isNotEmpty()) {
-                        lock.withLock {
-                            this.recordsToWrite.addAll(0, failedRecords)
-                        }
-                    }
-                }
+                writeRecordsAndReAddFailedOnes(recordsToWrite)
 
                 delay(writeLogRecordsPeriodMillis)
             } catch (e: Exception) {
@@ -72,6 +64,18 @@ abstract class LogWriterBase(
         writeAllRecordsNow()
 
 //        errorHandler.logInfo("asyncWriteLoop() has stopped")
+    }
+
+    private suspend fun writeRecordsAndReAddFailedOnes(recordsToWrite: List<LogRecord>) {
+        if (recordsToWrite.isNotEmpty()) {
+            val failedRecords = writeRecords(recordsToWrite)
+
+            if (failedRecords.isNotEmpty()) {
+                lock.withLock {
+                    this.recordsToWrite.addAll(0, failedRecords)
+                }
+            }
+        }
     }
 
     protected open fun calculateRecordsToWrite(): List<LogRecord> {
@@ -106,9 +110,7 @@ abstract class LogWriterBase(
                 recordsToWrite
             }
 
-            if (recordsToWrite.isNotEmpty()) {
-                writeRecords(recordsToWrite)
-            }
+            writeRecordsAndReAddFailedOnes(recordsToWrite)
         }
     }
 
