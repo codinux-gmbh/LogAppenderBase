@@ -24,31 +24,17 @@ abstract class LogWriterBase(
     private val coroutineScope = CoroutineScope(Dispatchers.IOorDefault)
 
     init {
-        if (config.appendLogsAsync) {
-            coroutineScope.async {
-                asyncWriteLoop()
-            }
+        coroutineScope.async {
+            val writeLogRecordsPeriodMillis = if (config.appendLogsAsync) config.sendLogRecordsPeriodMillis
+                                            else 5L
+            asyncWriteLoop(writeLogRecordsPeriodMillis)
         }
     }
 
     override fun writeRecord(record: LogRecord) {
-        if (config.appendLogsAsync == false || isClosed.value) {
-            writeRecordSync(record)
-        } else {
-            writeRecordAsync(record)
-        }
-    }
-
-    private fun writeRecordSync(record: LogRecord) {
-        // yes, it's not really synchronous, but didn't want to introduce a lot of runBlocking { } calls. But it gets
-        // called almost immediately and due to structured concurrency order is observed and all jobs get finished on coroutineScope.cancel() call
-        coroutineScope.async {
-            writeRecords(listOf(record))
-        }
-    }
-
-    private fun writeRecordAsync(record: LogRecord) {
         lock.withLock {
+            // as writeRecords() is a suspend function even if config.appendLogsAsync == false we cannot write log record synchronously
+            // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
             recordsToWrite.add(record)
 
             if (recordsToWrite.size > config.maxBufferedLogRecords) { // recordsToWrite exceeds max size
@@ -59,7 +45,7 @@ abstract class LogWriterBase(
     }
 
 
-    protected open suspend fun asyncWriteLoop() {
+    protected open suspend fun asyncWriteLoop(writeLogRecordsPeriodMillis: Long) {
         while (isClosed.value == false) {
             try {
                 val recordsToWrite = lock.withLock {
@@ -77,7 +63,7 @@ abstract class LogWriterBase(
                     }
                 }
 
-                delay(config.sendLogRecordsPeriodMillis)
+                delay(writeLogRecordsPeriodMillis)
             } catch (e: Exception) {
 //                errorHandler.error("Could not write batch: $e")
             }
@@ -120,6 +106,7 @@ abstract class LogWriterBase(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun flush() {
         if (recordsToWrite.isNotEmpty()) {
             // yes, we really want to use GlobalScope here was we want to assert that Coroutine gets executed before program ends

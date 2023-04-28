@@ -48,6 +48,36 @@ class LogWriterBaseTest {
     }
 
 
+    @Test
+    fun `writeRecords sync - Records get written almost immediately`() = runTest {
+        val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
+        val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
+
+        writeRecordsSync(writtenRecords, testRecords)
+
+        val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
+        receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
+        receivedWriteRecordsEvents.forEach { writtenRecord ->
+            (now() - writtenRecord.writeTimestamp).inWholeMilliseconds.shouldBeLessThan(SendTimeTolerance)
+        }
+    }
+
+    @Test
+    fun `writeRecords async - Records get written with delay`() = runTest {
+        val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
+        val sendPeriod = 50L
+        val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
+
+        writeRecordsAsync(sendPeriod, writtenRecords, testRecords)
+
+        val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
+        receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
+        receivedWriteRecordsEvents.forEach { writtenRecord ->
+            (now() - writtenRecord.writeTimestamp).inWholeMilliseconds.shouldBeLessThan(sendPeriod)
+        }
+    }
+
+
     private fun assertWrittenRecords(sendRecords: List<LogRecord>, writtenRecordsArray: AtomicArray<WrittenRecord?>): List<WrittenRecord> {
         val writtenRecords = (0 until writtenRecordsArray.size)
             .mapNotNull { index -> writtenRecordsArray[index].value }
@@ -94,7 +124,8 @@ class LogWriterBaseTest {
         underTest.close()
     }
 
-    private fun createRecord() = LogRecord("Test message", now(), "INFO", "", "")
+    private fun createRecord(message: String = "Test message") =
+        LogRecord(message, now(), "INFO", "", "")
 
     private fun now() = Clock.System.now()
 
