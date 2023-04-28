@@ -62,6 +62,8 @@ kotlin {
                 implementation(kotlin("test"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+
+                implementation("io.kotest:kotest-assertions-core:5.6.1")
             }
         }
 

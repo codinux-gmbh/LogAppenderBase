@@ -1,5 +1,9 @@
 package net.codinux.log
 
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.collections.shouldHaveAtMostSize
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.comparables.shouldBeLessThan
 import kotlinx.atomicfu.AtomicArray
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.atomicArrayOfNulls
@@ -9,8 +13,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LogWriterBaseTest {
@@ -22,25 +24,27 @@ class LogWriterBaseTest {
 
     @Test
     fun `writeRecord sync - Records get written almost immediately`() = runTest {
-        val testRecord = createRecord()
+        val testRecord = listOf(createRecord())
         val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
 
         writeRecordsSync(writtenRecords, testRecord)
 
-        assertWrittenRecords(listOf(testRecord), writtenRecords)
-        assertTrue((now() - writtenRecords[0].value!!.writeTimestamp).inWholeMilliseconds < SendTimeTolerance)
+        val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
+        receivedWriteRecordsEvents.shouldHaveSize(1)
+        (now() - receivedWriteRecordsEvents.first().writeTimestamp).inWholeMilliseconds.shouldBeLessThan(SendTimeTolerance)
     }
 
     @Test
     fun `writeRecord async - Records get written with delay`() = runTest {
-        val testRecord = createRecord()
+        val testRecord = listOf(createRecord())
         val sendPeriod = 50L
         val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
 
         writeRecordsAsync(sendPeriod, writtenRecords, testRecord)
 
-        assertWrittenRecords(listOf(testRecord), writtenRecords)
-        assertTrue((now() - writtenRecords[0].value!!.writeTimestamp).inWholeMilliseconds < sendPeriod)
+        val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
+        receivedWriteRecordsEvents.shouldHaveSize(1)
+        (now() - receivedWriteRecordsEvents.first().writeTimestamp).inWholeMilliseconds.shouldBeLessThan(sendPeriod)
     }
 
 
@@ -49,22 +53,22 @@ class LogWriterBaseTest {
             .mapNotNull { index -> writtenRecordsArray[index].value }
         val writtenLogRecords = writtenRecords.flatMap { it.records }
 
-        assertEquals(sendRecords.size, writtenLogRecords.size)
+        sendRecords.shouldHaveSize(writtenLogRecords.size)
 
-        assertTrue(writtenLogRecords.containsAll(sendRecords))
+        writtenLogRecords.shouldContainAll(sendRecords)
 
         return writtenRecords
     }
 
-    private suspend fun writeRecordsAsync(sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, vararg records: LogRecord) {
-        writeRecords(true, sendPeriod, writtenRecords, *records)
+    private suspend fun writeRecordsAsync(sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
+        writeRecords(true, sendPeriod, writtenRecords, records)
     }
 
-    private suspend fun writeRecordsSync(writtenRecords: AtomicArray<WrittenRecord?>, vararg records: LogRecord) {
-        writeRecords(false, 0L, writtenRecords, *records)
+    private suspend fun writeRecordsSync(writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
+        writeRecords(false, 0L, writtenRecords, records)
     }
 
-    private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, vararg records: LogRecord) {
+    private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
         val config = LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
         val countWrittenRecords = atomic(0)
 
