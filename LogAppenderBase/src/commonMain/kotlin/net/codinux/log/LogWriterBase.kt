@@ -98,9 +98,13 @@ abstract class LogWriterBase(
 
     protected open suspend fun writeAllRecordsNow() {
         if (recordsToWrite.isNotEmpty()) {
-            val recordsToWrite = ArrayList(recordsToWrite)
+            val recordsToWrite = lock.withLock {
+                val recordsToWrite = ArrayList(recordsToWrite)
 
-            this.recordsToWrite.clear()
+                this.recordsToWrite.clear()
+
+                recordsToWrite
+            }
 
             if (recordsToWrite.isNotEmpty()) {
                 writeRecords(recordsToWrite)
