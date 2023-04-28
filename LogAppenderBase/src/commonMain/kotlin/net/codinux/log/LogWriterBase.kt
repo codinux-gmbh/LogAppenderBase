@@ -69,7 +69,7 @@ abstract class LogWriterBase(
             }
         }
 
-        writeRecordsNow()
+        writeAllRecordsNow()
 
 //        errorHandler.logInfo("asyncWriteLoop() has stopped")
     }
@@ -96,13 +96,15 @@ abstract class LogWriterBase(
         }
     }
 
-    protected open suspend fun writeRecordsNow() {
+    protected open suspend fun writeAllRecordsNow() {
         if (recordsToWrite.isNotEmpty()) {
             val recordsToWrite = ArrayList(recordsToWrite)
 
             this.recordsToWrite.clear()
 
-            writeRecords(recordsToWrite)
+            if (recordsToWrite.isNotEmpty()) {
+                writeRecords(recordsToWrite)
+            }
         }
     }
 
@@ -111,7 +113,7 @@ abstract class LogWriterBase(
         if (recordsToWrite.isNotEmpty()) {
             // yes, we really want to use GlobalScope here was we want to assert that Coroutine gets executed before program ends
             GlobalScope.async {
-                writeRecordsNow()
+                writeAllRecordsNow()
             }
         }
     }
