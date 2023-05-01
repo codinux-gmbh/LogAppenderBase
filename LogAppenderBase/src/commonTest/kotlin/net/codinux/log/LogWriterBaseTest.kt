@@ -4,6 +4,7 @@ import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.collections.shouldHaveAtMostSize
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeLessThan
+import io.kotest.matchers.maps.shouldHaveSize
 import kotlinx.atomicfu.AtomicArray
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.atomicArrayOfNulls
@@ -72,6 +73,49 @@ class LogWriterBaseTest {
     }
 
 
+    @Test
+    fun `writeRecords async - Re-add failed records`() = runTest {
+        val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
+        val sendPeriod = 50L
+
+        val writtenRecords = mutableMapOf<Int, List<LogRecord>>()
+        val countWriteRecordCalls = atomic(0)
+
+        val underTest = object : LogWriterBase(createConfig(true, sendPeriod)) {
+
+            override suspend fun writeRecords(records: List<LogRecord>): List<LogRecord> {
+                writtenRecords[countWriteRecordCalls.getAndIncrement()] = records
+
+                // on first call we say all records with an odd index fail
+                return if (countWriteRecordCalls.value == 1) {
+                    records.filterIndexed { index, _ -> index % 2 == 0 }
+                } else {
+                    emptyList()
+                }
+            }
+
+        }
+
+
+        testRecords.forEach { record ->
+            underTest.writeRecord(record)
+        }
+
+        delay(sendPeriod * 4)
+
+        underTest.close()
+
+
+        writtenRecords.shouldHaveSize(2) // as on first call some records failed there has to be another call with the failed records
+
+        writtenRecords[0]!!.shouldContainAll(testRecords)
+
+        val failedRecords = writtenRecords[1]!!
+        failedRecords.shouldHaveSize(3)
+        failedRecords.shouldContainAll(testRecords[0], testRecords[2], testRecords[4])
+    }
+
+
     private fun assertWrittenRecords(sendRecords: List<LogRecord>, writtenRecordsArray: AtomicArray<WrittenRecord?>): List<WrittenRecord> {
         val writtenRecords = (0 until writtenRecordsArray.size)
             .mapNotNull { index -> writtenRecordsArray[index].value }
@@ -93,7 +137,7 @@ class LogWriterBaseTest {
     }
 
     private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
-        val config = LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
+        val config = createConfig(writeAsync, sendPeriod)
         val countWrittenRecords = atomic(0)
 
         val underTest = object : LogWriterBase(config) {
@@ -117,6 +161,9 @@ class LogWriterBaseTest {
 
         underTest.close()
     }
+
+    private fun createConfig(writeAsync: Boolean, sendPeriod: Long) =
+        LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
 
     private fun createRecord(message: String = "Test message") =
         LogRecord(message, now(), "INFO", "", "")
