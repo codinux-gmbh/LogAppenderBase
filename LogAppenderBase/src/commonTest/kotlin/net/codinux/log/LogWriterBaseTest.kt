@@ -174,8 +174,11 @@ class LogWriterBaseTest {
     private fun createConfig(writeAsync: Boolean, sendPeriod: Long) =
         LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
 
-    private fun createRecord(message: String = "Test message") =
-        LogRecord(message, now(), "INFO", "", "")
+    private fun createRecord(message: String = "Test message"): LogRecord {
+        val now = now()
+
+        return LogRecord(message, now.toEpochMilliseconds(), now.nanosecondsOfSecond % 1_000_000L, "INFO", "", "")
+    }
 
     private fun now() = Clock.System.now()
 

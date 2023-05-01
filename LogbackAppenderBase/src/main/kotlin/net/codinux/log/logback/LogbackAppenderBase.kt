@@ -4,7 +4,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.UnsynchronizedAppenderBase
-import kotlinx.datetime.Instant
 import net.codinux.log.LogRecord
 import net.codinux.log.LogWriter
 
@@ -21,7 +20,7 @@ open class LogbackAppenderBase(
     }
 
     protected open fun mapRecord(event: ILoggingEvent): LogRecord {
-        return LogRecord(event.formattedMessage, Instant.fromEpochMilliseconds(event.timeStamp), event.level.levelStr, event.loggerName,
+        return LogRecord(event.formattedMessage, event.timeStamp, null, event.level.levelStr, event.loggerName,
             event.threadName, getThrowable(event), event.mdcPropertyMap, event.marker?.name)
     }
 

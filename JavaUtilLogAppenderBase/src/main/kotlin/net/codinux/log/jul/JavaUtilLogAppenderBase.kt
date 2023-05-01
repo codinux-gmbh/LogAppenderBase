@@ -1,8 +1,8 @@
 package net.codinux.log.jul
 
-import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogRecord
 import net.codinux.log.LogWriter
+import net.codinux.log.extensions.microAndNanosecondsPart
 import java.util.logging.Handler
 
 open class JavaUtilLogAppenderBase(
@@ -24,8 +24,8 @@ open class JavaUtilLogAppenderBase(
             message = String.format(record.message, *record.parameters)
         }
 
-        return LogRecord(message, record.instant.toKotlinInstant(), record.level.name, record.loggerName,
-            threadName, record.thrown)
+        return LogRecord(message, record.instant.toEpochMilli(), record.instant.microAndNanosecondsPart, record.level.name,
+            record.loggerName, threadName, record.thrown)
     }
 
     override fun flush() {
