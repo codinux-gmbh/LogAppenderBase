@@ -78,12 +78,15 @@ class LogWriterBaseTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
         val sendPeriod = 50L
 
-        val writtenRecords = mutableMapOf<Int, List<LogRecord>>()
+        val writtenRecords = mutableMapOf<Int, List<String>>()
         val countWriteRecordCalls = atomic(0)
 
         val underTest = object : LogWriterBase(createConfig(true, sendPeriod)) {
 
-            override suspend fun writeRecords(records: List<LogRecord>): List<LogRecord> {
+            override fun serializeRecord(record: LogRecord): String =
+                this@LogWriterBaseTest.serializeRecord(record)
+
+            override suspend fun writeRecords(records: List<String>): List<String> {
                 writtenRecords[countWriteRecordCalls.getAndIncrement()] = records
 
                 // on first call we say all records with an odd index fail
@@ -108,11 +111,11 @@ class LogWriterBaseTest {
 
         writtenRecords.shouldHaveSize(2) // as on first call some records failed there has to be another call with the failed records
 
-        writtenRecords[0]!!.shouldContainAll(testRecords)
+        writtenRecords[0]!!.shouldContainAll(testRecords.map { serializeRecord(it) })
 
         val failedRecords = writtenRecords[1]!!
         failedRecords.shouldHaveSize(3)
-        failedRecords.shouldContainAll(testRecords[0], testRecords[2], testRecords[4])
+        failedRecords.shouldContainAll(serializeRecord(testRecords[0]), serializeRecord(testRecords[2]), serializeRecord(testRecords[4]))
     }
 
 
@@ -123,7 +126,7 @@ class LogWriterBaseTest {
 
         sendRecords.shouldHaveSize(writtenLogRecords.size)
 
-        writtenLogRecords.shouldContainAll(sendRecords)
+        writtenLogRecords.shouldContainAll(sendRecords.map { serializeRecord(it) })
 
         return writtenRecords
     }
@@ -142,8 +145,12 @@ class LogWriterBaseTest {
 
         val underTest = object : LogWriterBase(config) {
 
-            override suspend fun writeRecords(records: List<LogRecord>): List<LogRecord> {
-                writtenRecords.get(countWrittenRecords.getAndIncrement()).value = WrittenRecord(now(), records)
+            override fun serializeRecord(record: LogRecord): String =
+                this@LogWriterBaseTest.serializeRecord(record)
+
+            override suspend fun writeRecords(records: List<String>): List<String> {
+                writtenRecords[countWrittenRecords.getAndIncrement()].value = WrittenRecord(now(), records)
+
                 return emptyList()
             }
 
@@ -162,6 +169,8 @@ class LogWriterBaseTest {
         underTest.close()
     }
 
+    private fun serializeRecord(record: LogRecord) = record.toString()
+
     private fun createConfig(writeAsync: Boolean, sendPeriod: Long) =
         LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
 
@@ -173,7 +182,7 @@ class LogWriterBaseTest {
 
     data class WrittenRecord(
         val writeTimestamp: Instant,
-        val records: List<LogRecord>
+        val records: List<String>
     )
 
 }

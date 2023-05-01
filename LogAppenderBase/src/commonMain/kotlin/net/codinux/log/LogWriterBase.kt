@@ -12,10 +12,12 @@ abstract class LogWriterBase(
     protected open val processData: ProcessData = ProcessDataRetriever().retrieveProcessData()
 ) : LogWriter {
 
-    protected abstract suspend fun writeRecords(records: List<LogRecord>): List<LogRecord>
+    protected abstract fun serializeRecord(record: LogRecord): String
+
+    protected abstract suspend fun writeRecords(records: List<String>): List<String>
 
 
-    private val recordsToWrite = mutableListOf<LogRecord>()
+    private val recordsToWrite = mutableListOf<String>()
 
     private val lock = reentrantLock()
 
@@ -35,7 +37,7 @@ abstract class LogWriterBase(
         lock.withLock {
             // as writeRecords() is a suspend function even if config.appendLogsAsync == false we cannot write log record synchronously
             // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
-            recordsToWrite.add(record)
+            recordsToWrite.add(serializeRecord(record))
 
             if (recordsToWrite.size > config.maxBufferedLogRecords) { // recordsToWrite exceeds max size
                 recordsToWrite.removeAt(0) // drop the oldest log record then
@@ -66,7 +68,7 @@ abstract class LogWriterBase(
 //        errorHandler.logInfo("asyncWriteLoop() has stopped")
     }
 
-    private suspend fun writeRecordsAndReAddFailedOnes(recordsToWrite: List<LogRecord>) {
+    private suspend fun writeRecordsAndReAddFailedOnes(recordsToWrite: List<String>) {
         if (recordsToWrite.isNotEmpty()) {
             val failedRecords = writeRecords(recordsToWrite)
 
@@ -78,7 +80,7 @@ abstract class LogWriterBase(
         }
     }
 
-    protected open fun calculateRecordsToWrite(): List<LogRecord> {
+    protected open fun calculateRecordsToWrite(): List<String> {
         val size = recordsToWrite.size
 
         if (size <= config.maxLogRecordsPerBatch) {
