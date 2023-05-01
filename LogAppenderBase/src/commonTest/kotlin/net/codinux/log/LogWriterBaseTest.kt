@@ -83,8 +83,20 @@ class LogWriterBaseTest {
 
         val underTest = object : LogWriterBase(createConfig(true, sendPeriod)) {
 
-            override fun serializeRecord(record: LogRecord): String =
-                this@LogWriterBaseTest.serializeRecord(record)
+            override fun serializeRecord(
+                timestampMillisSinceEpoch: Long,
+                timestampMicroAndNanosecondsPart: Long?,
+                level: String,
+                message: String,
+                loggerName: String,
+                threadName: String,
+                exception: Throwable?,
+                mdc: Map<String, String>?,
+                marker: String?,
+                ndc: String?
+            ): String =
+                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level,
+                    message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
                 writtenRecords[countWriteRecordCalls.getAndIncrement()] = records
@@ -101,7 +113,7 @@ class LogWriterBaseTest {
 
 
         testRecords.forEach { record ->
-            underTest.writeRecord(record)
+            writeRecord(underTest, record)
         }
 
         delay(sendPeriod * 4)
@@ -141,15 +153,27 @@ class LogWriterBaseTest {
 
     private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
         val config = createConfig(writeAsync, sendPeriod)
-        val countWrittenRecords = atomic(0)
+        val countWriteRecordCalls = atomic(0)
 
         val underTest = object : LogWriterBase(config) {
 
-            override fun serializeRecord(record: LogRecord): String =
-                this@LogWriterBaseTest.serializeRecord(record)
+            override fun serializeRecord(
+                timestampMillisSinceEpoch: Long,
+                timestampMicroAndNanosecondsPart: Long?,
+                level: String,
+                message: String,
+                loggerName: String,
+                threadName: String,
+                exception: Throwable?,
+                mdc: Map<String, String>?,
+                marker: String?,
+                ndc: String?
+            ): String =
+                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level,
+                    message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
-                writtenRecords[countWrittenRecords.getAndIncrement()].value = WrittenRecord(now(), records)
+                writtenRecords[countWriteRecordCalls.getAndIncrement()].value = WrittenRecord(now(), records)
 
                 return emptyList()
             }
@@ -157,7 +181,7 @@ class LogWriterBaseTest {
         }
 
         records.forEach { record ->
-            underTest.writeRecord(record)
+            writeRecord(underTest, record)
         }
 
         if (writeAsync) {
@@ -169,7 +193,27 @@ class LogWriterBaseTest {
         underTest.close()
     }
 
-    private fun serializeRecord(record: LogRecord) = record.toString()
+    private fun writeRecord(writer: LogWriterBase, record: LogRecord) {
+        writer.writeRecord(record.timestampMillisSinceEpoch, record.timestampMicroAndNanosecondsPart, record.level,
+            record.message, record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
+    }
+
+    private fun serializeRecord(record: LogRecord) =
+        serializeRecord(record.timestampMillisSinceEpoch, record.timestampMicroAndNanosecondsPart, record.level, record.message,
+            record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
+
+    private fun serializeRecord(
+        timestampMillisSinceEpoch: Long,
+        timestampMicroAndNanosecondsPart: Long?,
+        level: String,
+        message: String,
+        loggerName: String,
+        threadName: String,
+        exception: Throwable?,
+        mdc: Map<String, String>?,
+        marker: String?,
+        ndc: String?
+    ) = "$timestampMillisSinceEpoch $level $loggerName [$threadName] $message"
 
     private fun createConfig(writeAsync: Boolean, sendPeriod: Long) =
         LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)

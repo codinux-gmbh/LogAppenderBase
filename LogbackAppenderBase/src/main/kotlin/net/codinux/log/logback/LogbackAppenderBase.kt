@@ -4,7 +4,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.UnsynchronizedAppenderBase
-import net.codinux.log.LogRecord
 import net.codinux.log.LogWriter
 
 open class LogbackAppenderBase(
@@ -13,15 +12,11 @@ open class LogbackAppenderBase(
     protected open val logWriter: LogWriter
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
-    override fun append(eventObject: ILoggingEvent?) {
-        if (isAppenderEnabled && eventObject != null) {
-            logWriter.writeRecord(mapRecord(eventObject))
+    override fun append(event: ILoggingEvent?) {
+        if (isAppenderEnabled && event != null) {
+            logWriter.writeRecord(event.timeStamp, null, event.level.levelStr, event.formattedMessage,
+                event.loggerName, event.threadName, getThrowable(event), event.mdcPropertyMap, event.marker?.name)
         }
-    }
-
-    protected open fun mapRecord(event: ILoggingEvent): LogRecord {
-        return LogRecord(event.formattedMessage, event.timeStamp, null, event.level.levelStr, event.loggerName,
-            event.threadName, getThrowable(event), event.mdcPropertyMap, event.marker?.name)
     }
 
 

@@ -12,7 +12,18 @@ abstract class LogWriterBase(
     protected open val processData: ProcessData = ProcessDataRetriever().retrieveProcessData()
 ) : LogWriter {
 
-    protected abstract fun serializeRecord(record: LogRecord): String
+    protected abstract fun serializeRecord(
+        timestampMillisSinceEpoch: Long,
+        timestampMicroAndNanosecondsPart: Long?,
+        level: String,
+        message: String,
+        loggerName: String,
+        threadName: String,
+        exception: Throwable?,
+        mdc: Map<String, String>?,
+        marker: String?,
+        ndc: String?
+    ): String
 
     protected abstract suspend fun writeRecords(records: List<String>): List<String>
 
@@ -33,11 +44,23 @@ abstract class LogWriterBase(
         }
     }
 
-    override fun writeRecord(record: LogRecord) {
+    override fun writeRecord(
+        timestampMillisSinceEpoch: Long,
+        timestampMicroAndNanosecondsPart: Long?,
+        level: String,
+        message: String,
+        loggerName: String,
+        threadName: String,
+        exception: Throwable?,
+        mdc: Map<String, String>?,
+        marker: String?,
+        ndc: String?
+    ) {
         lock.withLock {
             // as writeRecords() is a suspend function even if config.appendLogsAsync == false we cannot write log record synchronously
             // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
-            recordsToWrite.add(serializeRecord(record))
+            recordsToWrite.add(serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level, message,
+                loggerName, threadName, exception, mdc, marker, ndc))
 
             if (recordsToWrite.size > config.maxBufferedLogRecords) { // recordsToWrite exceeds max size
                 recordsToWrite.removeAt(0) // drop the oldest log record then

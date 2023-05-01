@@ -1,6 +1,5 @@
 package net.codinux.log.jboss
 
-import net.codinux.log.LogRecord
 import net.codinux.log.LogWriter
 import net.codinux.log.extensions.microAndNanosecondsPart
 import org.jboss.logmanager.ExtFormatter
@@ -23,16 +22,12 @@ open class JBossLoggingAppenderBase(
 
     override fun doPublish(record: ExtLogRecord?) {
         if (isAppenderEnabled && record != null) {
-            logWriter.writeRecord(mapRecord(record))
+            val message = formatter.formatMessage(record)
+            val ndc = if (record.ndc.isNullOrBlank()) null else record.ndc
+
+            logWriter.writeRecord(record.instant.toEpochMilli(), record.instant.microAndNanosecondsPart, record.level.name,
+                message, record.loggerName, record.threadName, record.thrown, record.mdcCopy, record.marker?.toString(), ndc)
         }
-    }
-
-    protected open fun mapRecord(record: ExtLogRecord): LogRecord {
-        val message = formatter.formatMessage(record)
-        val ndc = if (record.ndc.isNullOrBlank()) null else record.ndc
-
-        return LogRecord(message, record.instant.toEpochMilli(), record.instant.microAndNanosecondsPart, record.level.name,
-            record.loggerName, record.threadName, record.thrown, record.mdcCopy, record.marker?.toString(), ndc)
     }
 
     override fun flush() {
