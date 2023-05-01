@@ -1,7 +1,7 @@
 package net.codinux.log.data
 
-data class ProcessData(
-    val startTime: String?,
-    val hostName: String?,
-    val hostIp: String?
+open class ProcessData(
+    open val startTime: String?,
+    open val hostName: String?,
+    open val hostIp: String?
 )
