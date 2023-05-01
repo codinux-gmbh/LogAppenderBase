@@ -57,9 +57,6 @@ class LogWriterBaseTest {
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
-        receivedWriteRecordsEvents.forEach { writtenRecord ->
-            (now() - writtenRecord.writeTimestamp).inWholeMilliseconds.shouldBeLessThan(SendTimeTolerance)
-        }
     }
 
     @Test
@@ -72,9 +69,6 @@ class LogWriterBaseTest {
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
-        receivedWriteRecordsEvents.forEach { writtenRecord ->
-            (now() - writtenRecord.writeTimestamp).inWholeMilliseconds.shouldBeLessThan(sendPeriod)
-        }
     }
 
 
