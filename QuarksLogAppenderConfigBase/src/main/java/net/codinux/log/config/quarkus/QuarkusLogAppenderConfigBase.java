@@ -54,6 +54,12 @@ public class QuarkusLogAppenderConfigBase {
     public HostNameConfig hostName;
 
     /**
+     * Config for the host IP.
+     */
+    @ConfigItem(name = "hostip")
+    public HostNameConfig hostIp;
+
+    /**
      * Config for the app name.
      */
     @ConfigItem(name = "app")
@@ -67,17 +73,27 @@ public class QuarkusLogAppenderConfigBase {
 
     public StacktraceConfig stacktrace;
 
+
     public MdcConfig mdc;
 
     public MarkerConfig marker;
 
     public NdcConfig ndc;
 
+
     /**
      * Configure which Kubernetes values to include in log.
      */
     @ConfigItem(name = "kubernetes")
     public KubernetesInfoConfig kubernetesInfo;
+
+
+    /**
+     * If the logs should be sent asynchronously to Loki / Elasticsearch. Leave at 'true' if you don't have a very good
+     * reason to do so as otherwise for each log call current thread gets blocked till log record is inserted in remote system.
+     */
+    @ConfigItem(defaultValue = "" + LogAppenderConfig.AppendLogsAsyncDefaultValue)
+    public boolean appendLogsAsync;
 
     /**
      * The maximum number of log records that are send in one batch to Elasticsearch.
