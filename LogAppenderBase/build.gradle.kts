@@ -67,7 +67,13 @@ kotlin {
             }
         }
 
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+                implementation("io.fabric8:kubernetes-client:6.5.1")
+                // TODO: or use JDK HttpClient? Wouldn't conflict with other OkHttp usages
+                implementation("io.fabric8:kubernetes-httpclient-okhttp:6.5.1")
+            }
+        }
         val jvmTest by getting
 
         val jsMain by getting

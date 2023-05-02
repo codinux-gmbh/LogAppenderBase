@@ -1,7 +1,6 @@
 package net.codinux.log.data
 
 import java.net.InetAddress
-import java.time.Instant
 
 actual class ProcessDataRetriever {
 
@@ -9,7 +8,7 @@ actual class ProcessDataRetriever {
         val localHost = getLocalHost()
 
         return ProcessData(
-            Instant.now().toString(),
+            DataConfig.getCurrentTimeFormatted(),
             localHost?.hostName,
             localHost?.hostAddress
         )

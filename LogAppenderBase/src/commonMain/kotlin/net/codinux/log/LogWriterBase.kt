@@ -4,6 +4,8 @@ import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.locks.reentrantLock
 import kotlinx.atomicfu.locks.withLock
 import kotlinx.coroutines.*
+import net.codinux.log.data.KubernetesInfo
+import net.codinux.log.data.KubernetesInfoRetriever
 import net.codinux.log.data.ProcessData
 import net.codinux.log.data.ProcessDataRetriever
 
@@ -28,6 +30,8 @@ abstract class LogWriterBase(
     protected abstract suspend fun writeRecords(records: List<String>): List<String>
 
 
+    protected open var kubernetesInfo: KubernetesInfo? = null
+
     private val recordsToWrite = mutableListOf<String>()
 
     private val lock = reentrantLock()
@@ -38,6 +42,10 @@ abstract class LogWriterBase(
 
     init {
         coroutineScope.async {
+            if (config.includeKubernetesInfo) {
+                kubernetesInfo = KubernetesInfoRetriever().retrieveKubernetesInfo()
+            }
+
             val writeLogRecordsPeriodMillis = if (config.appendLogsAsync) config.sendLogRecordsPeriodMillis
                                             else 5L
             asyncWriteLoop(writeLogRecordsPeriodMillis)
