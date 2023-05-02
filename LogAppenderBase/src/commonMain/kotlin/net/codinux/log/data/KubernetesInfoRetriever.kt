@@ -1,6 +1,8 @@
 package net.codinux.log.data
 
-expect class KubernetesInfoRetriever() {
+import net.codinux.log.statelogger.AppenderStateLogger
+
+expect class KubernetesInfoRetriever(stateLogger: AppenderStateLogger) {
 
     suspend fun retrieveKubernetesInfo(): KubernetesInfo?
 

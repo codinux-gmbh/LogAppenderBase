@@ -5,11 +5,14 @@ import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.UnsynchronizedAppenderBase
 import net.codinux.log.LogWriter
+import net.codinux.log.statelogger.AppenderStateLogger
+import net.codinux.log.statelogger.StdOutStateLogger
 
 open class LogbackAppenderBase(
     protected open val isAppenderEnabled: Boolean,
     protected open val logExceptions: Boolean = true,
-    protected open val logWriter: LogWriter
+    protected open val logWriter: LogWriter,
+    protected open val stateLogger: AppenderStateLogger = StdOutStateLogger()
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
     override fun append(event: ILoggingEvent?) {
@@ -53,8 +56,7 @@ open class LogbackAppenderBase(
 
             return throwable
         } catch (e: Exception) {
-            // TODO: log with error handler
-//            errorHandler.logError("Could not get Throwable from IThrowableProxy", e)
+            stateLogger.error("Could not get Throwable from IThrowableProxy", e)
         }
 
         return null

@@ -1,6 +1,8 @@
 package net.codinux.log.data
 
-expect class ProcessDataRetriever() {
+import net.codinux.log.statelogger.AppenderStateLogger
+
+expect class ProcessDataRetriever(stateLogger: AppenderStateLogger) {
 
     fun retrieveProcessData(): ProcessData
 

@@ -1,8 +1,12 @@
 package net.codinux.log.data
 
-actual class KubernetesInfoRetriever {
+import net.codinux.log.statelogger.AppenderStateLogger
 
-    actual suspend fun retrieveKubernetesInfo(): KubernetesInfo? =
+actual open class KubernetesInfoRetriever actual constructor(
+    protected open val stateLogger: AppenderStateLogger
+) {
+
+    actual open suspend fun retrieveKubernetesInfo(): KubernetesInfo? =
         null
 
 }

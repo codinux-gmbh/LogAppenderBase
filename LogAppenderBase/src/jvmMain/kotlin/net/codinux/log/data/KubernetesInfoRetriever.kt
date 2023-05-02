@@ -4,22 +4,21 @@ import io.fabric8.kubernetes.api.model.Pod
 import io.fabric8.kubernetes.client.KubernetesClient
 import io.fabric8.kubernetes.client.KubernetesClientBuilder
 import io.fabric8.kubernetes.client.okhttp.OkHttpClientImpl
+import net.codinux.log.statelogger.AppenderStateLogger
 import okhttp3.logging.HttpLoggingInterceptor
-import org.slf4j.LoggerFactory
 import java.io.File
 import java.net.InetAddress
 import java.time.Instant
 
-actual open class KubernetesInfoRetriever {
+actual open class KubernetesInfoRetriever actual constructor(
+    protected open val stateLogger: AppenderStateLogger
+) {
 
-    private val log = LoggerFactory.getLogger(KubernetesInfoRetriever::class.java) // TODO: use ErrorLogger
-
-
-    actual suspend fun retrieveKubernetesInfo(): KubernetesInfo? {
+    actual open suspend fun retrieveKubernetesInfo(): KubernetesInfo? {
         try {
             val namespaceFile = File("/run/secrets/kubernetes.io/serviceaccount/namespace")
             if (namespaceFile.exists() == false) {
-                log.info("Not running in a Kubernetes environment, file '/run/secrets/kubernetes.io/serviceaccount/namespace' does not exist.")
+                stateLogger.info("Not running in a Kubernetes environment, file '/run/secrets/kubernetes.io/serviceaccount/namespace' does not exist.")
                 return null
             }
 
@@ -31,7 +30,7 @@ actual open class KubernetesInfoRetriever {
 
             return retrieveKubernetesInfo(namespace, podName, podIp)
         } catch(e: Throwable) {
-            log.error("Could not retrieve any pod / Kubernetes info, no cluster or container info will be added to logs", e)
+            stateLogger.error("Could not retrieve any pod / Kubernetes info, no cluster or container info will be added to logs", e)
         }
 
         return null
@@ -47,7 +46,7 @@ actual open class KubernetesInfoRetriever {
 
             retrieveKubernetesInfo(pod, namespace, podName, podIp)
         } catch(e: Throwable) {
-            log.error("Does the pod have the privilege to access the Kubernetes API (see https://github.com/codinux-gmbh/ElasticsearchLogger#kubernetes-info)? " +
+            stateLogger.error("Does the pod have the privilege to access the Kubernetes API (see https://github.com/codinux-gmbh/ElasticsearchLogger#kubernetes-info)? " +
                     "Could not retrieve pod info, only basic data like Kubernetes namespace and Pod name are added to logs, but no cluster or container info", e)
 
             KubernetesInfo(namespace, podName, podIp, Instant.now().toString())
@@ -116,7 +115,7 @@ actual open class KubernetesInfoRetriever {
                     .forEach { it.level = HttpLoggingInterceptor.Level.NONE }
             }
         } catch (e: Throwable) {
-            log.error("Could not disable verbose logging of Kubernetes Client", e)
+            stateLogger.error("Could not disable verbose logging of Kubernetes Client", e)
         }
     }
 
