@@ -1,9 +1,6 @@
 package net.codinux.log
 
 import io.kotest.matchers.collections.*
-import kotlinx.atomicfu.AtomicArray
-import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.atomicArrayOfNulls
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -25,9 +22,8 @@ class LogWriterBaseTest {
     @JsName("writeRecord_sync_Records_get_written_almost_immediately")
     fun `writeRecord sync - Records get written almost immediately`() = runTest {
         val testRecord = listOf(createRecord())
-        val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
 
-        writeRecordsSync(writtenRecords, testRecord)
+        val writtenRecords = writeRecordsSync(testRecord)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveSize(1)
@@ -38,9 +34,8 @@ class LogWriterBaseTest {
     fun `writeRecord async - Records get written with delay`() = runTest {
         val testRecord = listOf(createRecord())
         val sendPeriod = 50L
-        val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
 
-        writeRecordsAsync(sendPeriod, writtenRecords, testRecord)
+        val writtenRecords = writeRecordsAsync(sendPeriod, testRecord)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveSize(1)
@@ -51,9 +46,8 @@ class LogWriterBaseTest {
     @JsName("writeRecords_sync_Records_get_written_almost_immediately")
     fun `writeRecords sync - Records get written almost immediately`() = runTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
-        val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
 
-        writeRecordsSync(writtenRecords, testRecords)
+        val writtenRecords = writeRecordsSync(testRecords)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
@@ -64,9 +58,8 @@ class LogWriterBaseTest {
     fun `writeRecords async - Records get written with delay`() = runTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
         val sendPeriod = 50L
-        val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
 
-        writeRecordsAsync(sendPeriod, writtenRecords, testRecords)
+        val writtenRecords = writeRecordsAsync(sendPeriod, testRecords)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
@@ -84,7 +77,7 @@ class LogWriterBaseTest {
         val sendPeriod = 50L
 
         val writtenRecords = mutableMapOf<Int, List<String>>()
-        val countWriteRecordCalls = atomic(0)
+        var countWriteRecordCalls = 0
 
         val underTest = object : LogWriterBase(createConfig(true, sendPeriod)) {
 
@@ -104,10 +97,10 @@ class LogWriterBaseTest {
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
-                writtenRecords[countWriteRecordCalls.getAndIncrement()] = records
+                writtenRecords[countWriteRecordCalls++] = records
 
-                return if ((countWriteRecordCalls.value == 1 && records.size == testRecords.size) || // on first call we say writing some of the records fails
-                    (countWriteRecordCalls.value == 2 && records != recordsToFailOnFirstWriteCall)) { // sometimes the first call contains only a part of testRecords, then return failed records on second call
+                return if ((countWriteRecordCalls == 1 && records.size == testRecords.size) || // on first call we say writing some of the records fails
+                    (countWriteRecordCalls == 2 && records != recordsToFailOnFirstWriteCall)) { // sometimes the first call contains only a part of testRecords, then return failed records on second call
                     recordsToFailOnFirstWriteCall
                 } else {
                     emptyList()
@@ -121,7 +114,7 @@ class LogWriterBaseTest {
             writeRecord(underTest, record)
         }
 
-        delay(sendPeriod * 2)
+        delay(sendPeriod * 3)
 
         underTest.close()
 
@@ -139,9 +132,7 @@ class LogWriterBaseTest {
     }
 
 
-    private fun assertWrittenRecords(sendRecords: List<LogRecord>, writtenRecordsArray: AtomicArray<WrittenRecord?>): List<WrittenRecord> {
-        val writtenRecords = (0 until writtenRecordsArray.size)
-            .mapNotNull { index -> writtenRecordsArray[index].value }
+    private fun assertWrittenRecords(sendRecords: List<LogRecord>, writtenRecords: List<WrittenRecord>): List<WrittenRecord> {
         val writtenLogRecords = writtenRecords.flatMap { it.records }
 
         sendRecords.shouldHaveSize(writtenLogRecords.size)
@@ -151,17 +142,15 @@ class LogWriterBaseTest {
         return writtenRecords
     }
 
-    private suspend fun writeRecordsAsync(sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
-        writeRecords(true, sendPeriod, writtenRecords, records)
-    }
+    private suspend fun writeRecordsAsync(sendPeriod: Long = 50L, records: List<LogRecord>) =
+        writeRecords(true, sendPeriod, records)
 
-    private suspend fun writeRecordsSync(writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
-        writeRecords(false, 0L, writtenRecords, records)
-    }
+    private suspend fun writeRecordsSync(records: List<LogRecord>) =
+        writeRecords(false, 0L, records)
 
-    private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, writtenRecords: AtomicArray<WrittenRecord?>, records: List<LogRecord>) {
+    private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, records: List<LogRecord>): List<WrittenRecord> {
         val config = createConfig(writeAsync, sendPeriod)
-        val countWriteRecordCalls = atomic(0)
+        val writtenRecords = mutableListOf<WrittenRecord>()
 
         val underTest = object : LogWriterBase(config) {
 
@@ -181,7 +170,7 @@ class LogWriterBaseTest {
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
-                writtenRecords[countWriteRecordCalls.getAndIncrement()].value = WrittenRecord(now(), records)
+                writtenRecords.add(WrittenRecord(now(), records))
 
                 return emptyList()
             }
@@ -196,6 +185,8 @@ class LogWriterBaseTest {
         delay(waitForCompletion + SendTimeTolerance)
 
         underTest.close()
+
+        return writtenRecords
     }
 
     private fun writeRecord(writer: LogWriterBase, record: LogRecord) {
