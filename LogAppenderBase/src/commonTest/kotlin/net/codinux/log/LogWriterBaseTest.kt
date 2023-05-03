@@ -1,10 +1,6 @@
 package net.codinux.log
 
-import io.kotest.matchers.collections.shouldContainAll
-import io.kotest.matchers.collections.shouldHaveAtMostSize
-import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.comparables.shouldBeLessThan
-import io.kotest.matchers.maps.shouldHaveSize
+import io.kotest.matchers.collections.*
 import kotlinx.atomicfu.AtomicArray
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.atomicArrayOfNulls
@@ -81,6 +77,10 @@ class LogWriterBaseTest {
     @JsName("writeRecords_async_Re_add_failed_records")
     fun `writeRecords async - Re-add failed records`() = runTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
+        // on first call we say all records with an odd index fail
+        val recordsToFailOnFirstWriteCall = testRecords
+            .filterIndexed { index, _ -> index % 2 == 0 }
+            .map { this@LogWriterBaseTest.serializeRecord(it) }
         val sendPeriod = 50L
 
         val writtenRecords = mutableMapOf<Int, List<String>>()
@@ -106,9 +106,9 @@ class LogWriterBaseTest {
             override suspend fun writeRecords(records: List<String>): List<String> {
                 writtenRecords[countWriteRecordCalls.getAndIncrement()] = records
 
-                // on first call we say all records with an odd index fail
-                return if (countWriteRecordCalls.value == 1) {
-                    records.filterIndexed { index, _ -> index % 2 == 0 }
+                return if ((countWriteRecordCalls.value == 1 && records.size == testRecords.size) || // on first call we say writing some of the records fails
+                    (countWriteRecordCalls.value == 2 && records != recordsToFailOnFirstWriteCall)) { // sometimes the first call contains only a part of testRecords, then return failed records on second call
+                    recordsToFailOnFirstWriteCall
                 } else {
                     emptyList()
                 }
@@ -126,13 +126,16 @@ class LogWriterBaseTest {
         underTest.close()
 
 
-        writtenRecords.shouldHaveSize(2) // as on first call some records failed there has to be another call with the failed records
+        writtenRecords.size.shouldBeIn(2, 3) // as on first call some records failed there has to be another call with the failed records
 
-        writtenRecords[0]!!.shouldContainAll(testRecords.map { serializeRecord(it) })
+        // the original 5 records may get send in different chunks, not all in one chunks
+        val originalRecords = if (writtenRecords.size == 2) writtenRecords[0]!!
+                                else writtenRecords[0]!! + writtenRecords[1]!!
+        originalRecords.shouldContainExactlyInAnyOrder(testRecords.map { serializeRecord(it) })
 
-        val failedRecords = writtenRecords[1]!!
+        val failedRecords = if (writtenRecords.size == 2) writtenRecords[1]!! else writtenRecords[2]!!
         failedRecords.shouldHaveSize(3)
-        failedRecords.shouldContainAll(serializeRecord(testRecords[0]), serializeRecord(testRecords[2]), serializeRecord(testRecords[4]))
+        failedRecords.shouldContainExactlyInAnyOrder(serializeRecord(testRecords[0]), serializeRecord(testRecords[2]), serializeRecord(testRecords[4]))
     }
 
 
