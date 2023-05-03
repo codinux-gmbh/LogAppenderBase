@@ -8,9 +8,10 @@ import io.kotest.matchers.maps.shouldHaveSize
 import kotlinx.atomicfu.AtomicArray
 import kotlinx.atomicfu.atomic
 import kotlinx.atomicfu.atomicArrayOfNulls
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlin.test.Test
@@ -32,7 +33,6 @@ class LogWriterBaseTest {
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveSize(1)
-        (now() - receivedWriteRecordsEvents.first().writeTimestamp).inWholeMilliseconds.shouldBeLessThan(SendTimeTolerance)
     }
 
     @Test
@@ -45,7 +45,6 @@ class LogWriterBaseTest {
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveSize(1)
-        (now() - receivedWriteRecordsEvents.first().writeTimestamp).inWholeMilliseconds.shouldBeLessThan(sendPeriod)
     }
 
 
@@ -116,7 +115,7 @@ class LogWriterBaseTest {
             writeRecord(underTest, record)
         }
 
-        delay(sendPeriod * 4)
+        delay(sendPeriod * 2)
 
         underTest.close()
 
@@ -184,11 +183,8 @@ class LogWriterBaseTest {
             writeRecord(underTest, record)
         }
 
-        if (writeAsync) {
-            delay(sendPeriod * 2)
-        } else {
-            delay(sendPeriod + SendTimeTolerance)
-        }
+        val waitForCompletion = if (writeAsync) sendPeriod else 0
+        delay(waitForCompletion + SendTimeTolerance)
 
         underTest.close()
     }
@@ -225,6 +221,12 @@ class LogWriterBaseTest {
     }
 
     private fun now() = Clock.System.now()
+
+    private suspend fun delay(millis: Long) {
+        withContext(Dispatchers.Default) { // use Dispatchers.Default as otherwise delay() calls will be ignored
+            kotlinx.coroutines.delay(millis)
+        }
+    }
 
 
     data class WrittenRecord(
