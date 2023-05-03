@@ -14,6 +14,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlin.js.JsName
 import kotlin.test.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -25,6 +26,7 @@ class LogWriterBaseTest {
 
 
     @Test
+    @JsName("writeRecord_sync_Records_get_written_almost_immediately")
     fun `writeRecord sync - Records get written almost immediately`() = runTest {
         val testRecord = listOf(createRecord())
         val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
@@ -36,6 +38,7 @@ class LogWriterBaseTest {
     }
 
     @Test
+    @JsName("writeRecord_async_Records_get_written_with_delay")
     fun `writeRecord async - Records get written with delay`() = runTest {
         val testRecord = listOf(createRecord())
         val sendPeriod = 50L
@@ -49,6 +52,7 @@ class LogWriterBaseTest {
 
 
     @Test
+    @JsName("writeRecords_sync_Records_get_written_almost_immediately")
     fun `writeRecords sync - Records get written almost immediately`() = runTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
         val writtenRecords = atomicArrayOfNulls<WrittenRecord>(10)
@@ -60,6 +64,7 @@ class LogWriterBaseTest {
     }
 
     @Test
+    @JsName("writeRecords_async_Records_get_written_with_delay")
     fun `writeRecords async - Records get written with delay`() = runTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
         val sendPeriod = 50L
@@ -73,6 +78,7 @@ class LogWriterBaseTest {
 
 
     @Test
+    @JsName("writeRecords_async_Re_add_failed_records")
     fun `writeRecords async - Re-add failed records`() = runTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
         val sendPeriod = 50L
