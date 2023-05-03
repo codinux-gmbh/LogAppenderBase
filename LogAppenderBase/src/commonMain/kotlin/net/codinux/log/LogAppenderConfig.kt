@@ -155,7 +155,7 @@ open class LogAppenderConfig(
         const val AppendLogsAsyncDefaultValue = true
 
         const val MaxLogRecordsPerBatchDefaultValue = 100
-        const val MaxBufferedLogRecordsDefaultValue = 2000
+        const val MaxBufferedLogRecordsDefaultValue = 5000
         const val SendLogRecordsPeriodMillisDefaultValue = 100L
 
     }

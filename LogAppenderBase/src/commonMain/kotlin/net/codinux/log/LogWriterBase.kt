@@ -1,16 +1,14 @@
 package net.codinux.log
 
-import kotlinx.atomicfu.atomic
-import kotlinx.atomicfu.locks.reentrantLock
-import kotlinx.atomicfu.locks.withLock
 import kotlinx.coroutines.*
-import net.codinux.log.data.KubernetesInfo
-import net.codinux.log.data.KubernetesInfoRetriever
-import net.codinux.log.data.ProcessData
-import net.codinux.log.data.ProcessDataRetriever
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.toList
+import net.codinux.log.data.*
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
 
+@OptIn(ExperimentalCoroutinesApi::class)
 abstract class LogWriterBase(
     protected open val config: LogAppenderConfig,
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger(),
@@ -33,18 +31,19 @@ abstract class LogWriterBase(
     protected abstract suspend fun writeRecords(records: List<String>): List<String>
 
 
+    private val recordsToWrite = Channel<String>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
+        stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
+                "or the count log records to write per batch (maxLogRecordsPerBatch) or decrease the period to write logs (sendLogRecordsPeriodMillis).")
+    }
+
+    private val senderScope = CoroutineScope(Dispatchers.IOorDefault)
+
+    private val receiverScope = CoroutineScope(Dispatchers.IOorDefault)
+
     protected open var kubernetesInfo: KubernetesInfo? = null
 
-    private val recordsToWrite = mutableListOf<String>()
-
-    private val lock = reentrantLock()
-
-    private val isClosed = atomic(false)
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IOorDefault)
-
     init {
-        coroutineScope.async {
+        receiverScope.async {
             if (config.includeKubernetesInfo) {
                 kubernetesInfo = KubernetesInfoRetriever(stateLogger).retrieveKubernetesInfo()
             }
@@ -67,108 +66,97 @@ abstract class LogWriterBase(
         marker: String?,
         ndc: String?
     ) {
-        lock.withLock {
-            // as writeRecords() is a suspend function even if config.appendLogsAsync == false we cannot write log record synchronously
-            // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
-            recordsToWrite.add(serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level, message,
-                loggerName, threadName, exception, mdc, marker, ndc))
-
-            if (recordsToWrite.size > config.maxBufferedLogRecords) { // recordsToWrite exceeds max size
-                recordsToWrite.removeAt(0) // drop the oldest log record then
-
-                stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
-                        "or the count log records to write per batch (maxLogRecordsPerBatch) or decrease the period to write logs (sendLogRecordsPeriodMillis).")
+        // as writeRecords() is a suspend function even if config.appendLogsAsync == false we cannot write log record synchronously
+        // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
+        senderScope.async {
+            try {
+                recordsToWrite.send(serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level, message,
+                    loggerName, threadName, exception, mdc, marker, ndc))
+            } catch (e: Throwable) {
+                if (e !is CancellationException) {
+                    stateLogger.error("Could not write log record '$timestampMillisSinceEpoch $level $message'", e)
+                }
             }
         }
     }
 
 
     protected open suspend fun asyncWriteLoop(writeLogRecordsPeriodMillis: Long) {
-        while (isClosed.value == false) {
+        var failedRecords: List<String> = emptyList()
+
+        while (senderScope.isActive && receiverScope.isActive) { // may find a better signal
             try {
-                val recordsToWrite = lock.withLock {
-                    if (recordsToWrite.isEmpty()) emptyList()
-                    else calculateRecordsToWrite()
+                val nextBatch = failedRecords.toMutableList()
+
+                while (recordsToWrite.isNotEmpty && recordsToWrite.isClosedForReceive == false && nextBatch.size < config.maxLogRecordsPerBatch) {
+                    nextBatch.add(recordsToWrite.receive())
                 }
 
-                writeRecordsAndReAddFailedOnes(recordsToWrite)
+                if (nextBatch.isNotEmpty()) {
+                    failedRecords = writeRecords(nextBatch)
+                }
 
                 delay(writeLogRecordsPeriodMillis)
-            } catch (e: Exception) {
-                stateLogger.error("Could not write batch", e)
+            } catch (e: Throwable) {
+                if (e is CancellationException) {
+                    break
+                } else {
+                    stateLogger.error("Could not write batch", e)
+                }
             }
         }
 
-        writeAllRecordsNow()
+        stateLogger.info("Stopping asyncWriteLoop()")
+
+        if (failedRecords.isNotEmpty()) {
+            writeRecords(failedRecords)
+        }
+
+        flushRecords()
 
         stateLogger.info("asyncWriteLoop() has stopped")
     }
 
-    private suspend fun writeRecordsAndReAddFailedOnes(recordsToWrite: List<String>) {
-        if (recordsToWrite.isNotEmpty()) {
-            val failedRecords = writeRecords(recordsToWrite)
+    protected open suspend fun flushRecords() {
+        // do not use recordsToWrite.isEmpty, it returns false even though there are still log records to send
+        val nextBatch = recordsToWrite.toList()
 
-            if (failedRecords.isNotEmpty()) {
-                lock.withLock {
-                    this.recordsToWrite.addAll(0, failedRecords)
-                }
-            }
+        if (nextBatch.isNotEmpty()) {
+            writeRecords(nextBatch)
         }
     }
 
-    protected open fun calculateRecordsToWrite(): List<String> {
-        val size = recordsToWrite.size
-
-        if (size <= config.maxLogRecordsPerBatch) {
-            val recordsToWrite = ArrayList(recordsToWrite)
-
-            this.recordsToWrite.clear()
-
-            return recordsToWrite
-        }
-        else {
-            val fromIndex = size - config.maxLogRecordsPerBatch
-            val recordsToWrite = ArrayList(recordsToWrite.subList(fromIndex, size)) // make a copy
-
-            while (this.recordsToWrite.size > fromIndex) {
-                this.recordsToWrite.removeAt(fromIndex) // do not call removeAll() as if other records have the same JSON string than all matching strings get removed
-            }
-
-            return recordsToWrite
-        }
-    }
-
-    protected open suspend fun writeAllRecordsNow() {
-        if (recordsToWrite.isNotEmpty()) {
-            val recordsToWrite = lock.withLock {
-                val recordsToWrite = ArrayList(recordsToWrite)
-
-                this.recordsToWrite.clear()
-
-                recordsToWrite
-            }
-
-            writeRecordsAndReAddFailedOnes(recordsToWrite)
-        }
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
     override fun flush() {
-        if (recordsToWrite.isNotEmpty()) {
-            // yes, we really want to use GlobalScope here was we want to assert that Coroutine gets executed before program ends
-            GlobalScope.async {
-                writeAllRecordsNow()
-            }
+        // do not use recordsToWrite.isEmpty, it returns false even though there are still log records to send
+        GlobalScope.launch {
+            flushRecords()
         }
     }
 
     override fun close() {
-        isClosed.value = true
+        try {
+            senderScope.cancelSafely()
 
-        flush()
+            flush()
 
-        if (coroutineScope.isActive) {
-            coroutineScope.cancel()
+            receiverScope.cancelSafely()
+
+            recordsToWrite.close()
+        } catch (e: Throwable) {
+            stateLogger.error("Closing LogWriter failed", e)
+        }
+    }
+
+    private val <T> Channel<T>.isNotEmpty
+        get() = isEmpty == false
+
+    protected open fun CoroutineScope.cancelSafely() {
+        try {
+            if (this.isActive) {
+                this.cancel()
+            }
+        } catch (e: Throwable) {
+            stateLogger.error("Could not cancel CoroutineScope", e)
         }
     }
 
