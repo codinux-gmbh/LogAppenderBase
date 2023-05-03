@@ -126,8 +126,10 @@ abstract class LogWriterBase(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun flush() {
         // do not use recordsToWrite.isEmpty, it returns false even though there are still log records to send
+        // yes, we really want to use GlobalScope here was we want to assert that Coroutine gets executed before program ends
         GlobalScope.launch {
             flushRecords()
         }
