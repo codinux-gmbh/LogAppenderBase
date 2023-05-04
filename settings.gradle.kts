@@ -8,8 +8,9 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("jvm") version kotlinVersion
-        kotlin("multiplatform") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion apply(false)
+        kotlin("jvm") version kotlinVersion apply(false)
+        kotlin("plugin.serialization") version kotlinVersion apply(false)
 
         id("io.quarkus") version quarkusVersion
         id("io.quarkus.extension") version quarkusVersion
@@ -34,3 +35,8 @@ project(":JavaUtilLogAppenderBase").name = "java-util-log-appender-base"
 
 include("QuarksLogAppenderConfigBase")
 project(":QuarksLogAppenderConfigBase").name = "quarks-log-appender-config-base"
+
+include("KubernetesInfoRetriever")
+project(":KubernetesInfoRetriever").apply {
+    projectDir = File("kubernetes/KubernetesInfoRetriever")
+}

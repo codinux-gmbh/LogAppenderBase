@@ -1,0 +1,289 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "whats-on-the-radio-5d6bffb5bd-2zphk",
+    "generateName": "whats-on-the-radio-5d6bffb5bd-",
+    "namespace": "staging",
+    "uid": "63e167dc-d669-4b18-8245-52da6f50b9ba",
+    "resourceVersion": "10716837",
+    "creationTimestamp": "2023-05-03T20:57:12Z",
+    "labels": {
+      "app": "whats-on-the-radio",
+      "hasmetrics": "true",
+      "pod-template-hash": "5d6bffb5bd"
+    },
+    "ownerReferences": [
+      {
+        "apiVersion": "apps/v1",
+        "kind": "ReplicaSet",
+        "name": "whats-on-the-radio-5d6bffb5bd",
+        "uid": "2d0ae9fb-5c27-4b59-b491-521a0b4ec241",
+        "controller": true,
+        "blockOwnerDeletion": true
+      }
+    ],
+    "managedFields": [
+      {
+        "manager": "k3s",
+        "operation": "Update",
+        "apiVersion": "v1",
+        "time": "2023-05-03T20:57:12Z",
+        "fieldsType": "FieldsV1",
+        "fieldsV1": {
+          "f:metadata": {
+            "f:generateName": {},
+            "f:labels": {
+              ".": {},
+              "f:app": {},
+              "f:hasmetrics": {},
+              "f:pod-template-hash": {}
+            },
+            "f:ownerReferences": {
+              ".": {},
+              "k:{\"uid\":\"2d0ae9fb-5c27-4b59-b491-521a0b4ec241\"}": {}
+            }
+          },
+          "f:spec": {
+            "f:containers": {
+              "k:{\"name\":\"whats-on-the-radio\"}": {
+                ".": {},
+                "f:envFrom": {},
+                "f:image": {},
+                "f:imagePullPolicy": {},
+                "f:name": {},
+                "f:ports": {
+                  ".": {},
+                  "k:{\"containerPort\":8080,\"protocol\":\"TCP\"}": {
+                    ".": {},
+                    "f:containerPort": {},
+                    "f:protocol": {}
+                  }
+                },
+                "f:resources": {},
+                "f:terminationMessagePath": {},
+                "f:terminationMessagePolicy": {}
+              }
+            },
+            "f:dnsPolicy": {},
+            "f:enableServiceLinks": {},
+            "f:imagePullSecrets": {
+              ".": {},
+              "k:{\"name\":\"dankito-docker-registry\"}": {}
+            },
+            "f:restartPolicy": {},
+            "f:schedulerName": {},
+            "f:securityContext": {},
+            "f:serviceAccount": {},
+            "f:serviceAccountName": {},
+            "f:terminationGracePeriodSeconds": {}
+          }
+        }
+      },
+      {
+        "manager": "k3s",
+        "operation": "Update",
+        "apiVersion": "v1",
+        "time": "2023-05-03T20:57:14Z",
+        "fieldsType": "FieldsV1",
+        "fieldsV1": {
+          "f:status": {
+            "f:conditions": {
+              "k:{\"type\":\"ContainersReady\"}": {
+                ".": {},
+                "f:lastProbeTime": {},
+                "f:lastTransitionTime": {},
+                "f:status": {},
+                "f:type": {}
+              },
+              "k:{\"type\":\"Initialized\"}": {
+                ".": {},
+                "f:lastProbeTime": {},
+                "f:lastTransitionTime": {},
+                "f:status": {},
+                "f:type": {}
+              },
+              "k:{\"type\":\"Ready\"}": {
+                ".": {},
+                "f:lastProbeTime": {},
+                "f:lastTransitionTime": {},
+                "f:status": {},
+                "f:type": {}
+              }
+            },
+            "f:containerStatuses": {},
+            "f:hostIP": {},
+            "f:phase": {},
+            "f:podIP": {},
+            "f:podIPs": {
+              ".": {},
+              "k:{\"ip\":\"10.244.13.57\"}": {
+                ".": {},
+                "f:ip": {}
+              }
+            },
+            "f:startTime": {}
+          }
+        },
+        "subresource": "status"
+      }
+    ]
+  },
+  "spec": {
+    "volumes": [
+      {
+        "name": "kube-api-access-vbcbr",
+        "projected": {
+          "sources": [
+            {
+              "serviceAccountToken": {
+                "expirationSeconds": 3607,
+                "path": "token"
+              }
+            },
+            {
+              "configMap": {
+                "name": "kube-root-ca.crt",
+                "items": [
+                  {
+                    "key": "ca.crt",
+                    "path": "ca.crt"
+                  }
+                ]
+              }
+            },
+            {
+              "downwardAPI": {
+                "items": [
+                  {
+                    "path": "namespace",
+                    "fieldRef": {
+                      "apiVersion": "v1",
+                      "fieldPath": "metadata.namespace"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "defaultMode": 420
+        }
+      }
+    ],
+    "containers": [
+      {
+        "name": "whats-on-the-radio",
+        "image": "docker.dankito.net/dankito/whats-on-the-radio:1.0.0-beta1",
+        "ports": [
+          {
+            "containerPort": 8080,
+            "protocol": "TCP"
+          }
+        ],
+        "envFrom": [
+          {
+            "configMapRef": {
+              "name": "postgres-config"
+            }
+          }
+        ],
+        "resources": {},
+        "volumeMounts": [
+          {
+            "name": "kube-api-access-vbcbr",
+            "readOnly": true,
+            "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+          }
+        ],
+        "terminationMessagePath": "/dev/termination-log",
+        "terminationMessagePolicy": "File",
+        "imagePullPolicy": "Always"
+      }
+    ],
+    "restartPolicy": "Always",
+    "terminationGracePeriodSeconds": 30,
+    "dnsPolicy": "ClusterFirst",
+    "serviceAccountName": "whats-on-the-radio",
+    "serviceAccount": "whats-on-the-radio",
+    "nodeName": "staging-cx31-pool-medium-worker1",
+    "securityContext": {},
+    "imagePullSecrets": [
+      {
+        "name": "dankito-docker-registry"
+      }
+    ],
+    "schedulerName": "default-scheduler",
+    "tolerations": [
+      {
+        "key": "node.kubernetes.io/not-ready",
+        "operator": "Exists",
+        "effect": "NoExecute",
+        "tolerationSeconds": 300
+      },
+      {
+        "key": "node.kubernetes.io/unreachable",
+        "operator": "Exists",
+        "effect": "NoExecute",
+        "tolerationSeconds": 300
+      }
+    ],
+    "priority": 0,
+    "enableServiceLinks": true,
+    "preemptionPolicy": "PreemptLowerPriority"
+  },
+  "status": {
+    "phase": "Running",
+    "conditions": [
+      {
+        "type": "Initialized",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-05-03T20:57:12Z"
+      },
+      {
+        "type": "Ready",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-05-03T20:57:13Z"
+      },
+      {
+        "type": "ContainersReady",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-05-03T20:57:13Z"
+      },
+      {
+        "type": "PodScheduled",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2023-05-03T20:57:12Z"
+      }
+    ],
+    "hostIP": "10.0.0.5",
+    "podIP": "10.244.13.57",
+    "podIPs": [
+      {
+        "ip": "10.244.13.57"
+      }
+    ],
+    "startTime": "2023-05-03T20:57:12Z",
+    "containerStatuses": [
+      {
+        "name": "whats-on-the-radio",
+        "state": {
+          "running": {
+            "startedAt": "2023-05-03T20:57:13Z"
+          }
+        },
+        "lastState": {},
+        "ready": true,
+        "restartCount": 0,
+        "image": "docker.dankito.net/dankito/whats-on-the-radio:1.0.0-beta1",
+        "imageID": "docker.dankito.net/dankito/whats-on-the-radio@sha256:d4ed6a2ba65d248892ecaa8d404cddfc53f205f23b3323287f26c700dbdfa898",
+        "containerID": "containerd://1563f7d866a63cccf6e9ff652c0af64d26099e90c23a4c3e4d9ea32b793c6727",
+        "started": true
+      }
+    ],
+    "qosClass": "BestEffort"
+  }
+}
