@@ -4,6 +4,6 @@ import net.codinux.log.statelogger.AppenderStateLogger
 
 expect class KubernetesInfoRetrieverLocator(stateLogger: AppenderStateLogger) {
 
-    fun findKubernetesInfoRetrieverImplementations(): List<KubernetesInfoRetriever>
+    fun findKubernetesInfoRetrieverImplementations(): Set<KubernetesInfoRetriever>
 
 }

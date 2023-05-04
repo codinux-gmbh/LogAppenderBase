@@ -6,8 +6,8 @@ actual open class KubernetesInfoRetrieverLocator actual constructor(
     protected open val stateLogger: AppenderStateLogger
 ) {
 
-    actual open fun findKubernetesInfoRetrieverImplementations(): List<KubernetesInfoRetriever> {
-        return mutableListOf<KubernetesInfoRetriever>().apply {
+    actual open fun findKubernetesInfoRetrieverImplementations(): Set<KubernetesInfoRetriever> {
+        return mutableSetOf<KubernetesInfoRetriever>().apply {
             findImplementation("net.codinux.log.kubernetes.Fabric8KubernetesInfoRetriever")?.let {
                 add(it)
             }
@@ -20,12 +20,19 @@ actual open class KubernetesInfoRetrieverLocator actual constructor(
 
     protected open fun findImplementation(className: String): KubernetesInfoRetriever? {
         try {
-            val kubernetesApiPodInfoRetrieverClass = Class.forName(className)
+            val kubernetesInfoRetrieverClass = Class.forName(className)
 
             try {
-                val constructor = kubernetesApiPodInfoRetrieverClass.getDeclaredConstructor(AppenderStateLogger::class.java)
+                val constructors = kubernetesInfoRetrieverClass.declaredConstructors
 
-                val instance = constructor.newInstance(stateLogger)
+                // first try to find constructor that takes an AppenderStateLogger as single argument
+                val instance = constructors.firstOrNull { it.parameterTypes.size == 1 && it.parameterTypes.contains(AppenderStateLogger::class.java) }
+                    ?.newInstance(stateLogger)
+
+                    // if that one cannot be found try to find parameterless constructor
+                    ?: constructors.firstOrNull { it.parameterTypes.isEmpty() }
+                        ?.newInstance()
+
                 return instance as? KubernetesInfoRetriever
             } catch (e: Throwable) {
                 stateLogger.error("Could not load KubernetesInfoRetriever", e)

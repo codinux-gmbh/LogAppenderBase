@@ -4,7 +4,7 @@ import net.codinux.log.statelogger.AppenderStateLogger
 
 actual class KubernetesInfoRetrieverLocator actual constructor(stateLogger: AppenderStateLogger) {
 
-    actual fun findKubernetesInfoRetrieverImplementations(): List<KubernetesInfoRetriever> =
-        emptyList()
+    actual fun findKubernetesInfoRetrieverImplementations(): Set<KubernetesInfoRetriever> =
+        emptySet()
 
 }

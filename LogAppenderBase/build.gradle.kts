@@ -2,6 +2,7 @@ plugins {
     kotlin("multiplatform")
 }
 
+
 group = "net.codinux.log"
 version = "1.0.0-SNAPSHOT"
 
@@ -68,13 +69,7 @@ kotlin {
             }
         }
 
-        val jvmMain by getting {
-            dependencies {
-                compileOnly("$group.kubernetes:fabric8-kubernetes-info-retriever:$version")
-
-                compileOnly("$group.kubernetes:codinux-kubernetes-info-retriever:$version")
-            }
-        }
+        val jvmMain by getting
         val jvmTest by getting
 
         val jsMain by getting
