@@ -12,11 +12,11 @@ import java.io.File
 import java.net.InetAddress
 import java.time.Instant
 
-actual open class KubernetesInfoRetriever actual constructor(
+open class Fabric8KubernetesInfoRetriever(
     protected open val stateLogger: AppenderStateLogger
-) {
+) : KubernetesInfoRetriever {
 
-    actual open suspend fun retrieveCurrentPodInfo(): PodInfo? {
+    override suspend fun retrieveCurrentPodInfo(): PodInfo? {
         try {
             val namespaceFile = File("/run/secrets/kubernetes.io/serviceaccount/namespace")
             if (namespaceFile.exists() == false) {

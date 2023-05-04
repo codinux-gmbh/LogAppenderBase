@@ -36,6 +36,14 @@ project(":JavaUtilLogAppenderBase").name = "java-util-log-appender-base"
 include("QuarksLogAppenderConfigBase")
 project(":QuarksLogAppenderConfigBase").name = "quarks-log-appender-config-base"
 
+
+/*      Kubernetes info retriever       */
+
+include("Fabric8KubernetesInfoRetriever")
+project(":Fabric8KubernetesInfoRetriever").apply {
+    projectDir = File("kubernetes/Fabric8KubernetesInfoRetriever")
+}
+
 include("KubernetesInfoRetriever")
 project(":KubernetesInfoRetriever").apply {
     projectDir = File("kubernetes/KubernetesInfoRetriever")

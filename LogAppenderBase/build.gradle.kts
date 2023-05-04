@@ -47,10 +47,13 @@ kotlin {
     }
 
 
+    val coroutinesVersion: String by project
+    val kotestVersion: String by project
+
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
             }
         }
         val commonTest by getting {
@@ -59,17 +62,15 @@ kotlin {
 
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
 
-                implementation("io.kotest:kotest-assertions-core:5.6.1")
+                implementation("io.kotest:kotest-assertions-core:$kotestVersion")
             }
         }
 
         val jvmMain by getting {
             dependencies {
-                implementation("io.fabric8:kubernetes-client:6.5.1")
-                // TODO: or use JDK HttpClient? Wouldn't conflict with other OkHttp usages
-                implementation("io.fabric8:kubernetes-httpclient-okhttp:6.5.1")
+                compileOnly("$group.kubernetes:fabric8-kubernetes-info-retriever:$version")
             }
         }
         val jvmTest by getting
