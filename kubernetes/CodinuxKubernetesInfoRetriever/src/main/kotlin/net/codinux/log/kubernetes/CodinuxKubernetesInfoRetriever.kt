@@ -25,7 +25,7 @@ import javax.net.ssl.X509TrustManager
 
 class CodinuxKubernetesInfoRetriever(
     private val stateLogger: AppenderStateLogger = StdOutStateLogger()
-) {
+) : KubernetesInfoRetriever {
 
     companion object {
         private val KubernetesSecretsFolder = File("/run/secrets/kubernetes.io/serviceaccount/")
@@ -42,7 +42,7 @@ class CodinuxKubernetesInfoRetriever(
     }
 
 
-    suspend fun getCurrentPodInfo(): PodInfo? {
+    override suspend fun retrieveCurrentPodInfo(): PodInfo? {
         try {
             val namespaceFile = File(KubernetesSecretsFolder, "namespace")
             if (namespaceFile.exists() == false) {
