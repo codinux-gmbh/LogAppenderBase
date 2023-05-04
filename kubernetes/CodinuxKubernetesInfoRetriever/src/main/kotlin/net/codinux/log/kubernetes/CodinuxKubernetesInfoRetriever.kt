@@ -72,11 +72,11 @@ class CodinuxKubernetesInfoRetriever(
 
     suspend fun retrievePodInfo(podName: String, podIp: String, namespace: String, accessToken: String, kubeApiCertificate: String?): PodInfo? {
         try {
-            val host = System.getProperty("KUBERNETES_SERVICE_HOST")
-            val port = System.getProperty("KUBERNETES_SERVICE_PORT_HTTPS")
+            val host = System.getenv("KUBERNETES_SERVICE_HOST")
+            val port = System.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
 
             val apiServer = if (host != null && port != null) "https://$host:$port"
-                            else "kubernetes.default.svc"
+                            else "https://kubernetes.default.svc:443"
             val url = "$apiServer/api/v1/namespaces/$namespace/pods/$podName"
 
             val client = createClientForCertificate(kubeApiCertificate)
