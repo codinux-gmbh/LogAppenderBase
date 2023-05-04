@@ -23,7 +23,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("net.codinux.log:log-appender-base:$version")
+                implementation("$group:log-appender-base:$version")
 
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -51,4 +51,14 @@ kotlin {
         }
         val jvmTest by getting
     }
+}
+
+
+group = "$group.kubernetes"
+ext["artifactName"] = "codinux-kubernetes-info-retriever"
+
+
+val commonScriptsFile = File(File(project.gradle.gradleUserHomeDir, "scripts"), "commonScripts.gradle")
+if (commonScriptsFile.exists()) {
+    apply(from = commonScriptsFile)
 }

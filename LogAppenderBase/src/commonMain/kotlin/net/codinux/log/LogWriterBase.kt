@@ -46,7 +46,8 @@ abstract class LogWriterBase(
     init {
         receiverScope.async {
             if (config.includeKubernetesInfo) {
-                podInfo = KubernetesInfoRetriever(stateLogger).retrieveCurrentPodInfo()
+                KubernetesInfoRetrieverRegistry.init(stateLogger)
+                podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
             }
 
             val writeLogRecordsPeriodMillis = if (config.appendLogsAsync) config.sendLogRecordsPeriodMillis

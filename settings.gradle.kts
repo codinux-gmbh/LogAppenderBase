@@ -44,7 +44,7 @@ project(":Fabric8KubernetesInfoRetriever").apply {
     projectDir = File("kubernetes/Fabric8KubernetesInfoRetriever")
 }
 
-include("KubernetesInfoRetriever")
-project(":KubernetesInfoRetriever").apply {
-    projectDir = File("kubernetes/KubernetesInfoRetriever")
+include("CodinuxKubernetesInfoRetriever")
+project(":CodinuxKubernetesInfoRetriever").apply {
+    projectDir = File("kubernetes/CodinuxKubernetesInfoRetriever")
 }

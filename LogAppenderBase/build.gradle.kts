@@ -71,6 +71,8 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 compileOnly("$group.kubernetes:fabric8-kubernetes-info-retriever:$version")
+
+                compileOnly("$group.kubernetes:codinux-kubernetes-info-retriever:$version")
             }
         }
         val jvmTest by getting

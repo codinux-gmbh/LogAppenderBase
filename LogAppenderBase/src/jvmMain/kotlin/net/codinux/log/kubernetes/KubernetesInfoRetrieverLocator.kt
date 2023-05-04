@@ -11,6 +11,10 @@ actual open class KubernetesInfoRetrieverLocator actual constructor(
             findImplementation("net.codinux.log.kubernetes.Fabric8KubernetesInfoRetriever")?.let {
                 add(it)
             }
+
+            findImplementation("net.codinux.log.kubernetes.CodinuxKubernetesInfoRetriever")?.let {
+                add(it)
+            }
         }
     }
 

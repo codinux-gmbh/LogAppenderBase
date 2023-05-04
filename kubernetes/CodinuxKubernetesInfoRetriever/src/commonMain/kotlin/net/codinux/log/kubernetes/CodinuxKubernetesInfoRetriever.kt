@@ -9,7 +9,6 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import net.codinux.log.data.PodInfo
 import net.codinux.log.kubernetes.model.Pod
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
@@ -24,7 +23,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
-class KubernetesApiPodInfoRetriever(
+class CodinuxKubernetesInfoRetriever(
     private val stateLogger: AppenderStateLogger = StdOutStateLogger()
 ) {
 
