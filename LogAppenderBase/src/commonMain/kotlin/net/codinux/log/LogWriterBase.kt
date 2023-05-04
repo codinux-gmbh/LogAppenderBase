@@ -40,12 +40,12 @@ abstract class LogWriterBase(
 
     private val receiverScope = CoroutineScope(Dispatchers.IOorDefault)
 
-    protected open var kubernetesInfo: KubernetesInfo? = null
+    protected open var podInfo: PodInfo? = null
 
     init {
         receiverScope.async {
             if (config.includeKubernetesInfo) {
-                kubernetesInfo = KubernetesInfoRetriever(stateLogger).retrieveKubernetesInfo()
+                podInfo = KubernetesInfoRetriever(stateLogger).retrieveCurrentPodInfo()
             }
 
             val writeLogRecordsPeriodMillis = if (config.appendLogsAsync) config.sendLogRecordsPeriodMillis

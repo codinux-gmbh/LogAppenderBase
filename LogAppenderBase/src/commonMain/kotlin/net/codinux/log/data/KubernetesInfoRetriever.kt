@@ -4,6 +4,6 @@ import net.codinux.log.statelogger.AppenderStateLogger
 
 expect class KubernetesInfoRetriever(stateLogger: AppenderStateLogger) {
 
-    suspend fun retrieveKubernetesInfo(): KubernetesInfo?
+    suspend fun retrieveCurrentPodInfo(): PodInfo?
 
 }

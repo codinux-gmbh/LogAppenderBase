@@ -14,7 +14,7 @@ actual open class KubernetesInfoRetriever actual constructor(
     protected open val stateLogger: AppenderStateLogger
 ) {
 
-    actual open suspend fun retrieveKubernetesInfo(): KubernetesInfo? {
+    actual open suspend fun retrieveCurrentPodInfo(): PodInfo? {
         try {
             val namespaceFile = File("/run/secrets/kubernetes.io/serviceaccount/namespace")
             if (namespaceFile.exists() == false) {
@@ -28,15 +28,15 @@ actual open class KubernetesInfoRetriever actual constructor(
             val podName = localHost.hostName
             val podIp = localHost.hostAddress
 
-            return retrieveKubernetesInfo(namespace, podName, podIp)
-        } catch(e: Throwable) {
+            return retrieveCurrentPodInfo(namespace, podName, podIp)
+        } catch (e: Throwable) {
             stateLogger.error("Could not retrieve any pod / Kubernetes info, no cluster or container info will be added to logs", e)
         }
 
         return null
     }
 
-    open fun retrieveKubernetesInfo(namespace: String, podName: String, podIp: String): KubernetesInfo? {
+    open fun retrieveCurrentPodInfo(namespace: String, podName: String, podIp: String): PodInfo? {
         return try {
             val client = KubernetesClientBuilder().build()//.adapt(OpenShiftClient::class.java)
             // disable HttpClient's logging, is really very verbose
@@ -44,16 +44,16 @@ actual open class KubernetesInfoRetriever actual constructor(
 
             val pod = client.pods().inNamespace(namespace).withName(podName)?.get()
 
-            retrieveKubernetesInfo(pod, namespace, podName, podIp)
-        } catch(e: Throwable) {
+            retrieveCurrentPodInfo(pod, namespace, podName, podIp)
+        } catch (e: Throwable) {
             stateLogger.error("Does the pod have the privilege to access the Kubernetes API (see https://github.com/codinux-gmbh/ElasticsearchLogger#kubernetes-info)? " +
                     "Could not retrieve pod info, only basic data like Kubernetes namespace and Pod name are added to logs, but no cluster or container info", e)
 
-            KubernetesInfo(namespace, podName, podIp, Instant.now().toString())
+            PodInfo(namespace, podName, podIp, Instant.now().toString())
         }
     }
 
-    protected open fun retrieveKubernetesInfo(pod: Pod?, namespace: String, podName: String, podIp: String): KubernetesInfo? {
+    protected open fun retrieveCurrentPodInfo(pod: Pod?, namespace: String, podName: String, podIp: String): PodInfo? {
         var containerName: String? = null
         var podIp = podIp
         var nodeIp: String? = null
@@ -103,7 +103,7 @@ actual open class KubernetesInfoRetriever actual constructor(
             }
         }
 
-        return KubernetesInfo(namespace, podName, podIp, startTime, uid, restartCount, containerName, containerId,
+        return PodInfo(namespace, podName, podIp, startTime, uid, restartCount, containerName, containerId,
             imageName, imageId, nodeIp, nodeName, labels, annotations)
     }
 

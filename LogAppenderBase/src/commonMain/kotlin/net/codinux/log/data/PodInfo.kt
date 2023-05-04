@@ -1,10 +1,10 @@
 package net.codinux.log.data
 
-open class KubernetesInfo(
+open class PodInfo(
     open val namespace: String,
     open val podName: String,
     open val podIp: String,
-    open val startTime: String,
+    open val startTime: String? = null,
     open val podUid: String? = null,
     open val restartCount: Int? = null,
     open val containerName: String? = null,
@@ -15,4 +15,10 @@ open class KubernetesInfo(
     open val nodeName: String? = null,
     open val labels: Map<String, String> = mapOf(),
     open val annotations: Map<String, String> = mapOf()
-)
+) {
+
+    override fun toString(): String {
+        return "$namespace/$podName $startTime"
+    }
+
+}

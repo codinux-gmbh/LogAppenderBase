@@ -6,7 +6,7 @@ actual open class KubernetesInfoRetriever actual constructor(
     protected open val stateLogger: AppenderStateLogger
 ) {
 
-    actual open suspend fun retrieveKubernetesInfo(): KubernetesInfo? =
+    actual open suspend fun retrieveCurrentPodInfo(): PodInfo? =
         null
 
 }
