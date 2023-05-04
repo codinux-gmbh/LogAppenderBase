@@ -1,4 +1,4 @@
-package net.codinux.log.data
+package net.codinux.log.kubernetes
 
 open class PodInfo(
     open val namespace: String,
