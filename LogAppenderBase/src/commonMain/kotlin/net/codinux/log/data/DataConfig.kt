@@ -2,6 +2,7 @@ package net.codinux.log.data
 
 object DataConfig {
 
-    const val StartTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+    // the same formate as Kubernetes uses for date times
+    const val StartTimeFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 }
