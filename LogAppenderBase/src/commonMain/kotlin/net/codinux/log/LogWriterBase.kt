@@ -18,7 +18,7 @@ abstract class LogWriterBase(
 
     protected abstract fun serializeRecord(
         timestampMillisSinceEpoch: Long,
-        timestampMicroAndNanosecondsPart: Long?,
+        timestampNanoOfMillisecond: Long?,
         level: String,
         message: String,
         loggerName: String,
@@ -58,7 +58,7 @@ abstract class LogWriterBase(
 
     override fun writeRecord(
         timestampMillisSinceEpoch: Long,
-        timestampMicroAndNanosecondsPart: Long?,
+        timestampNanoOfMillisecond: Long?,
         level: String,
         message: String,
         loggerName: String,
@@ -72,7 +72,7 @@ abstract class LogWriterBase(
         // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
         senderScope.async {
             try {
-                recordsToWrite.send(serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level, message,
+                recordsToWrite.send(serializeRecord(timestampMillisSinceEpoch, timestampNanoOfMillisecond, level, message,
                     loggerName, threadName, exception, mdc, marker, ndc))
             } catch (e: Throwable) {
                 if (e !is CancellationException) {

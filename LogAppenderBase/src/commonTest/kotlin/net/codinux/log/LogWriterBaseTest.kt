@@ -83,7 +83,7 @@ class LogWriterBaseTest {
 
             override fun serializeRecord(
                 timestampMillisSinceEpoch: Long,
-                timestampMicroAndNanosecondsPart: Long?,
+                timestampNanoOfMillisecond: Long?,
                 level: String,
                 message: String,
                 loggerName: String,
@@ -93,7 +93,7 @@ class LogWriterBaseTest {
                 marker: String?,
                 ndc: String?
             ): String =
-                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level,
+                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampNanoOfMillisecond, level,
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
@@ -156,7 +156,7 @@ class LogWriterBaseTest {
 
             override fun serializeRecord(
                 timestampMillisSinceEpoch: Long,
-                timestampMicroAndNanosecondsPart: Long?,
+                timestampNanoOfMillisecond: Long?,
                 level: String,
                 message: String,
                 loggerName: String,
@@ -166,7 +166,7 @@ class LogWriterBaseTest {
                 marker: String?,
                 ndc: String?
             ): String =
-                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampMicroAndNanosecondsPart, level,
+                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampNanoOfMillisecond, level,
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
@@ -190,17 +190,17 @@ class LogWriterBaseTest {
     }
 
     private fun writeRecord(writer: LogWriterBase, record: LogRecord) {
-        writer.writeRecord(record.timestampMillisSinceEpoch, record.timestampMicroAndNanosecondsPart, record.level,
+        writer.writeRecord(record.timestampMillisSinceEpoch, record.timestampNanoOfMillisecond, record.level,
             record.message, record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
     }
 
     private fun serializeRecord(record: LogRecord) =
-        serializeRecord(record.timestampMillisSinceEpoch, record.timestampMicroAndNanosecondsPart, record.level, record.message,
+        serializeRecord(record.timestampMillisSinceEpoch, record.timestampNanoOfMillisecond, record.level, record.message,
             record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
 
     private fun serializeRecord(
         timestampMillisSinceEpoch: Long,
-        timestampMicroAndNanosecondsPart: Long?,
+        timestampNanoOfMillisecond: Long?,
         level: String,
         message: String,
         loggerName: String,

@@ -10,11 +10,11 @@ interface LogWriter {
      */
     fun writeRecord(
         /**
-         * Previously we used kotlinx.datetime.Instant. Even though it makes a nicer API than [timestampMillisSinceEpoch] and [timestampMicroAndNanosecondsPart],
+         * Previously we used kotlinx.datetime.Instant. Even though it makes a nicer API than [timestampMillisSinceEpoch] and [timestampNanoOfMillisecond],
          * we removed it to avoid that an Instant instance has to be created for each log event and to get rid of this external dependency.
          */
         timestampMillisSinceEpoch: Long,
-        timestampMicroAndNanosecondsPart: Long? = null,
+        timestampNanoOfMillisecond: Long? = null,
         level: String,
         message: String,
         loggerName: String,
