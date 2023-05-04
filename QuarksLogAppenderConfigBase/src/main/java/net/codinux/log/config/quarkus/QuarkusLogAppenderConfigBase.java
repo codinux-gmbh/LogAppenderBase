@@ -1,21 +1,12 @@
 package net.codinux.log.config.quarkus;
 
 import io.quarkus.runtime.annotations.ConfigItem;
-
+import io.quarkus.runtime.annotations.RegisterForReflection;
 import net.codinux.log.LogAppenderConfig;
-import net.codinux.log.config.quarkus.fields.AppNameConfig;
-import net.codinux.log.config.quarkus.fields.HostNameConfig;
-import net.codinux.log.config.quarkus.fields.LogLevelConfig;
-import net.codinux.log.config.quarkus.fields.LoggerClassNameConfig;
-import net.codinux.log.config.quarkus.fields.LoggerNameConfig;
-import net.codinux.log.config.quarkus.fields.MarkerConfig;
-import net.codinux.log.config.quarkus.fields.MdcConfig;
-import net.codinux.log.config.quarkus.fields.MessageConfig;
-import net.codinux.log.config.quarkus.fields.NdcConfig;
-import net.codinux.log.config.quarkus.fields.StacktraceConfig;
-import net.codinux.log.config.quarkus.fields.ThreadNameConfig;
+import net.codinux.log.config.quarkus.fields.*;
 import net.codinux.log.config.quarkus.fields.kubernetes.KubernetesInfoConfig;
 
+@RegisterForReflection
 public class QuarkusLogAppenderConfigBase {
 
     /**
@@ -29,6 +20,18 @@ public class QuarkusLogAppenderConfigBase {
      */
     @ConfigItem(name = "host")
     public String endpointHost;
+
+    /**
+     * For password protected Loki instances, to Username to authenticate to Loki.
+     */
+    @ConfigItem(defaultValue = "null")
+    public String username = null;
+
+    /**
+     * For password protected Loki instances, to Password to authenticate to Loki.
+     */
+    @ConfigItem(defaultValue = "null")
+    public String password = null;
 
     public MessageConfig message;
 
