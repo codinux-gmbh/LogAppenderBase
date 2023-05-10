@@ -4,6 +4,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.UnsynchronizedAppenderBase
+import kotlinx.datetime.Instant
 import net.codinux.log.LogWriter
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
@@ -17,7 +18,7 @@ open class LogbackAppenderBase(
 
     override fun append(event: ILoggingEvent?) {
         if (isAppenderEnabled && event != null) {
-            logWriter.writeRecord(event.timeStamp, null, event.level.levelStr, event.formattedMessage,
+            logWriter.writeRecord(Instant.fromEpochMilliseconds(event.timeStamp), event.level.levelStr, event.formattedMessage,
                 event.loggerName, event.threadName, getThrowable(event), event.mdcPropertyMap, event.marker?.name)
         }
     }

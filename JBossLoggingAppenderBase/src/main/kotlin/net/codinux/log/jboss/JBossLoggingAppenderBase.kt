@@ -1,7 +1,7 @@
 package net.codinux.log.jboss
 
+import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogWriter
-import net.codinux.log.extensions.microAndNanosecondsPart
 import org.jboss.logmanager.ExtFormatter
 import org.jboss.logmanager.ExtHandler
 import org.jboss.logmanager.ExtLogRecord
@@ -25,7 +25,7 @@ open class JBossLoggingAppenderBase(
             val message = formatter.formatMessage(record)
             val ndc = if (record.ndc.isNullOrBlank()) null else record.ndc
 
-            logWriter.writeRecord(record.instant.toEpochMilli(), record.instant.microAndNanosecondsPart, record.level.name,
+            logWriter.writeRecord(record.instant.toKotlinInstant(), record.level.name,
                 message, record.loggerName, record.threadName, record.thrown, record.mdcCopy, record.marker?.toString(), ndc)
         }
     }

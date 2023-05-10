@@ -1,17 +1,12 @@
 package net.codinux.log
 
+import kotlinx.datetime.Instant
 import kotlin.jvm.JvmOverloads
 
 open class LogRecord @JvmOverloads constructor(
     open val message: String,
 
-    /**
-     * Previously we used kotlinx.datetime.Instant. Even though it makes a nicer API than [timestampMillisSinceEpoch] and [timestampNanoOfMillisecond],
-     * we removed it to avoid that an Instant instance has to be created for each log event and to get rid of this external dependency.
-     */
-    open val timestampMillisSinceEpoch: Long,
-
-    open val timestampNanoOfMillisecond: Long? = null,
+    open val timestamp: Instant,
 
     open val level: String,
 
@@ -29,7 +24,7 @@ open class LogRecord @JvmOverloads constructor(
 ) {
 
     override fun toString(): String {
-        return "$timestampMillisSinceEpoch $timestampNanoOfMillisecond $message"
+        return "$timestamp $message"
     }
 
 }

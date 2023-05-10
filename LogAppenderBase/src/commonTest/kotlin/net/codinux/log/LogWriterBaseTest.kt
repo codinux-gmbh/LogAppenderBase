@@ -82,8 +82,7 @@ class LogWriterBaseTest {
         val underTest = object : LogWriterBase(createConfig(true, sendPeriod)) {
 
             override fun serializeRecord(
-                timestampMillisSinceEpoch: Long,
-                timestampNanoOfMillisecond: Long?,
+                timestamp: Instant,
                 level: String,
                 message: String,
                 loggerName: String,
@@ -93,7 +92,7 @@ class LogWriterBaseTest {
                 marker: String?,
                 ndc: String?
             ): String =
-                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampNanoOfMillisecond, level,
+                this@LogWriterBaseTest.serializeRecord(timestamp, level,
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
@@ -155,8 +154,7 @@ class LogWriterBaseTest {
         val underTest = object : LogWriterBase(config) {
 
             override fun serializeRecord(
-                timestampMillisSinceEpoch: Long,
-                timestampNanoOfMillisecond: Long?,
+                timestamp: Instant,
                 level: String,
                 message: String,
                 loggerName: String,
@@ -166,7 +164,7 @@ class LogWriterBaseTest {
                 marker: String?,
                 ndc: String?
             ): String =
-                this@LogWriterBaseTest.serializeRecord(timestampMillisSinceEpoch, timestampNanoOfMillisecond, level,
+                this@LogWriterBaseTest.serializeRecord(timestamp, level,
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
@@ -190,17 +188,16 @@ class LogWriterBaseTest {
     }
 
     private fun writeRecord(writer: LogWriterBase, record: LogRecord) {
-        writer.writeRecord(record.timestampMillisSinceEpoch, record.timestampNanoOfMillisecond, record.level,
+        writer.writeRecord(record.timestamp, record.level,
             record.message, record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
     }
 
     private fun serializeRecord(record: LogRecord) =
-        serializeRecord(record.timestampMillisSinceEpoch, record.timestampNanoOfMillisecond, record.level, record.message,
+        serializeRecord(record.timestamp, record.level, record.message,
             record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
 
     private fun serializeRecord(
-        timestampMillisSinceEpoch: Long,
-        timestampNanoOfMillisecond: Long?,
+        timestamp: Instant,
         level: String,
         message: String,
         loggerName: String,
@@ -209,7 +206,7 @@ class LogWriterBaseTest {
         mdc: Map<String, String>?,
         marker: String?,
         ndc: String?
-    ) = "$timestampMillisSinceEpoch $level $loggerName [$threadName] $message"
+    ) = "$timestamp $level $loggerName [$threadName] $message"
 
     private fun createConfig(writeAsync: Boolean, sendPeriod: Long) =
         LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
@@ -217,7 +214,7 @@ class LogWriterBaseTest {
     private fun createRecord(message: String = "Test message"): LogRecord {
         val now = now()
 
-        return LogRecord(message, now.toEpochMilliseconds(), now.nanosecondsOfSecond % 1_000_000L, "INFO", "", "")
+        return LogRecord(message, now, "INFO", "", "")
     }
 
     private fun now() = Clock.System.now()

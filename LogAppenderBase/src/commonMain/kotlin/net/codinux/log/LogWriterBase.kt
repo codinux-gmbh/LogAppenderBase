@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
+import kotlinx.datetime.Instant
 import net.codinux.log.data.*
 import net.codinux.log.kubernetes.*
 import net.codinux.log.statelogger.AppenderStateLogger
@@ -17,8 +18,7 @@ abstract class LogWriterBase(
 ) : LogWriter {
 
     protected abstract fun serializeRecord(
-        timestampMillisSinceEpoch: Long,
-        timestampNanoOfMillisecond: Long?,
+        timestamp: Instant,
         level: String,
         message: String,
         loggerName: String,
@@ -57,8 +57,7 @@ abstract class LogWriterBase(
     }
 
     override fun writeRecord(
-        timestampMillisSinceEpoch: Long,
-        timestampNanoOfMillisecond: Long?,
+        timestamp: Instant,
         level: String,
         message: String,
         loggerName: String,
@@ -72,11 +71,10 @@ abstract class LogWriterBase(
         // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
         senderScope.async {
             try {
-                recordsToWrite.send(serializeRecord(timestampMillisSinceEpoch, timestampNanoOfMillisecond, level, message,
-                    loggerName, threadName, exception, mdc, marker, ndc))
+                recordsToWrite.send(serializeRecord(timestamp, level, message, loggerName, threadName, exception, mdc, marker, ndc))
             } catch (e: Throwable) {
                 if (e !is CancellationException) {
-                    stateLogger.error("Could not write log record '$timestampMillisSinceEpoch $level $message'", e)
+                    stateLogger.error("Could not write log record '$timestamp $level $message'", e)
                 }
             }
         }

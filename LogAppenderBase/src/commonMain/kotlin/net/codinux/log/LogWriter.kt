@@ -1,5 +1,7 @@
 package net.codinux.log
 
+import kotlinx.datetime.Instant
+
 interface LogWriter {
 
     /**
@@ -9,12 +11,7 @@ interface LogWriter {
      * nicer, better readable and better maintainable before.
      */
     fun writeRecord(
-        /**
-         * Previously we used kotlinx.datetime.Instant. Even though it makes a nicer API than [timestampMillisSinceEpoch] and [timestampNanoOfMillisecond],
-         * we removed it to avoid that an Instant instance has to be created for each log event and to get rid of this external dependency.
-         */
-        timestampMillisSinceEpoch: Long,
-        timestampNanoOfMillisecond: Long? = null,
+        timestamp: Instant,
         level: String,
         message: String,
         loggerName: String,
