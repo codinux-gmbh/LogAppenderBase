@@ -11,7 +11,7 @@ import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
 
 @OptIn(ExperimentalCoroutinesApi::class)
-abstract class LogWriterBase(
+abstract class LogWriterBase<T>(
     protected open val config: LogAppenderConfig,
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger(),
     protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData()
@@ -27,12 +27,12 @@ abstract class LogWriterBase(
         mdc: Map<String, String>?,
         marker: String?,
         ndc: String?
-    ): String
+    ): T
 
-    protected abstract suspend fun writeRecords(records: List<String>): List<String>
+    protected abstract suspend fun writeRecords(records: List<T>): List<T>
 
 
-    private val recordsToWrite = Channel<String>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
+    private val recordsToWrite = Channel<T>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
         stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
                 "or the count log records to write per batch (maxLogRecordsPerBatch) or decrease the period to write logs (sendLogRecordsPeriodMillis).")
     }
@@ -82,7 +82,7 @@ abstract class LogWriterBase(
 
 
     protected open suspend fun asyncWriteLoop(writeLogRecordsPeriodMillis: Long) {
-        var failedRecords: List<String> = emptyList()
+        var failedRecords: List<T> = emptyList()
 
         while (senderScope.isActive && receiverScope.isActive) { // may find a better signal
             try {
