@@ -32,14 +32,14 @@ abstract class LogWriterBase<T>(
     protected abstract suspend fun writeRecords(records: List<T>): List<T>
 
 
-    private val recordsToWrite = Channel<T>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
+    protected open val recordsToWrite = Channel<T>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
         stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
                 "or the count log records to write per batch (maxLogRecordsPerBatch) or decrease the period to write logs (sendLogRecordsPeriodMillis).")
     }
 
-    private val senderScope = CoroutineScope(Dispatchers.IOorDefault)
+    protected open val senderScope = CoroutineScope(Dispatchers.IOorDefault)
 
-    private val receiverScope = CoroutineScope(Dispatchers.IOorDefault)
+    protected open val receiverScope = CoroutineScope(Dispatchers.IOorDefault)
 
     protected open var podInfo: PodInfo? = null
 
@@ -149,7 +149,7 @@ abstract class LogWriterBase<T>(
         }
     }
 
-    private val <T> Channel<T>.isNotEmpty
+    protected open val <T> Channel<T>.isNotEmpty
         get() = isEmpty == false
 
     protected open fun CoroutineScope.cancelSafely() {
