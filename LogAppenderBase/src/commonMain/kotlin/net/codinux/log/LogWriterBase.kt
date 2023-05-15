@@ -19,7 +19,7 @@ abstract class LogWriterBase<T>(
     protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData()
 ) : LogWriter {
 
-    protected abstract suspend fun serializeRecord(
+    protected abstract suspend fun mapRecord(
         timestamp: Instant,
         level: String,
         message: String,
@@ -73,7 +73,7 @@ abstract class LogWriterBase<T>(
         // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
         senderScope.async {
             try {
-                recordsToWrite.send(serializeRecord(timestamp, level, message, loggerName, threadName, exception, mdc, marker, ndc))
+                recordsToWrite.send(mapRecord(timestamp, level, message, loggerName, threadName, exception, mdc, marker, ndc))
             } catch (e: Throwable) {
                 if (e !is CancellationException) {
                     stateLogger.error("Could not write log record '$timestamp $level $message'", e)
