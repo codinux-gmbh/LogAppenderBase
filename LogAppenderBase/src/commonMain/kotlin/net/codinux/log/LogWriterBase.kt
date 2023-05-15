@@ -6,6 +6,8 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
 import kotlinx.datetime.Instant
 import net.codinux.log.data.*
+import net.codinux.log.extensions.cancelSafely
+import net.codinux.log.extensions.isNotEmpty
 import net.codinux.log.kubernetes.*
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
@@ -146,19 +148,6 @@ abstract class LogWriterBase<T>(
             recordsToWrite.close()
         } catch (e: Throwable) {
             stateLogger.error("Closing LogWriter failed", e)
-        }
-    }
-
-    protected open val <T> Channel<T>.isNotEmpty
-        get() = isEmpty == false
-
-    protected open fun CoroutineScope.cancelSafely() {
-        try {
-            if (this.isActive) {
-                this.cancel()
-            }
-        } catch (e: Throwable) {
-            stateLogger.error("Could not cancel CoroutineScope", e)
         }
     }
 
