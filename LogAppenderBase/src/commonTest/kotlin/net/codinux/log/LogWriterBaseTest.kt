@@ -79,9 +79,9 @@ class LogWriterBaseTest {
         val writtenRecords = mutableMapOf<Int, List<String>>()
         var countWriteRecordCalls = 0
 
-        val underTest = object : LogWriterBase(createConfig(true, sendPeriod)) {
+        val underTest = object : LogWriterBase<String>(createConfig(true, sendPeriod)) {
 
-            override fun serializeRecord(
+            override suspend fun mapRecord(
                 timestamp: Instant,
                 level: String,
                 message: String,
@@ -151,9 +151,9 @@ class LogWriterBaseTest {
         val config = createConfig(writeAsync, sendPeriod)
         val writtenRecords = mutableListOf<WrittenRecord>()
 
-        val underTest = object : LogWriterBase(config) {
+        val underTest = object : LogWriterBase<String>(config) {
 
-            override fun serializeRecord(
+            override suspend fun mapRecord(
                 timestamp: Instant,
                 level: String,
                 message: String,
@@ -187,7 +187,7 @@ class LogWriterBaseTest {
         return writtenRecords
     }
 
-    private fun writeRecord(writer: LogWriterBase, record: LogRecord) {
+    private fun writeRecord(writer: LogWriterBase<String>, record: LogRecord) {
         writer.writeRecord(record.timestamp, record.level,
             record.message, record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
     }
