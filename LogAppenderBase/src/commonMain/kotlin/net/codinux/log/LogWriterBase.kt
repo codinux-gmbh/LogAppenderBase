@@ -19,7 +19,7 @@ abstract class LogWriterBase<T>(
     protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData()
 ) : LogWriter {
 
-    protected abstract fun serializeRecord(
+    protected abstract suspend fun serializeRecord(
         timestamp: Instant,
         level: String,
         message: String,
