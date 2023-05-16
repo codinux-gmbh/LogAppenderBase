@@ -50,12 +50,16 @@ abstract class LogWriterBase<T>(
 
     protected open var podInfo: PodInfo? = null
 
+    protected open var isFullyInitialized = false // TODO: this is not thread safe / volatile
+
     init {
         receiverScope.async {
             if (config.includeKubernetesInfo) {
                 KubernetesInfoRetrieverRegistry.init(stateLogger)
                 podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
             }
+
+            isFullyInitialized = true
 
             // pre-cache mapped record objects
             IntRange(0, min(1_000, config.maxBufferedLogRecords / 2)).forEach {
@@ -93,7 +97,8 @@ abstract class LogWriterBase<T>(
     }
 
     protected open suspend fun getMappedRecordObject(): T {
-        return if (cachedMappedRecords.isNotEmpty) {
+        // if writer is not fully initialized (e.g. PodInfo hasn't been retrieved yet), then wait till it is initialized and pre-allocates mapped record objects
+        return if (cachedMappedRecords.isNotEmpty || isFullyInitialized == false) {
             cachedMappedRecords.receive()
         } else {
             instantiateMappedRecord()
