@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.UnsynchronizedAppenderBase
 import kotlinx.datetime.Instant
+import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogWriter
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
@@ -15,10 +16,18 @@ open class LogbackAppenderBase(
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger()
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
+    protected open val eventSupportsInstant: Boolean = try {
+        // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
+        ILoggingEvent::class.java.getDeclaredMethod("getInstant")
+        true
+    } catch (ignored: Exception) {
+        false
+    }
+
     override fun append(event: ILoggingEvent?) {
         if (isAppenderEnabled && event != null) {
             logWriter.writeRecord(
-                Instant.fromEpochMilliseconds(event.timeStamp),
+                if (eventSupportsInstant) event.instant.toKotlinInstant() else Instant.fromEpochMilliseconds(event.timeStamp),
                 event.level.levelStr,
                 event.formattedMessage,
                 if (logWriter.config.logsLoggerName) event.loggerName else null,
