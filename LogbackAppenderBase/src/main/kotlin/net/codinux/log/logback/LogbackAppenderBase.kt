@@ -11,15 +11,22 @@ import net.codinux.log.statelogger.StdOutStateLogger
 
 open class LogbackAppenderBase(
     protected open val isAppenderEnabled: Boolean,
-    protected open val logExceptions: Boolean = true,
     protected open val logWriter: LogWriter,
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger()
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
     override fun append(event: ILoggingEvent?) {
         if (isAppenderEnabled && event != null) {
-            logWriter.writeRecord(Instant.fromEpochMilliseconds(event.timeStamp), event.level.levelStr, event.formattedMessage,
-                event.loggerName, event.threadName, getThrowable(event), event.mdcPropertyMap, event.marker?.name)
+            logWriter.writeRecord(
+                Instant.fromEpochMilliseconds(event.timeStamp),
+                event.level.levelStr,
+                event.formattedMessage,
+                if (logWriter.config.logsLoggerName) event.loggerName else null,
+                if (logWriter.config.logsThreadName) event.threadName else null,
+                if (logWriter.config.logsException) getThrowable(event) else null,
+                if (logWriter.config.logsMdc) event.mdcPropertyMap else null,
+                if (logWriter.config.logsMarker) event.marker?.name else null
+            )
         }
     }
 
@@ -32,17 +39,13 @@ open class LogbackAppenderBase(
 
 
     protected open fun getThrowable(event: ILoggingEvent): Throwable? {
-        if (logExceptions) {
-            event.throwableProxy?.let { proxy ->
-                if (proxy is ThrowableProxy) {
-                    return proxy.throwable
-                } else {
-                    return tryToInstantiateThrowable(proxy)
-                }
+        return event.throwableProxy?.let { proxy ->
+            if (proxy is ThrowableProxy) {
+                return proxy.throwable
+            } else {
+                return tryToInstantiateThrowable(proxy)
             }
         }
-
-        return null
     }
 
     protected open fun tryToInstantiateThrowable(proxy: IThrowableProxy): Throwable? {

@@ -18,8 +18,14 @@ open class JavaUtilLogAppenderBase(
                 message = String.format(record.message, *record.parameters)
             }
 
-            logWriter.writeRecord(record.instant.toKotlinInstant(), record.level.name,
-                message, record.loggerName, threadName, record.thrown)
+            logWriter.writeRecord(
+                record.instant.toKotlinInstant(),
+                record.level.name,
+                message,
+                if (logWriter.config.logsLoggerName) record.loggerName else null,
+                if (logWriter.config.logsThreadName) threadName else null,
+                if (logWriter.config.logsException) record.thrown else null
+            )
         }
     }
 

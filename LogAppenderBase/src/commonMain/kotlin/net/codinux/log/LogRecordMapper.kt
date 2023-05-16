@@ -30,8 +30,8 @@ open class LogRecordMapper(
     open fun mapLogEventFields(
         fields: MutableMap<String, String?>,
         level: String,
-        loggerName: String,
-        threadName: String,
+        loggerName: String?,
+        threadName: String?,
         exception: Throwable?,
         mdc: Map<String, String>?,
         marker: String?,
@@ -41,7 +41,7 @@ open class LogRecordMapper(
 
         mapField(fields, config.includeLogLevel, config.logLevelFieldName, level)
         mapField(fields, config.includeLoggerName, config.loggerNameFieldName, loggerName)
-        mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { extractLoggerClassName(loggerName) }
+        mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { loggerName?.let { extractLoggerClassName(it) } }
 
         mapMdcFields(fields, config.includeMdc && mdc != null, mdc)
         mapField(fields, config.includeMarker, config.markerFieldName, marker)

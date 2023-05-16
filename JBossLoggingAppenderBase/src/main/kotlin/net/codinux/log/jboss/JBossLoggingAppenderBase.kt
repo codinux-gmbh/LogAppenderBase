@@ -23,10 +23,19 @@ open class JBossLoggingAppenderBase(
     override fun doPublish(record: ExtLogRecord?) {
         if (isAppenderEnabled && record != null) {
             val message = formatter.formatMessage(record)
-            val ndc = if (record.ndc.isNullOrBlank()) null else record.ndc
+            val ndc = if (logWriter.config.logsNdc && record.ndc.isNullOrBlank() == false) record.ndc else null
 
-            logWriter.writeRecord(record.instant.toKotlinInstant(), record.level.name,
-                message, record.loggerName, record.threadName, record.thrown, record.mdcCopy, record.marker?.toString(), ndc)
+            logWriter.writeRecord(
+                record.instant.toKotlinInstant(),
+                record.level.name,
+                message,
+                if (logWriter.config.logsLoggerName) record.loggerName else null,
+                if (logWriter.config.logsThreadName) record.threadName else null,
+                if (logWriter.config.logsException) record.thrown else null,
+                if (logWriter.config.logsMdc) record.mdcCopy else null,
+                if (logWriter.config.logsMarker) record.marker?.toString() else null,
+                ndc
+            )
         }
     }
 

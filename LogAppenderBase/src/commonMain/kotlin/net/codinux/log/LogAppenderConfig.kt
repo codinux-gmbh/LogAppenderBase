@@ -66,6 +66,19 @@ open class LogAppenderConfig(
     open var sendLogRecordsPeriodMillis: Long = SendLogRecordsPeriodMillisDefaultValue
 ) {
 
+    open val logsLoggerName = includeLoggerName || includeLoggerClassName
+
+    open val logsThreadName = includeThreadName
+
+    open val logsException = includeStacktrace
+
+    open val logsMdc = includeMdc
+
+    open val logsMarker = includeMarker
+
+    open val logsNdc = includeNdc
+    
+
     companion object {
         
         private const val True = true
