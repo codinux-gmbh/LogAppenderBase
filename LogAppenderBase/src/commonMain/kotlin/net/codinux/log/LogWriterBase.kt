@@ -11,6 +11,7 @@ import net.codinux.log.extensions.isNotEmpty
 import net.codinux.log.kubernetes.*
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
+import kotlin.math.min
 
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class LogWriterBase<T>(
@@ -18,6 +19,8 @@ abstract class LogWriterBase<T>(
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger(),
     protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData()
 ) : LogWriter {
+
+    protected abstract fun instantiateMappedRecord(): T
 
     protected abstract suspend fun mapRecord(
         timestamp: Instant,
@@ -33,6 +36,8 @@ abstract class LogWriterBase<T>(
 
     protected abstract suspend fun writeRecords(records: List<T>): List<T>
 
+
+    protected open val cachedMappedRecords = Channel<T>(config.maxBufferedLogRecords)
 
     protected open val recordsToWrite = Channel<T>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
         stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
@@ -50,6 +55,11 @@ abstract class LogWriterBase<T>(
             if (config.includeKubernetesInfo) {
                 KubernetesInfoRetrieverRegistry.init(stateLogger)
                 podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
+            }
+
+            // pre-cache mapped record objects
+            IntRange(0, min(1_000, config.maxBufferedLogRecords / 2)).forEach {
+                cachedMappedRecords.send(instantiateMappedRecord())
             }
 
             val writeLogRecordsPeriodMillis = if (config.appendLogsAsync) config.sendLogRecordsPeriodMillis
@@ -79,6 +89,20 @@ abstract class LogWriterBase<T>(
                     stateLogger.error("Could not write log record '$timestamp $level $message'", e)
                 }
             }
+        }
+    }
+
+    protected open suspend fun getMappedRecordObject(): T {
+        return if (cachedMappedRecords.isNotEmpty) {
+            cachedMappedRecords.receive()
+        } else {
+            instantiateMappedRecord()
+        }
+    }
+
+    protected open suspend fun releaseMappedRecords(records: List<T>) {
+        records.forEach {
+            cachedMappedRecords.send(it)
         }
     }
 
