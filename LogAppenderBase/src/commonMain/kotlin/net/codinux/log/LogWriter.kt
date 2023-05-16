@@ -4,6 +4,8 @@ import kotlinx.datetime.Instant
 
 interface LogWriter {
 
+    val config: LogAppenderConfig
+
     /**
      * Previously we used a LogRecord object instead of all of these parameters directly but to get it (almost) allocation and therefore
      * Garbage Collection free according to these design principles https://github.com/real-logic/aeron/wiki/Design-Principles,

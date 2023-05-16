@@ -15,7 +15,7 @@ import kotlin.math.min
 
 @OptIn(ExperimentalCoroutinesApi::class)
 abstract class LogWriterBase<T>(
-    protected open val config: LogAppenderConfig,
+    override val config: LogAppenderConfig,
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger(),
     protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData(),
     protected open val mapper: LogRecordMapper = LogRecordMapper(config, processData)
