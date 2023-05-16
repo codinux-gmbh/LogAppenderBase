@@ -81,6 +81,8 @@ class LogWriterBaseTest {
 
         val underTest = object : LogWriterBase<String>(createConfig(true, sendPeriod)) {
 
+            override fun instantiateMappedRecord() = "" // not used by this implementation
+
             override suspend fun mapRecord(
                 timestamp: Instant,
                 level: String,
@@ -152,6 +154,8 @@ class LogWriterBaseTest {
         val writtenRecords = mutableListOf<WrittenRecord>()
 
         val underTest = object : LogWriterBase<String>(config) {
+
+            override fun instantiateMappedRecord() = "" // not used by this implementation
 
             override suspend fun mapRecord(
                 timestamp: Instant,
