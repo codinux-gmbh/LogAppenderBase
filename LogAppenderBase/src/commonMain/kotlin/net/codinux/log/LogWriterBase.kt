@@ -17,7 +17,8 @@ import kotlin.math.min
 abstract class LogWriterBase<T>(
     protected open val config: LogAppenderConfig,
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger(),
-    protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData()
+    protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData(),
+    protected open val mapper: LogRecordMapper = LogRecordMapper(config, processData)
 ) : LogWriter {
 
     protected abstract fun instantiateMappedRecord(): T
@@ -57,6 +58,7 @@ abstract class LogWriterBase<T>(
             if (config.includeKubernetesInfo) {
                 KubernetesInfoRetrieverRegistry.init(stateLogger)
                 podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
+                mapper.podInfo = podInfo
             }
 
             isFullyInitialized = true
