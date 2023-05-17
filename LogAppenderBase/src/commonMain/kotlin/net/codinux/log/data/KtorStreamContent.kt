@@ -1,12 +1,12 @@
 package net.codinux.log.data
 
-expect class KtorStreamContent(content: Any) {
+expect class KtorStreamContent(content: Any, gzipContent: Boolean) {
 
     companion object {
 
         val isSupported: Boolean
 
-        val additionalHeaders: Map<String, String>
+        val supportsGZip: Boolean
 
     }
 

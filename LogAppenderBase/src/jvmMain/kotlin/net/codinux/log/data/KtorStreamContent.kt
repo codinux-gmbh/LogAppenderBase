@@ -7,13 +7,16 @@ import io.ktor.utils.io.*
 import io.ktor.utils.io.jvm.javaio.*
 import java.util.zip.GZIPOutputStream
 
-actual class KtorStreamContent actual constructor(private val content: Any) : OutgoingContent.WriteChannelContent() {
+actual class KtorStreamContent actual constructor(
+    private val content: Any,
+    private val gzipContent: Boolean
+) : OutgoingContent.WriteChannelContent() {
 
     actual companion object {
 
         actual val isSupported = true
 
-        actual val additionalHeaders = mapOf("Content-Encoding" to "gzip")
+        actual val supportsGZip = true
 
     }
 
@@ -23,9 +26,12 @@ actual class KtorStreamContent actual constructor(private val content: Any) : Ou
     }
 
     override suspend fun writeTo(channel: ByteWriteChannel) {
-        val outputStream = channel.toOutputStream()
+        var outputStream = channel.toOutputStream()
+        if (gzipContent) {
+            outputStream = GZIPOutputStream(outputStream)
+        }
 
-        objectMapper.writeValue(GZIPOutputStream(outputStream), content)
+        objectMapper.writeValue(outputStream, content)
     }
 
 }
