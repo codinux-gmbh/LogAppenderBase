@@ -10,7 +10,6 @@ import net.codinux.log.LogWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
-import java.util.concurrent.TimeUnit
 
 class LogbackAppenderBaseTest {
 
@@ -22,14 +21,15 @@ class LogbackAppenderBaseTest {
 
     private val underTest = LogbackAppenderBase(true, logWriterMock).apply {
         this.start()
-
-        (LoggerFactory.getILoggerFactory() as? LoggerContext)?.let { context ->
-            this.context = context
-            context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(this)
-        }
     }
 
     private val log = LoggerFactory.getLogger(LogbackAppenderBaseTest::class.java)
+
+    init {
+        (LoggerFactory.getILoggerFactory() as? LoggerContext)?.let { context ->
+            context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(underTest)
+        }
+    }
 
 
     @Test
@@ -46,8 +46,6 @@ class LogbackAppenderBaseTest {
 
         log.error(message, exception)
 
-
-        TimeUnit.MILLISECONDS.sleep(100)
 
         assertThat(capturedMessage.captured).isEqualTo(message)
         assertThat(capturedException.captured).isEqualTo(exception)
