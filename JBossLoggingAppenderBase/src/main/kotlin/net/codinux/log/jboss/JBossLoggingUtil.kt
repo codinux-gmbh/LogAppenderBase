@@ -15,11 +15,7 @@ object JBossLoggingUtil {
     }
 
     fun registerLogHandler(vararg handler: Handler) {
-        val rootLogger = LogManager.getLogManager().getLogger("")
-
-        handler.forEach {
-            rootLogger.addHandler(it)
-        }
+        LogManager.getLogManager().addHandlerToRootLogger(*handler)
     }
 
     fun consoleHandler(formatter: Formatter = SimpleFormatter()) =
