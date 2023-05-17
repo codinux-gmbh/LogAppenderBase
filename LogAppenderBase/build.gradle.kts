@@ -49,6 +49,7 @@ kotlin {
 
 
     val coroutinesVersion: String by project
+    val ktorVersion: String by project
     val kotestVersion: String by project
 
     sourceSets {
@@ -71,7 +72,12 @@ kotlin {
             }
         }
 
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+                compileOnly("io.ktor:ktor-client-cio:$ktorVersion")
+                compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
+            }
+        }
         val jvmTest by getting
 
         val jsMain by getting
