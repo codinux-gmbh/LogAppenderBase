@@ -68,9 +68,7 @@ abstract class LogWriterBase<T>(
                 cachedMappedRecords.send(instantiateMappedRecord())
             }
 
-            val writeLogRecordsPeriodMillis = if (config.appendLogsAsync) config.sendLogRecordsPeriodMillis
-                                            else 5L
-            asyncWriteLoop(writeLogRecordsPeriodMillis)
+            asyncWriteLoop(config.sendLogRecordsPeriodMillis)
         }
     }
 
@@ -85,8 +83,6 @@ abstract class LogWriterBase<T>(
         marker: String?,
         ndc: String?
     ) {
-        // as writeRecords() is a suspend function even if config.appendLogsAsync == false we cannot write log record synchronously
-        // (if we don't want to call runBlocking { } on each log event), therefore also add these to recordsToWrite queue
         senderScope.async {
             try {
                 recordsToWrite.send(mapRecord(timestamp, level, message, loggerName, threadName, exception, mdc, marker, ndc))

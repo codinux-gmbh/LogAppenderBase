@@ -19,39 +19,17 @@ class LogWriterBaseTest {
 
 
     @Test
-    @JsName("writeRecord_sync_Records_get_written_almost_immediately")
-    fun `writeRecord sync - Records get written almost immediately`() = runTest {
-        val testRecord = listOf(createRecord())
-
-        val writtenRecords = writeRecordsSync(testRecord)
-
-        val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
-        receivedWriteRecordsEvents.shouldHaveSize(1)
-    }
-
-    @Test
     @JsName("writeRecord_async_Records_get_written_with_delay")
     fun `writeRecord async - Records get written with delay`() = runTest {
         val testRecord = listOf(createRecord())
         val sendPeriod = 50L
 
-        val writtenRecords = writeRecordsAsync(sendPeriod, testRecord)
+        val writtenRecords = writeRecords(sendPeriod, testRecord)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveSize(1)
     }
 
-
-    @Test
-    @JsName("writeRecords_sync_Records_get_written_almost_immediately")
-    fun `writeRecords sync - Records get written almost immediately`() = runTest {
-        val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
-
-        val writtenRecords = writeRecordsSync(testRecords)
-
-        val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
-        receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
-    }
 
     @Test
     @JsName("writeRecords_async_Records_get_written_with_delay")
@@ -59,7 +37,7 @@ class LogWriterBaseTest {
         val testRecords = IntRange(1, 5).map { createRecord("Record #$it") }
         val sendPeriod = 50L
 
-        val writtenRecords = writeRecordsAsync(sendPeriod, testRecords)
+        val writtenRecords = writeRecords(sendPeriod, testRecords)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
         receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
@@ -79,7 +57,7 @@ class LogWriterBaseTest {
         val writtenRecords = mutableMapOf<Int, List<String>>()
         var countWriteRecordCalls = 0
 
-        val underTest = object : LogWriterBase<String>(createConfig(true, sendPeriod)) {
+        val underTest = object : LogWriterBase<String>(createConfig(sendPeriod)) {
 
             override fun instantiateMappedRecord() = "" // not used by this implementation
 
@@ -143,14 +121,8 @@ class LogWriterBaseTest {
         return writtenRecords
     }
 
-    private suspend fun writeRecordsAsync(sendPeriod: Long = 50L, records: List<LogRecord>) =
-        writeRecords(true, sendPeriod, records)
-
-    private suspend fun writeRecordsSync(records: List<LogRecord>) =
-        writeRecords(false, 0L, records)
-
-    private suspend fun writeRecords(writeAsync: Boolean, sendPeriod: Long = 50L, records: List<LogRecord>): List<WrittenRecord> {
-        val config = createConfig(writeAsync, sendPeriod)
+    private suspend fun writeRecords(sendPeriod: Long = 50L, records: List<LogRecord>): List<WrittenRecord> {
+        val config = createConfig(sendPeriod)
         val writtenRecords = mutableListOf<WrittenRecord>()
 
         val underTest = object : LogWriterBase<String>(config) {
@@ -183,8 +155,7 @@ class LogWriterBaseTest {
             writeRecord(underTest, record)
         }
 
-        val waitForCompletion = if (writeAsync) sendPeriod else 0
-        delay(waitForCompletion + SendTimeTolerance)
+        delay(sendPeriod + SendTimeTolerance)
 
         underTest.close()
 

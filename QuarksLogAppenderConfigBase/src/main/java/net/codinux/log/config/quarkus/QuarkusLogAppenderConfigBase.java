@@ -92,13 +92,6 @@ public class QuarkusLogAppenderConfigBase {
 
 
     /**
-     * If the logs should be sent asynchronously to Loki / Elasticsearch. Leave at 'true' if you don't have a very good
-     * reason to do so as otherwise for each log call current thread gets blocked till log record is inserted in remote system.
-     */
-    @ConfigItem(defaultValue = "" + LogAppenderConfig.AppendLogsAsyncDefaultValue)
-    public boolean appendLogsAsync;
-
-    /**
      * The maximum number of log records that are send in one batch to Elasticsearch.
      */
     @ConfigItem(defaultValue = "" + LogAppenderConfig.MaxLogRecordsPerBatchDefaultValue)

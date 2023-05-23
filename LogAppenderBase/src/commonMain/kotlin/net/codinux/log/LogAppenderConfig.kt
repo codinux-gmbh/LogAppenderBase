@@ -29,13 +29,11 @@ open class LogAppenderConfig(
     open var includeHostIp: Boolean = IncludeHostIpDefaultValue,
     open var hostIpFieldName: String = HostIpDefaultFieldName,
 
-    open var deviceName: String? = DeviceNameDefaultValue,
-    open var includeDeviceName: Boolean = IncludeDeviceNameDefaultValue,
-    open var deviceNameFieldName: String = DeviceNameDefaultFieldName,
-
     open var appName: String? = AppNameDefaultValue,
     open var includeAppName: Boolean = IncludeAppNameDefaultValue,
     open var appNameFieldName: String = AppNameDefaultFieldName,
+
+    // TODO: add exceptionClass field?
 
     open var includeStacktrace: Boolean = IncludeStacktraceDefaultValue,
     open var stacktraceFieldName: String = StacktraceDefaultFieldName,
@@ -43,6 +41,8 @@ open class LogAppenderConfig(
 
     open var includeMdc: Boolean = IncludeMdcDefaultValue,
     open var mdcKeysPrefix: String? = MdcFieldsPrefixDefaultValue,
+
+    // TODO: how to handle multiple Marker (slf4j 2.x)?
 
     open var includeMarker: Boolean = IncludeMarkerDefaultValue,
     open var markerFieldName: String = MarkerDefaultFieldName,
@@ -58,8 +58,6 @@ open class LogAppenderConfig(
 
     open var includeKubernetesAnnotations: Boolean = IncludeKubernetesAnnotationsDefaultValue,
     open var kubernetesAnnotationsPrefix: String? = KubernetesAnnotationsPrefixDefaultValue,
-
-    open var appendLogsAsync: Boolean = AppendLogsAsyncDefaultValue,
 
     open var maxLogRecordsPerBatch: Int = MaxLogRecordsPerBatchDefaultValue,
     open var maxBufferedLogRecords: Int = MaxBufferedLogRecordsDefaultValue,
@@ -123,12 +121,6 @@ open class LogAppenderConfig(
         const val IncludeHostIpDefaultValueString = IncludeHostIpDefaultValue.toString()
         const val HostIpDefaultFieldName = "hostIP"
 
-        val DeviceNameDefaultValue: String? = null
-        const val DeviceNameDefaultValueString = "null"
-        const val IncludeDeviceNameDefaultValue = False
-        const val IncludeDeviceNameDefaultValueString = IncludeDeviceNameDefaultValue.toString()
-        const val DeviceNameDefaultFieldName = "device"
-
         val AppNameDefaultValue: String? = null
         const val AppNameDefaultValueString = "null"
         const val IncludeAppNameDefaultValue = False
@@ -164,8 +156,6 @@ open class LogAppenderConfig(
         const val IncludeKubernetesAnnotationsDefaultValue = False
         const val IncludeKubernetesAnnotationsDefaultValueString = IncludeKubernetesAnnotationsDefaultValue.toString()
         const val KubernetesAnnotationsPrefixDefaultValue: String = "annotation"
-
-        const val AppendLogsAsyncDefaultValue = true
 
         const val MaxLogRecordsPerBatchDefaultValue = 100
         const val MaxBufferedLogRecordsDefaultValue = 5000
