@@ -4,24 +4,23 @@ plugins {
 
 
 kotlin {
+    // Enable the default target hierarchy:
+    targetHierarchy.default()
+
     jvm {
         jvmToolchain(8)
-
         withJava()
+
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()
         }
     }
 
     js(IR) {
+        moduleName = "log-appender-base"
         binaries.executable()
 
         browser {
-            commonWebpackConfig {
-                cssSupport {
-                    enabled.set(true)
-                }
-            }
             testTask {
                 useKarma {
                     useChromeHeadless()
@@ -31,18 +30,34 @@ kotlin {
         }
 
         nodejs {
-
+            testTask {
+                useMocha {
+                    timeout = "20s" // Mocha times out after 2 s, which is too short for bufferExceeded() test
+                }
+            }
         }
     }
 
-    val hostOs = System.getProperty("os.name")
-    val isMingwX64 = hostOs.startsWith("Windows")
-    val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
-        else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    // wasm()
+
+
+    linuxX64()
+    mingwX64()
+
+    ios {
+        binaries {
+            framework {
+                baseName = "log-appender-base"
+            }
+        }
     }
+    iosSimulatorArm64()
+    macosX64()
+    macosArm64()
+    watchos()
+    watchosSimulatorArm64()
+    tvos()
+    tvosSimulatorArm64()
 
 
     val coroutinesVersion: String by project
