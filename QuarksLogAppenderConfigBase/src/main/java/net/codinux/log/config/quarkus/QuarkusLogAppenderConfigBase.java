@@ -16,10 +16,10 @@ public class QuarkusLogAppenderConfigBase {
     public boolean enable;
 
     /**
-     * Host of the endpoint where to reach ElasticSearch / Loki (e.g. http://localhost:9200 / http://localhost:3100).
+     * URL of the endpoint where to reach ElasticSearch / Loki (e.g. http://localhost:9200 / http://localhost:3100).
      */
-    @ConfigItem(name = "host")
-    public String endpointHost;
+    @ConfigItem(name = "host-url")
+    public String hostUrl;
 
     /**
      * For password protected Loki instances, to Username to authenticate to Loki.
