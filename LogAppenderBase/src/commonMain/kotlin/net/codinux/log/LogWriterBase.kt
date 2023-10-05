@@ -123,6 +123,12 @@ abstract class LogWriterBase<T>(
 
                 if (nextBatch.isNotEmpty()) {
                     failedRecords = writeRecords(nextBatch)
+
+                    if (failedRecords.size != nextBatch.size) { // if all records failed to send there's no need to release these records
+                        // in case of failed records this mutates nextBatch, so don't hold a reference to nextBatch
+                        nextBatch.removeAll(failedRecords)
+                        releaseMappedRecords(nextBatch)
+                    }
                 }
 
                 delay(writeLogRecordsPeriodMillis)

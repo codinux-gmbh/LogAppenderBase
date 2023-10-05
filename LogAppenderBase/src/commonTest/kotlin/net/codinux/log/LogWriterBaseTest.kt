@@ -76,7 +76,7 @@ class LogWriterBaseTest {
                     message, loggerName, threadName, exception, mdc, marker, ndc)
 
             override suspend fun writeRecords(records: List<String>): List<String> {
-                writtenRecords[countWriteRecordCalls++] = records
+                writtenRecords[countWriteRecordCalls++] = records.toList() // make a copy, releasing records modifies list if records fail
 
                 return if ((countWriteRecordCalls == 1 && records.size == testRecords.size) || // on first call we say writing some of the records fails
                     (countWriteRecordCalls == 2 && records != recordsToFailOnFirstWriteCall)) { // sometimes the first call contains only a part of testRecords, then return failed records on second call
