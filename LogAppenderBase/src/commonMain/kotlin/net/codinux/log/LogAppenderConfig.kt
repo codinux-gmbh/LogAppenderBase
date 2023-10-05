@@ -23,15 +23,15 @@ open class LogAppenderConfig(
     open var includeThreadName: Boolean = IncludeThreadNameDefaultValue,
     open var threadNameFieldName: String = ThreadNameDefaultFieldName,
 
+    open var includeAppName: Boolean = IncludeAppNameDefaultValue,
+    open var appNameFieldName: String = AppNameDefaultFieldName,
+    open var appName: String? = AppNameDefaultValue,
+
     open var includeHostName: Boolean = IncludeHostNameDefaultValue,
     open var hostNameFieldName: String = HostNameDefaultFieldName,
 
     open var includeHostIp: Boolean = IncludeHostIpDefaultValue,
     open var hostIpFieldName: String = HostIpDefaultFieldName,
-
-    open var appName: String? = AppNameDefaultValue,
-    open var includeAppName: Boolean = IncludeAppNameDefaultValue,
-    open var appNameFieldName: String = AppNameDefaultFieldName,
 
     // TODO: add exceptionClass field?
 
@@ -59,8 +59,8 @@ open class LogAppenderConfig(
     open var includeKubernetesAnnotations: Boolean = IncludeKubernetesAnnotationsDefaultValue,
     open var kubernetesAnnotationsPrefix: String? = KubernetesAnnotationsPrefixDefaultValue,
 
-    open var maxLogRecordsPerBatch: Int = MaxLogRecordsPerBatchDefaultValue,
     open var maxBufferedLogRecords: Int = MaxBufferedLogRecordsDefaultValue,
+    open var maxLogRecordsPerBatch: Int = MaxLogRecordsPerBatchDefaultValue,
     open var sendLogRecordsPeriodMillis: Long = SendLogRecordsPeriodMillisDefaultValue
 ) {
 
@@ -113,6 +113,12 @@ open class LogAppenderConfig(
         const val IncludeThreadNameDefaultValueString = IncludeThreadNameDefaultValue.toString()
         const val ThreadNameDefaultFieldName = "thread"
 
+        val AppNameDefaultValue: String? = null
+        const val AppNameDefaultValueString = "null"
+        const val IncludeAppNameDefaultValue = False
+        const val IncludeAppNameDefaultValueString = IncludeAppNameDefaultValue.toString()
+        const val AppNameDefaultFieldName = "app"
+
         const val IncludeHostNameDefaultValue = False
         const val IncludeHostNameDefaultValueString = IncludeHostNameDefaultValue.toString()
         const val HostNameDefaultFieldName = "host"
@@ -120,12 +126,6 @@ open class LogAppenderConfig(
         const val IncludeHostIpDefaultValue = False
         const val IncludeHostIpDefaultValueString = IncludeHostIpDefaultValue.toString()
         const val HostIpDefaultFieldName = "hostIP"
-
-        val AppNameDefaultValue: String? = null
-        const val AppNameDefaultValueString = "null"
-        const val IncludeAppNameDefaultValue = False
-        const val IncludeAppNameDefaultValueString = IncludeAppNameDefaultValue.toString()
-        const val AppNameDefaultFieldName = "app"
 
         const val IncludeStacktraceDefaultValue = True
         const val IncludeStacktraceDefaultValueString = IncludeStacktraceDefaultValue.toString()
@@ -157,8 +157,8 @@ open class LogAppenderConfig(
         const val IncludeKubernetesAnnotationsDefaultValueString = IncludeKubernetesAnnotationsDefaultValue.toString()
         const val KubernetesAnnotationsPrefixDefaultValue: String = "annotation"
 
-        const val MaxLogRecordsPerBatchDefaultValue = 100
         const val MaxBufferedLogRecordsDefaultValue = 5000
+        const val MaxLogRecordsPerBatchDefaultValue = 100
         const val SendLogRecordsPeriodMillisDefaultValue = 100L
 
     }
