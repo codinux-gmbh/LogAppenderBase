@@ -64,17 +64,23 @@ open class LogAppenderConfig(
     open var sendLogRecordsPeriodMillis: Long = SendLogRecordsPeriodMillisDefaultValue
 ) {
 
-    open val logsLoggerName = includeLoggerName || includeLoggerClassName
+    open val logsLoggerName: Boolean
+        get() = includeLoggerName || includeLoggerClassName
 
-    open val logsThreadName = includeThreadName
+    open val logsThreadName: Boolean
+        get() = includeThreadName
 
-    open val logsException = includeStacktrace
+    open val logsException: Boolean
+        get() = includeStacktrace
 
-    open val logsMdc = includeMdc
+    open val logsMdc: Boolean
+        get() = includeMdc
 
-    open val logsMarker = includeMarker
+    open val logsMarker: Boolean
+        get() = includeMarker
 
-    open val logsNdc = includeNdc
+    open val logsNdc: Boolean
+        get() = includeNdc
     
 
     companion object {
