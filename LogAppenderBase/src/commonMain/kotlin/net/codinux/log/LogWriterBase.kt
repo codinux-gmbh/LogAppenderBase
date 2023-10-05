@@ -138,7 +138,7 @@ abstract class LogWriterBase<T>(
         asyncWriteLoopStopped(failedRecords)
     }
 
-    private suspend fun LogWriterBase<T>.asyncWriteLoopStopped(failedRecords: List<T>) {
+    private suspend fun asyncWriteLoopStopped(failedRecords: List<T>) {
         stateLogger.info("Stopping asyncWriteLoop()")
 
         if (failedRecords.isNotEmpty()) {
