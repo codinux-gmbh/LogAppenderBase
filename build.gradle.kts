@@ -10,20 +10,22 @@ allprojects {
     version = "1.0.0-SNAPSHOT"
 
 
-    ext["groupId"] = group
-    ext["artifactVersion"] = version
-
-    ext["sourceCodeRepositoryBaseUrl"] = "https://github.com/codinux/LogAppenderBase"
-
-    ext["useNewSonatypeRepo"] = true
-    ext["packageGroup"] = "net.codinux"
+    ext["sourceCodeRepositoryBaseUrl"] = "github.com/codinux/LogAppenderBase"
 
     ext["projectDescription"] = "Common log appender implementation for log appenders like ElasticSearchLogAppender and LokiLogAppender"
+}
 
-    ext["developerId"] = "codinux"
-    ext["developerName"] = "codinux GmbH & Co. KG"
-    ext["developerMail"] = "git@codinux.net"
+tasks.register("publishAllToMavenLocal") {
+    dependsOn(
+        ":LogAppenderBase:publishToMavenLocal",
 
-    ext["licenseName"] = "The Apache License, Version 2.0"
-    ext["licenseUrl"] = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        ":LogbackAppenderBase:publishToMavenLocal",
+        ":JBossLoggingAppenderBase:publishToMavenLocal",
+        ":JavaUtilLogAppenderBase:publishToMavenLocal",
+
+        ":QuarksLogAppenderConfigBase:publishToMavenLocal",
+
+        ":CodinuxKubernetesInfoRetriever:publishToMavenLocal",
+        ":Fabric8KubernetesInfoRetriever:publishToMavenLocal"
+    )
 }

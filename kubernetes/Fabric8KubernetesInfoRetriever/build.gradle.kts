@@ -3,6 +3,8 @@ plugins {
 }
 
 java {
+    withSourcesJar()
+
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
     }
@@ -12,8 +14,7 @@ java {
 val junitVersion: String by project
 
 dependencies {
-    implementation("$group:log-appender-base:$version")
-//    implementation(project(":log-appender-base"))
+    implementation(project(":LogAppenderBase"))
 
     implementation("io.fabric8:kubernetes-client:6.5.1")
     // TODO: or use JDK HttpClient? Wouldn't conflict with other OkHttp usages
@@ -29,10 +30,6 @@ tasks.test {
 
 
 group = "$group.kubernetes"
-ext["artifactName"] = "fabric8-kubernetes-info-retriever"
+ext["customArtifactId"] = "fabric8-kubernetes-info-retriever"
 
-
-val commonScriptsFile = File(File(project.gradle.gradleUserHomeDir, "scripts"), "commonScripts.gradle")
-if (commonScriptsFile.exists()) {
-    apply(from = commonScriptsFile)
-}
+apply(from = "../../gradle/scripts/publish-codinux.gradle.kts")

@@ -2,12 +2,15 @@ plugins {
     kotlin("jvm")
 }
 
+java {
+    withSourcesJar()
+}
+
 
 val junitVersion: String by project
 
 dependencies {
-    api("$group:log-appender-base:$version")
-//    api(project(":log-appender-base"))
+    api(project(":LogAppenderBase"))
 
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -18,11 +21,6 @@ tasks.test {
 }
 
 
-ext["artifactId"] = project.name
-ext["libraryName"] = ext["artifactId"]
+ext["customArtifactId"] = "java-util-log-appender-base"
 
-
-val commonScriptsFile = File(File(project.gradle.gradleUserHomeDir, "scripts"), "commonScripts.gradle")
-if (commonScriptsFile.exists()) {
-    apply(from = commonScriptsFile)
-}
+apply(from = "../gradle/scripts/publish-codinux.gradle.kts")

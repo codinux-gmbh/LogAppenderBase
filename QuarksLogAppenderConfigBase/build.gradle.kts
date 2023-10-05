@@ -20,11 +20,6 @@ dependencies {
 }
 
 
-ext["artifactId"] = project.name
-ext["libraryName"] = ext["artifactId"]
+ext["customArtifactId"] = "quarks-log-appender-config-base"
 
-
-val commonScriptsFile = File(File(project.gradle.gradleUserHomeDir, "scripts"), "commonScripts.gradle")
-if (commonScriptsFile.exists()) {
-    apply(from = commonScriptsFile)
-}
+apply(from = "../gradle/scripts/publish-codinux.gradle.kts")

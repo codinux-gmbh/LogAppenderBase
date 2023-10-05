@@ -3,10 +3,6 @@ plugins {
 }
 
 
-group = "net.codinux.log"
-version = "1.0.0-SNAPSHOT"
-
-
 kotlin {
     jvm {
         jvmToolchain(8)
@@ -89,8 +85,7 @@ kotlin {
 }
 
 
-ext["artifactId"] = project.name
-ext["libraryName"] = ext["artifactId"]
 
+ext["customArtifactId"] = "log-appender-base"
 
-apply(from = "../publish.gradle.kts")
+apply(from = "../gradle/scripts/publish-codinux.gradle.kts")

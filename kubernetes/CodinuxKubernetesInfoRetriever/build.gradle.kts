@@ -5,6 +5,7 @@ plugins {
 
 java {
     withSourcesJar()
+
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
     }
@@ -17,8 +18,7 @@ val kotlinSerializationVersion: String by project
 val junitVersion: String by project
 
 dependencies {
-    implementation("$group:log-appender-base:$version")
-//    implementation(project(":log-appender-base"))
+    implementation(project(":LogAppenderBase"))
 
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -41,10 +41,6 @@ tasks.test {
 
 
 group = "$group.kubernetes"
-ext["artifactName"] = "codinux-kubernetes-info-retriever"
+ext["customArtifactId"] = "codinux-kubernetes-info-retriever"
 
-
-val commonScriptsFile = File(File(project.gradle.gradleUserHomeDir, "scripts"), "commonScripts.gradle")
-if (commonScriptsFile.exists()) {
-    apply(from = commonScriptsFile)
-}
+apply(from = "../../gradle/scripts/publish-codinux.gradle.kts")

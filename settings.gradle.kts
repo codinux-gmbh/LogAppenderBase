@@ -22,19 +22,12 @@ rootProject.name = "LogAppenderBase"
 
 
 include("LogAppenderBase")
-project(":LogAppenderBase").name = "log-appender-base"
 
 include("LogbackAppenderBase")
-project(":LogbackAppenderBase").name = "logback-appender-base"
-
 include("JBossLoggingAppenderBase")
-project(":JBossLoggingAppenderBase").name = "jboss-logging-appender-base"
-
 include("JavaUtilLogAppenderBase")
-project(":JavaUtilLogAppenderBase").name = "java-util-log-appender-base"
 
 include("QuarksLogAppenderConfigBase")
-project(":QuarksLogAppenderConfigBase").name = "quarks-log-appender-config-base"
 
 
 /*      Kubernetes info retriever       */
