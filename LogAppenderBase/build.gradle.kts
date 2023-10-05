@@ -46,6 +46,7 @@ kotlin {
 
 
     val coroutinesVersion: String by project
+    val kotlinxDatetimeVersion: String by project
     val ktorVersion: String by project
     val kotestVersion: String by project
 
@@ -54,14 +55,12 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
-                api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
 
