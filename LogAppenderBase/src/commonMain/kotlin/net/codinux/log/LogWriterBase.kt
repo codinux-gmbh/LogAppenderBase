@@ -56,9 +56,14 @@ abstract class LogWriterBase<T>(
     init {
         receiverScope.async {
             if (config.includeKubernetesInfo) {
-                KubernetesInfoRetrieverRegistry.init(stateLogger)
-                podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
-                mapper.podInfo = podInfo
+                try {
+                    KubernetesInfoRetrieverRegistry.init(stateLogger)
+                    podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
+                    mapper.podInfo = podInfo
+                } catch (e: Throwable) {
+                    // TODO: add a retry if retrieving Pod info fails?
+                    stateLogger.error("Could not retrieve Pod info from Kubernetes API server", e)
+                }
             }
 
             isFullyInitialized = true
