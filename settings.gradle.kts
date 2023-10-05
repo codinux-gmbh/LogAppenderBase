@@ -8,9 +8,9 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("multiplatform") version kotlinVersion apply(false)
-        kotlin("jvm") version kotlinVersion apply(false)
-        kotlin("plugin.serialization") version kotlinVersion apply(false)
+        kotlin("multiplatform") version kotlinVersion
+        kotlin("jvm") version kotlinVersion
+        kotlin("plugin.serialization") version kotlinVersion
 
         id("io.quarkus") version quarkusVersion
         id("io.quarkus.extension") version quarkusVersion
