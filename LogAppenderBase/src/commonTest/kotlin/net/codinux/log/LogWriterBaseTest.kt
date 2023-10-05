@@ -183,8 +183,8 @@ class LogWriterBaseTest {
         ndc: String?
     ) = "$timestamp $level $loggerName [$threadName] $message"
 
-    private fun createConfig(writeAsync: Boolean, sendPeriod: Long) =
-        LogAppenderConfig(appendLogsAsync = writeAsync, sendLogRecordsPeriodMillis = sendPeriod)
+    private fun createConfig(sendPeriod: Long) =
+        LogAppenderConfig(sendLogRecordsPeriodMillis = sendPeriod)
 
     private fun createRecord(message: String = "Test message"): LogRecord {
         val now = now()
