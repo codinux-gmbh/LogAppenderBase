@@ -4,10 +4,10 @@ package net.codinux.log
 open class LogAppenderConfig(
     open var enabled: Boolean = EnabledDefaultValue,
 
-    open var hostUrl: String = HostUrlNotSetValue,
+    open var hostUrl: String = HostUrlNotSet,
 
-    open var username: String? = UsernameDefaultValue,
-    open var password: String? = PasswordDefaultValue,
+    open var username: String? = UsernameNotSet,
+    open var password: String? = PasswordNotSet,
 
     open var messageFieldName: String = MessageDefaultFieldName,
 
@@ -92,13 +92,13 @@ open class LogAppenderConfig(
         const val EnabledDefaultValue = True
         const val EnabledDefaultValueString = EnabledDefaultValue.toString()
 
-        const val HostUrlNotSetValue = "null"
+        const val HostUrlNotSet = "null"
 
-        val UsernameDefaultValue: String? = null
-        const val UsernameDefaultValueString = "null"
+        val UsernameNotSet: String? = null
+        const val UsernameNotSetString = "null"
 
-        val PasswordDefaultValue: String? = null
-        const val PasswordDefaultValueString = "null"
+        val PasswordNotSet: String? = null
+        const val PasswordNotSetString = "null"
 
 
         const val MessageDefaultFieldName = "message"

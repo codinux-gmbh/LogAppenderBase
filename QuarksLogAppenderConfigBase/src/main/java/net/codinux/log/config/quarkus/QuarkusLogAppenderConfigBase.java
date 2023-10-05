@@ -24,13 +24,13 @@ public class QuarkusLogAppenderConfigBase {
     /**
      * For password protected Loki instances, to Username to authenticate to Loki.
      */
-    @ConfigItem(defaultValue = "null")
+    @ConfigItem(defaultValue = LogAppenderConfig.UsernameNotSetString)
     public String username = null;
 
     /**
      * For password protected Loki instances, to Password to authenticate to Loki.
      */
-    @ConfigItem(defaultValue = "null")
+    @ConfigItem(defaultValue = LogAppenderConfig.PasswordNotSetString)
     public String password = null;
 
     public MessageConfig message;
