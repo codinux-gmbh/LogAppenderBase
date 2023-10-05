@@ -16,6 +16,8 @@ open class LogbackAppenderBase(
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger()
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
+    protected open val config = logWriter.config.fields
+
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
         ILoggingEvent::class.java.getDeclaredMethod("getInstant")
@@ -30,11 +32,11 @@ open class LogbackAppenderBase(
                 if (eventSupportsInstant) event.instant.toKotlinInstant() else Instant.fromEpochMilliseconds(event.timeStamp),
                 event.level.levelStr,
                 event.formattedMessage,
-                if (logWriter.config.logsLoggerName) event.loggerName else null,
-                if (logWriter.config.logsThreadName) event.threadName else null,
-                if (logWriter.config.logsException) getThrowable(event) else null,
-                if (logWriter.config.logsMdc) event.mdcPropertyMap else null,
-                if (logWriter.config.logsMarker) event.marker?.name else null
+                if (config.logsLoggerName) event.loggerName else null,
+                if (config.logsThreadName) event.threadName else null,
+                if (config.logsException) getThrowable(event) else null,
+                if (config.logsMdc) event.mdcPropertyMap else null,
+                if (config.logsMarker) event.marker?.name else null
             )
         }
     }

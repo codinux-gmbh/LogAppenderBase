@@ -3,8 +3,7 @@ package net.codinux.log.config.quarkus.fields.kubernetes;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConvertWith;
-
-import net.codinux.log.LogAppenderConfig;
+import net.codinux.log.LogAppenderFieldsConfig;
 import net.codinux.log.config.quarkus.converter.FieldNamePrefixConverter;
 
 @ConfigGroup
@@ -13,7 +12,7 @@ public class KubernetesLabelsConfig {
     /**
      * If Kubernetes labels should be included in Elasticsearch index.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.IncludeKubernetesLabelsDefaultValueString)
+    @ConfigItem(defaultValue = LogAppenderFieldsConfig.IncludeKubernetesLabelsDefaultValueString)
     public boolean include;
 
     /**
@@ -21,7 +20,7 @@ public class KubernetesLabelsConfig {
      *
      * Empty string or special value "off" turns prefix off.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.KubernetesLabelsPrefixDefaultValue)
+    @ConfigItem(defaultValue = LogAppenderFieldsConfig.KubernetesLabelsPrefixDefaultValue)
     @ConvertWith(FieldNamePrefixConverter.class)
     public String prefix;
 

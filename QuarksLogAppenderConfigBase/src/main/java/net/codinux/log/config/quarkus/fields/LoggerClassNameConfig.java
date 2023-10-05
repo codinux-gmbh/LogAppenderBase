@@ -2,8 +2,7 @@ package net.codinux.log.config.quarkus.fields;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
-
-import net.codinux.log.LogAppenderConfig;
+import net.codinux.log.LogAppenderFieldsConfig;
 
 @ConfigGroup
 public class LoggerClassNameConfig {
@@ -12,7 +11,7 @@ public class LoggerClassNameConfig {
      * In most cases the logger is a full qualified class name including the package names.
      * If Elasticsearch logger should try to extract the class name - that is without package name - of the logger and include it in Elasticsearch index.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.IncludeLoggerClassNameDefaultValueString)
+    @ConfigItem(defaultValue = LogAppenderFieldsConfig.IncludeLoggerClassNameDefaultValueString)
     public boolean include;
 
     /**
@@ -20,7 +19,7 @@ public class LoggerClassNameConfig {
      * Elasticsearch logger can try to extract class' name from full qualified logger and log this.
      * This is the field name for this.
      */
-    @ConfigItem(name = "fieldname", defaultValue = LogAppenderConfig.LoggerClassNameDefaultFieldName)
+    @ConfigItem(name = "fieldname", defaultValue = LogAppenderFieldsConfig.LoggerClassNameDefaultFieldName)
     public String fieldName;
 
 }

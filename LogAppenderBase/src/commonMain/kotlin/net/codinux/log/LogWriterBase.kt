@@ -18,7 +18,7 @@ abstract class LogWriterBase<T>(
     override val config: LogAppenderConfig,
     protected open val stateLogger: AppenderStateLogger = StdOutStateLogger(),
     protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData(),
-    protected open val mapper: LogRecordMapper = LogRecordMapper(config, processData)
+    protected open val mapper: LogRecordMapper = LogRecordMapper(config.fields, processData)
 ) : LogWriter {
 
     protected abstract fun instantiateMappedRecord(): T
@@ -55,7 +55,7 @@ abstract class LogWriterBase<T>(
 
     init {
         receiverScope.async {
-            if (config.includeKubernetesInfo) {
+            if (config.fields.includeKubernetesInfo) {
                 try {
                     KubernetesInfoRetrieverRegistry.init(stateLogger)
                     podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()

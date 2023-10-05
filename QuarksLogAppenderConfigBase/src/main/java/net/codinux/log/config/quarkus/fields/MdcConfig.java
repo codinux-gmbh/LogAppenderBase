@@ -3,8 +3,7 @@ package net.codinux.log.config.quarkus.fields;
 import io.quarkus.runtime.annotations.ConfigGroup;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConvertWith;
-
-import net.codinux.log.LogAppenderConfig;
+import net.codinux.log.LogAppenderFieldsConfig;
 import net.codinux.log.config.quarkus.converter.FieldNamePrefixConverter;
 
 @ConfigGroup
@@ -13,7 +12,7 @@ public class MdcConfig {
     /**
      * If MDC (Mapped Diagnostic Context) should be included in Elasticsearch index.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.IncludeMdcDefaultValueString)
+    @ConfigItem(defaultValue = LogAppenderFieldsConfig.IncludeMdcDefaultValueString)
     public boolean include;
 
     /**
@@ -27,7 +26,7 @@ public class MdcConfig {
      *  key_1=value_1
      *  key_2=value_2
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.MdcFieldsPrefixDefaultValue)
+    @ConfigItem(defaultValue = LogAppenderFieldsConfig.MdcFieldsPrefixDefaultValue)
     @ConvertWith(FieldNamePrefixConverter.class)
     public String prefix;
 

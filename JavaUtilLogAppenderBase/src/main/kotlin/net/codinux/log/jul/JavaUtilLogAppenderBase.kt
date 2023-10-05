@@ -9,6 +9,8 @@ open class JavaUtilLogAppenderBase(
     protected open val logWriter: LogWriter
 ) : Handler() {
 
+    protected open val config = logWriter.config.fields
+
     override fun publish(record: java.util.logging.LogRecord?) {
         if (isAppenderEnabled && record != null && isLoggable(record)) {
             var message = if (record.message == null) "" else record.message
@@ -22,9 +24,9 @@ open class JavaUtilLogAppenderBase(
                 record.instant.toKotlinInstant(),
                 record.level.name,
                 message,
-                if (logWriter.config.logsLoggerName) record.loggerName else null,
-                if (logWriter.config.logsThreadName) threadName else null,
-                if (logWriter.config.logsException) record.thrown else null
+                if (config.logsLoggerName) record.loggerName else null,
+                if (config.logsThreadName) threadName else null,
+                if (config.logsException) record.thrown else null
             )
         }
     }

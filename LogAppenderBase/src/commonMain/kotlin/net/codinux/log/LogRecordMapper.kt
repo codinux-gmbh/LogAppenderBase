@@ -4,7 +4,7 @@ import net.codinux.log.data.ProcessData
 import net.codinux.log.kubernetes.PodInfo
 
 open class LogRecordMapper(
-    protected open val config: LogAppenderConfig,
+    protected open val config: LogAppenderFieldsConfig,
     protected open val processData: ProcessData,
     open var podInfo: PodInfo? = null,
     open var escapeControlCharacters: Boolean = true
