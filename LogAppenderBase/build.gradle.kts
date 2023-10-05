@@ -6,6 +6,7 @@ plugins {
 kotlin {
     jvm {
         jvmToolchain(8)
+
         withJava()
         testRuns["test"].executionTask.configure {
             useJUnitPlatform()

@@ -6,7 +6,7 @@ java {
     withSourcesJar()
 
     toolchain {
-        // ExtLogRecord.instant needs at least Java version 9 (why?)
+        // ExtLogRecord.instant needs at least Java version 9
         languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
