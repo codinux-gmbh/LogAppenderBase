@@ -20,6 +20,7 @@ open class LogRecordMapper(
     open fun mapStaticFields(fields: MutableMap<String, String?>) {
         mapField(fields, config.includeHostName, config.hostNameFieldName, processData.hostName)
         mapField(fields, config.includeAppName, config.appNameFieldName, config.appName)
+        mapField(fields, config.includeAppVersion, config.appVersionFieldName, config.appVersion)
 
         mapPodInfoFields(fields)
 

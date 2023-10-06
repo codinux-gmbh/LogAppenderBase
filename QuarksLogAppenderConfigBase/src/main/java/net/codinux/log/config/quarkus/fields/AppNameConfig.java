@@ -20,7 +20,7 @@ public class AppNameConfig {
     public String fieldName;
 
     /**
-     * The name of the app name field.
+     * The application name as it gets sent to logging backend.
      *
      * Defaults to ${quarkus.application.name} (see <a href="https://quarkus.io/guides/all-config#quarkus-core_quarkus.application.name">Quarkus config quarkus.application.name</a>).
      */

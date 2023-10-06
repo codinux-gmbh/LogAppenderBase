@@ -44,6 +44,12 @@ public class QuarkusLogAppenderFieldsConfig {
     public AppNameConfig appName;
 
     /**
+     * Config for the app version.
+     */
+    @ConfigItem(name = "version")
+    public AppVersionConfig appVersion;
+
+    /**
      * Config for the thread name.
      */
     @ConfigItem(name = "threadname")

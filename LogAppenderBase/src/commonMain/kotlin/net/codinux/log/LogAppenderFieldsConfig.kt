@@ -19,6 +19,10 @@ open class LogAppenderFieldsConfig(
     open var appNameFieldName: String = AppNameDefaultFieldName,
     open var appName: String? = AppNameDefaultValue,
 
+    open var includeAppVersion: Boolean = IncludeAppVersionDefaultValue,
+    open var appVersionFieldName: String = AppVersionDefaultFieldName,
+    open var appVersion: String? = AppVersionDefaultValue,
+
     open var includeHostName: Boolean = IncludeHostNameDefaultValue,
     open var hostNameFieldName: String = HostNameDefaultFieldName,
 
@@ -101,6 +105,12 @@ open class LogAppenderFieldsConfig(
         const val IncludeAppNameDefaultValue = False
         const val IncludeAppNameDefaultValueString = IncludeAppNameDefaultValue.toString()
         const val AppNameDefaultFieldName = "app"
+
+        val AppVersionDefaultValue: String? = null
+        const val AppVersionDefaultValueString = "null"
+        const val IncludeAppVersionDefaultValue = False
+        const val IncludeAppVersionDefaultValueString = IncludeAppVersionDefaultValue.toString()
+        const val AppVersionDefaultFieldName = "version"
 
         const val IncludeHostNameDefaultValue = False
         const val IncludeHostNameDefaultValueString = IncludeHostNameDefaultValue.toString()
