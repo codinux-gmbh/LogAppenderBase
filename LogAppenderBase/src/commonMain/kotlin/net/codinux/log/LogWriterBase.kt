@@ -65,6 +65,10 @@ abstract class LogWriterBase<T>(
                 retrievePodInfo()
             }
 
+            Platform.addShutdownHook {
+                close()
+            }
+
             isFullyInitialized = true
 
             // pre-cache mapped record objects
@@ -194,6 +198,8 @@ abstract class LogWriterBase<T>(
 
     override fun close() {
         try {
+            stateLogger.info("close() called")
+
             senderScope.cancelSafely()
 
             flush()
