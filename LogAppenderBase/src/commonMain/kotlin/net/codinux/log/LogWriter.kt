@@ -1,10 +1,13 @@
 package net.codinux.log
 
 import kotlinx.datetime.Instant
+import net.codinux.log.statelogger.AppenderStateLogger
 
 interface LogWriter {
 
     val config: LogAppenderConfig
+
+    val stateLogger: AppenderStateLogger
 
     /**
      * Previously we used a LogRecord object instead of all of these parameters directly but to get it (almost) allocation and therefore

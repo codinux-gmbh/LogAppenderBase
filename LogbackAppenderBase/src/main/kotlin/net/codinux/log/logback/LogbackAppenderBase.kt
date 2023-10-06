@@ -7,13 +7,10 @@ import ch.qos.logback.core.UnsynchronizedAppenderBase
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogWriter
-import net.codinux.log.statelogger.AppenderStateLogger
-import net.codinux.log.statelogger.StdOutStateLogger
 
 open class LogbackAppenderBase(
     protected open val isAppenderEnabled: Boolean,
-    protected open val logWriter: LogWriter,
-    protected open val stateLogger: AppenderStateLogger = StdOutStateLogger()
+    protected open val logWriter: LogWriter
 ) : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
     protected open val config = logWriter.config.fields
@@ -71,7 +68,7 @@ open class LogbackAppenderBase(
 
             return throwable
         } catch (e: Exception) {
-            stateLogger.error("Could not get Throwable from IThrowableProxy", e)
+            logWriter.stateLogger.error("Could not get Throwable from IThrowableProxy", e)
         }
 
         return null
