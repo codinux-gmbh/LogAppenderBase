@@ -34,3 +34,18 @@ tasks.register("publishAllToMavenLocal") {
         ":Fabric8KubernetesInfoRetriever:publishToMavenLocal"
     )
 }
+
+tasks.register("publishAll") {
+    dependsOn(
+        ":LogAppenderBase:publish",
+
+        ":LogbackAppenderBase:publish",
+        ":JBossLoggingAppenderBase:publish",
+        ":JavaUtilLogAppenderBase:publish",
+
+        ":QuarksLogAppenderConfigBase:publish",
+
+        ":CodinuxKubernetesInfoRetriever:publish",
+        ":Fabric8KubernetesInfoRetriever:publish"
+    )
+}
