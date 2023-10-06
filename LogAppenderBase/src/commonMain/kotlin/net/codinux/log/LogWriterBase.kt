@@ -53,6 +53,9 @@ abstract class LogWriterBase<T>(
 
     protected open var isFullyInitialized = false // TODO: this is not thread safe / volatile
 
+    var countSentRecords: Long = 0
+        protected set
+
     init {
         receiverScope.async {
             if (config.fields.includeKubernetesInfo) {
@@ -128,6 +131,8 @@ abstract class LogWriterBase<T>(
 
                 if (nextBatch.isNotEmpty()) {
                     failedRecords = writeRecords(nextBatch)
+
+                    countSentRecords += (nextBatch.size - failedRecords.size)
 
                     if (failedRecords.size != nextBatch.size) { // if all records failed to send there's no need to release these records
                         // in case of failed records this mutates nextBatch, so don't hold a reference to nextBatch
