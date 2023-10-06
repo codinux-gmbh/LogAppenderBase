@@ -13,7 +13,6 @@ import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
 import kotlin.math.min
 
-@OptIn(ExperimentalCoroutinesApi::class)
 abstract class LogWriterBase<T>(
     override val config: LogAppenderConfig,
     override val stateLogger: AppenderStateLogger = StdOutStateLogger(),
@@ -57,16 +56,13 @@ abstract class LogWriterBase<T>(
         protected set
 
     init {
+        initializeWriter()
+    }
+
+    protected open fun initializeWriter() {
         receiverScope.async {
             if (config.fields.includeKubernetesInfo) {
-                try {
-                    KubernetesInfoRetrieverRegistry.init(stateLogger)
-                    podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
-                    mapper.podInfo = podInfo
-                } catch (e: Throwable) {
-                    // TODO: add a retry if retrieving Pod info fails?
-                    stateLogger.error("Could not retrieve Pod info from Kubernetes API server", e)
-                }
+                retrievePodInfo()
             }
 
             isFullyInitialized = true
@@ -77,6 +73,18 @@ abstract class LogWriterBase<T>(
             }
 
             asyncWriteLoop(config.sendLogRecordsPeriodMillis)
+        }
+    }
+
+    protected open suspend fun retrievePodInfo() {
+        try {
+            KubernetesInfoRetrieverRegistry.init(stateLogger)
+
+            podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
+            mapper.podInfo = podInfo
+        } catch (e: Throwable) {
+            // TODO: add a retry if retrieving Pod info fails?
+            stateLogger.error("Could not retrieve Pod info from Kubernetes API server", e)
         }
     }
 
