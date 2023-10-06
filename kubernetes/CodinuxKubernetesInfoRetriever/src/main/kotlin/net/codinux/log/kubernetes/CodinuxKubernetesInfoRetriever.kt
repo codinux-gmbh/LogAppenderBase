@@ -157,12 +157,15 @@ class CodinuxKubernetesInfoRetriever(
         // TODO: find the container we are running in. Till then we simply take the first container
         val containerStatus = pod.status.containerStatuses.firstOrNull()
         val container = pod.spec.containers.firstOrNull()
+        val startTime = containerStatus?.state?.running?.startedAt
+            ?: containerStatus?.state?.terminated?.startedAt
+            ?: pod.status.startTime // but be aware `startTime` returns Pod-, not Container start time
 
         PodInfo(
             pod.metadata.namespace.ifBlank { namespace },
             pod.metadata.name.ifBlank { podName },
             pod.status.podIP ?: podIp,
-            pod.status.startTime, // TODO: get current time
+            startTime,
             pod.metadata.uid,
             containerStatus?.restartCount,
             container?.name ?: containerStatus?.name,
