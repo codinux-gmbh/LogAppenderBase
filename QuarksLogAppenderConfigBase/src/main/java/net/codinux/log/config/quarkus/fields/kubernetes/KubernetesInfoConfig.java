@@ -24,8 +24,11 @@ public class KubernetesInfoConfig {
     @ConvertWith(FieldNamePrefixConverter.class)
     public String prefix;
 
-    public KubernetesLabelsConfig labels;
 
-    public KubernetesAnnotationsConfig annotations;
+    /**
+     * Config for logged Kubernetes fields.
+     */
+    @ConfigItem(name = "field")
+    public QuarkusKubernetesFieldsConfig fields;
 
 }

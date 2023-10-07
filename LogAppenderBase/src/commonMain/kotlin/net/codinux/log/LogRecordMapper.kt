@@ -77,8 +77,8 @@ open class LogRecordMapper(
         }
     }
 
-    protected open fun mapFieldIfNotNull(fields: MutableMap<String, String?>, fieldName: String, value: String?) {
-        mapField(fields, value != null, fieldName, value)
+    protected open fun mapFieldIfNotNull(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, value: String?) {
+        mapField(fields, includeField && value != null, fieldName, value)
     }
 
     protected open fun mapMdcFields(fields: MutableMap<String, String?>, includeMdc: Boolean, mdc: Map<String, String>?) {
@@ -97,20 +97,35 @@ open class LogRecordMapper(
         if (config.includeKubernetesInfo) {
             podInfo?.let { info ->
                 val prefix = config.kubernetesFieldsPrefix
+                val kubernetesFields = config.kubernetesFields
 
-                mapField(fields, true, prefix + "namespace", info.namespace)
-                mapField(fields, true, prefix + "podName", info.podName)
-                mapField(fields, true, prefix + "podIp", info.podIp)
-                mapField(fields, true, prefix + "startTime", info.startTime)
+                mapField(fields, kubernetesFields.includeNamespace, prefix + kubernetesFields.namespaceFieldName, info.namespace)
+                mapField(fields, kubernetesFields.includePodName, prefix + kubernetesFields.podNameFieldName, info.podName)
+                mapField(fields, kubernetesFields.includePodIp, prefix + kubernetesFields.podIpFieldName, info.podIp)
+                mapField(fields, kubernetesFields.includeStartTime, prefix + kubernetesFields.startTimeFieldName, info.startTime)
 
-                mapFieldIfNotNull(fields, prefix + "podUid", info.podUid)
-                mapFieldIfNotNull(fields, prefix + "restartCount", info.restartCount.toString())
-                mapFieldIfNotNull(fields, prefix + "containerName", info.containerName)
-                mapFieldIfNotNull(fields, prefix + "containerId", info.containerId)
-                mapFieldIfNotNull(fields, prefix + "imageName", info.imageName)
-                mapFieldIfNotNull(fields, prefix + "imageId", info.imageId)
-                mapFieldIfNotNull(fields, prefix + "nodeIp", info.nodeIp)
-                mapFieldIfNotNull(fields, prefix + "node", info.nodeName)
+                mapFieldIfNotNull(fields, kubernetesFields.includePodUid, prefix + kubernetesFields.podUidFieldName, info.podUid)
+                mapFieldIfNotNull(fields, kubernetesFields.includeRestartCount, prefix + kubernetesFields.restartCountFieldName, info.restartCount.toString())
+                mapFieldIfNotNull(fields, kubernetesFields.includeContainerName, prefix + kubernetesFields.containerNameFieldName, info.containerName)
+                mapFieldIfNotNull(fields, kubernetesFields.includeContainerId, prefix + kubernetesFields.containerIdFieldName, info.containerId)
+                mapFieldIfNotNull(fields, kubernetesFields.includeImageName, prefix + kubernetesFields.imageNameFieldName, info.imageName)
+                mapFieldIfNotNull(fields, kubernetesFields.includeImageId, prefix + kubernetesFields.imageIdFieldName, info.imageId)
+                mapFieldIfNotNull(fields, kubernetesFields.includeNodeIp, prefix + kubernetesFields.nodeIpFieldName, info.nodeIp)
+                mapFieldIfNotNull(fields, kubernetesFields.includeNodeName, prefix + kubernetesFields.nodeNameFieldName, info.nodeName)
+
+                if (kubernetesFields.includeLabels) {
+                    val labelsPrefix = prefix + kubernetesFields.labelsPrefix
+                    info.labels.forEach { (labelName, value) ->
+                        mapField(fields, true, labelsPrefix + labelName, value)
+                    }
+                }
+
+                if (kubernetesFields.includeAnnotations) {
+                    val annotationsPrefix = prefix + kubernetesFields.annotationsPrefix
+                    info.annotations.forEach { (annotationName, value) ->
+                        mapField(fields, true, annotationsPrefix + annotationName, value)
+                    }
+                }
             }
         }
     }

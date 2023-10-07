@@ -1,5 +1,7 @@
 package net.codinux.log
 
+import net.codinux.log.config.KubernetesFieldsConfig
+
 open class LogAppenderFieldsConfig(
     open var messageFieldName: String = MessageDefaultFieldName,
 
@@ -49,11 +51,7 @@ open class LogAppenderFieldsConfig(
     open var includeKubernetesInfo: Boolean = IncludeKubernetesInfoDefaultValue,
     open var kubernetesFieldsPrefix: String? = KubernetesFieldsPrefixDefaultValue,
 
-    open var includeKubernetesLabels: Boolean = IncludeKubernetesLabelsDefaultValue,
-    open var kubernetesLabelsPrefix: String? = KubernetesLabelsPrefixDefaultValue,
-
-    open var includeKubernetesAnnotations: Boolean = IncludeKubernetesAnnotationsDefaultValue,
-    open var kubernetesAnnotationsPrefix: String? = KubernetesAnnotationsPrefixDefaultValue
+    open var kubernetesFields: KubernetesFieldsConfig = KubernetesFieldsConfig(),
     
 ) {
 
@@ -141,14 +139,6 @@ open class LogAppenderFieldsConfig(
         const val IncludeKubernetesInfoDefaultValue = False
         const val IncludeKubernetesInfoDefaultValueString = IncludeKubernetesInfoDefaultValue.toString()
         const val KubernetesFieldsPrefixDefaultValue: String = "k8s"
-
-        const val IncludeKubernetesLabelsDefaultValue = False
-        const val IncludeKubernetesLabelsDefaultValueString = IncludeKubernetesLabelsDefaultValue.toString()
-        const val KubernetesLabelsPrefixDefaultValue: String = "label"
-
-        const val IncludeKubernetesAnnotationsDefaultValue = False
-        const val IncludeKubernetesAnnotationsDefaultValueString = IncludeKubernetesAnnotationsDefaultValue.toString()
-        const val KubernetesAnnotationsPrefixDefaultValue: String = "annotation"
 
     }
 
