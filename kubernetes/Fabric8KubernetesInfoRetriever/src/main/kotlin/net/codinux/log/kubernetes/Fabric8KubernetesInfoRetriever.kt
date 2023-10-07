@@ -105,7 +105,7 @@ open class Fabric8KubernetesInfoRetriever(
             }
         }
 
-        return PodInfo(namespace, podName, podIp, startTime, uid, restartCount, containerName, containerId,
+        return PodInfo(namespace, podName, podIp, uid, startTime, restartCount, containerName, containerId,
             imageName, imageId, nodeIp, nodeName, labels, annotations)
     }
 
