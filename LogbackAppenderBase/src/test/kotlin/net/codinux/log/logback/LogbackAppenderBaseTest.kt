@@ -5,7 +5,7 @@ import ch.qos.logback.classic.LoggerContext
 import io.mockk.*
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
-import net.codinux.log.LogAppenderConfig
+import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.LogWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

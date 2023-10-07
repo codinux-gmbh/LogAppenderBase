@@ -1,5 +1,6 @@
 package net.codinux.log
 
+import net.codinux.log.config.LogAppenderFieldsConfig
 import net.codinux.log.data.ProcessData
 import net.codinux.log.kubernetes.PodInfo
 

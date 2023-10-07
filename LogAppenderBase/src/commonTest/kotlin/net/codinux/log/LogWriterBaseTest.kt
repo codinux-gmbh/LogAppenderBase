@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import net.codinux.log.config.LogAppenderConfig
 import kotlin.js.JsName
 import kotlin.test.Test
 

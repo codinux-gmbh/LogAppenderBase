@@ -1,6 +1,7 @@
 package net.codinux.log
 
 import kotlinx.datetime.Instant
+import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.statelogger.AppenderStateLogger
 
 interface LogWriter {
