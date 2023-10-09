@@ -18,6 +18,12 @@ public class QuarkusLogAppenderConfigBase {
     public boolean enable;
 
     /**
+     * The logger name under which the internal state and errors get logged.
+     */
+    @ConfigItem(defaultValue = LogAppenderConfig.StateLoggerNotSetString)
+    public String stateLoggerName;
+
+    /**
      * URL of the endpoint where to reach ElasticSearch / Loki (e.g. http://localhost:9200 / http://localhost:3100).
      */
     @ConfigItem(name = "host-url")
@@ -73,12 +79,6 @@ public class QuarkusLogAppenderConfigBase {
     @ConfigItem
     public Optional<Duration> requestTimeout = Optional.empty();
 
-//    /**
-//     * The logger name under which Elasticsearch Logger logs its internal errors.
-//     */
-//    @ConfigItem(defaultValue = QuarkusElasticsearchLogHandler.ERROR_LOGGER_DEFAULT_NAME)
-//    public String errorLoggerName;
-//
 //    /**
 //     * To not flood logs with errors like ConnectionException internal errors get logged only once per a configurable period (default: once per 30 minutes).
 //     * Accepted formats are based on the ISO-8601 duration format. The format for the value is "PnDTnHnMn.nS" where "nDT" means "n" number of
