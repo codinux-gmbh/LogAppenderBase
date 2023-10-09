@@ -22,6 +22,6 @@ dependencies {
 }
 
 
-ext["customArtifactId"] = "quarks-log-appender-config-base"
+ext["customArtifactId"] = "quarkus-log-appender-config-base"
 
 apply(from = "../gradle/scripts/publish-codinux.gradle.kts")
