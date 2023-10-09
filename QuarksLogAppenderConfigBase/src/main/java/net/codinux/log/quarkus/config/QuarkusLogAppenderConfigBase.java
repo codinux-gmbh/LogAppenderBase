@@ -5,6 +5,8 @@ import io.quarkus.runtime.annotations.RegisterForReflection;
 import net.codinux.log.config.LogAppenderConfig;
 import net.codinux.log.config.WriterConfig;
 import net.codinux.log.quarkus.config.fields.QuarkusLogAppenderFieldsConfig;
+import java.time.Duration;
+import java.util.Optional;
 
 @RegisterForReflection
 public class QuarkusLogAppenderConfigBase {
@@ -58,6 +60,18 @@ public class QuarkusLogAppenderConfigBase {
      */
     @ConfigItem(defaultValue = "" + WriterConfig.SendLogRecordsPeriodMillisDefaultValue)
     public int sendLogRecordsPeriodMillis;
+
+    /**
+     * Sets the connection timeout, that is the time period in which a client should establish a connection with a server.
+     */
+    @ConfigItem
+    public Optional<Duration> connectTimeout = Optional.empty();
+
+    /**
+     * Sets the request timeout, that is the time period required to process an HTTP call: from sending a request to receiving a response..
+     */
+    @ConfigItem
+    public Optional<Duration> requestTimeout = Optional.empty();
 
 //    /**
 //     * The logger name under which Elasticsearch Logger logs its internal errors.

@@ -8,7 +8,10 @@ open class WriterConfig(
 
     open var maxBufferedLogRecords: Int = MaxBufferedLogRecordsDefaultValue,
     open var maxLogRecordsPerBatch: Int = MaxLogRecordsPerBatchDefaultValue,
-    open var sendLogRecordsPeriodMillis: Long = SendLogRecordsPeriodMillisDefaultValue
+    open var sendLogRecordsPeriodMillis: Long = SendLogRecordsPeriodMillisDefaultValue,
+
+    open var connectTimeoutMillis: Long? = ConnectTimeoutNotSet,
+    open var requestTimeoutMillis: Long? = RequestTimeoutNotSet
 ) {
 
     companion object {
@@ -24,6 +27,10 @@ open class WriterConfig(
         const val MaxBufferedLogRecordsDefaultValue = 5000
         const val MaxLogRecordsPerBatchDefaultValue = 100
         const val SendLogRecordsPeriodMillisDefaultValue = 100L
+
+        val ConnectTimeoutNotSet: Long? = null
+
+        val RequestTimeoutNotSet: Long? = null
 
     }
 }
