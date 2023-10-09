@@ -3,6 +3,7 @@ package net.codinux.log.quarkus.config;
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import net.codinux.log.config.LogAppenderConfig;
+import net.codinux.log.config.WriterConfig;
 import net.codinux.log.quarkus.config.fields.QuarkusLogAppenderFieldsConfig;
 
 @RegisterForReflection
@@ -23,13 +24,13 @@ public class QuarkusLogAppenderConfigBase {
     /**
      * For password protected Loki instances, to Username to authenticate to Loki.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.UsernameNotSetString)
+    @ConfigItem(defaultValue = WriterConfig.UsernameNotSetString)
     public String username = null;
 
     /**
      * For password protected Loki instances, to Password to authenticate to Loki.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.PasswordNotSetString)
+    @ConfigItem(defaultValue = WriterConfig.PasswordNotSetString)
     public String password = null;
 
 
@@ -43,19 +44,19 @@ public class QuarkusLogAppenderConfigBase {
     /**
      * The maximum number of log records that are send in one batch to Elasticsearch.
      */
-    @ConfigItem(defaultValue = "" + LogAppenderConfig.MaxLogRecordsPerBatchDefaultValue)
+    @ConfigItem(defaultValue = "" + WriterConfig.MaxLogRecordsPerBatchDefaultValue)
     public int maxLogRecordsPerBatch;
 
     /**
      * The maximum number of log records being buffered before the get dropped and therefore irrevocably get lost.
      */
-    @ConfigItem(defaultValue = "" + LogAppenderConfig.MaxBufferedLogRecordsDefaultValue)
+    @ConfigItem(defaultValue = "" + WriterConfig.MaxBufferedLogRecordsDefaultValue)
     public int maxBufferedLogRecords;
 
     /**
      * The interval in which log records get send to Elasticsearch in milliseconds.
      */
-    @ConfigItem(defaultValue = "" + LogAppenderConfig.SendLogRecordsPeriodMillisDefaultValue)
+    @ConfigItem(defaultValue = "" + WriterConfig.SendLogRecordsPeriodMillisDefaultValue)
     public int sendLogRecordsPeriodMillis;
 
 //    /**

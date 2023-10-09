@@ -38,9 +38,11 @@ abstract class LogWriterBase<T>(
     protected abstract suspend fun writeRecords(records: List<T>): List<T>
 
 
-    protected open val cachedMappedRecords = Channel<T>(config.maxBufferedLogRecords)
+    protected open val writerConfig = config.writer
 
-    protected open val recordsToWrite = Channel<T>(config.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
+    protected open val cachedMappedRecords = Channel<T>(writerConfig.maxBufferedLogRecords)
+
+    protected open val recordsToWrite = Channel<T>(writerConfig.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
         stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
                 "or the count log records to write per batch (maxLogRecordsPerBatch) or decrease the period to write logs (sendLogRecordsPeriodMillis).")
     }
@@ -73,11 +75,11 @@ abstract class LogWriterBase<T>(
             isFullyInitialized = true
 
             // pre-cache mapped record objects
-            IntRange(0, min(1_000, config.maxBufferedLogRecords / 2)).forEach {
+            IntRange(0, min(1_000, writerConfig.maxBufferedLogRecords / 2)).forEach {
                 cachedMappedRecords.send(instantiateMappedRecord())
             }
 
-            asyncWriteLoop(config.sendLogRecordsPeriodMillis)
+            asyncWriteLoop(writerConfig.sendLogRecordsPeriodMillis)
         }
     }
 
@@ -138,7 +140,7 @@ abstract class LogWriterBase<T>(
             try {
                 val nextBatch = failedRecords.toMutableList()
 
-                while (recordsToWrite.isNotEmpty && recordsToWrite.isClosedForReceive == false && nextBatch.size < config.maxLogRecordsPerBatch) {
+                while (recordsToWrite.isNotEmpty && recordsToWrite.isClosedForReceive == false && nextBatch.size < writerConfig.maxLogRecordsPerBatch) {
                     nextBatch.add(recordsToWrite.receive())
                 }
 

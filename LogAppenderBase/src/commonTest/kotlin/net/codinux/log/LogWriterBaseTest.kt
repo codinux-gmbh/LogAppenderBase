@@ -8,6 +8,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import net.codinux.log.config.LogAppenderConfig
+import net.codinux.log.config.WriterConfig
 import kotlin.js.JsName
 import kotlin.test.Test
 
@@ -185,7 +186,7 @@ class LogWriterBaseTest {
     ) = "$timestamp $level $loggerName [$threadName] $message"
 
     private fun createConfig(sendPeriod: Long) =
-        LogAppenderConfig(sendLogRecordsPeriodMillis = sendPeriod)
+        LogAppenderConfig(writer = WriterConfig(sendLogRecordsPeriodMillis = sendPeriod))
 
     private fun createRecord(message: String = "Test message"): LogRecord {
         val now = now()
