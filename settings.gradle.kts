@@ -24,6 +24,7 @@ rootProject.name = "LogAppenderBase"
 include("LogAppenderBase")
 
 include("LogbackAppenderBase")
+include("Log4j2LogAppenderBase")
 include("JBossLoggingAppenderBase")
 include("JavaUtilLogAppenderBase")
 
