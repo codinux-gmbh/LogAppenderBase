@@ -41,3 +41,6 @@ include("CodinuxKubernetesInfoRetriever")
 project(":CodinuxKubernetesInfoRetriever").apply {
     projectDir = File("kubernetes/CodinuxKubernetesInfoRetriever")
 }
+
+
+include("benchmarks")
