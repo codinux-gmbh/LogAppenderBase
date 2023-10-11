@@ -1,13 +1,16 @@
 package net.codinux.log.statelogger
 
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-open class LogbackStateLogger(loggerName: String) : AppenderStateLogger { // TODO: use ContextAware
+open class LogbackStateLogger(
+    protected open val log: Logger
+) : AppenderStateLogger { // TODO: use ContextAware
 
-    constructor(loggerClass: Class<*>) : this(loggerClass.name)
+    constructor(loggerName: String) : this(LoggerFactory.getLogger(loggerName))
 
+    constructor(loggerClass: Class<*>) : this(LoggerFactory.getLogger(loggerClass))
 
-    protected open val log = LoggerFactory.getLogger(loggerName)
 
     override fun info(message: String) {
         log.info(message)
