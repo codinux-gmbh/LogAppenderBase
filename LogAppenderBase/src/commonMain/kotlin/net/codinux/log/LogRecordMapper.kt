@@ -6,10 +6,13 @@ import net.codinux.log.kubernetes.PodInfo
 
 open class LogRecordMapper(
     protected open val config: LogAppenderFieldsConfig,
-    protected open val processData: ProcessData,
-    open var podInfo: PodInfo? = null,
     open var escapeControlCharacters: Boolean = true
 ) {
+
+    open lateinit var processData: ProcessData
+
+    open var podInfo: PodInfo? = null
+
 
     protected open val cachedStackTraces = mutableMapOf<Int?, String>() // TODO: use thread safe Map
 
@@ -88,11 +91,14 @@ open class LogRecordMapper(
                 val prefix = config.mdcKeysPrefix
 
                 mdc.mapNotNull { (key, value) ->
-                    mapField(fields, true, prefix + key, value)
+                    mapField(fields, true, prefix + escapeDynamicLabelName(key), value)
                 }
             }
         }
     }
+
+    // so that subclasses are able to do some Log storage specific escaping
+    protected open fun escapeDynamicLabelName(key: String): String = key
 
     protected open fun mapPodInfoFields(fields: MutableMap<String, String?>) {
         if (config.includeKubernetesInfo) {
