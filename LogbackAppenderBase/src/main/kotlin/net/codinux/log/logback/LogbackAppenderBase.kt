@@ -3,7 +3,6 @@ package net.codinux.log.logback
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
-import ch.qos.logback.core.UnsynchronizedAppenderBase
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogWriter
@@ -11,9 +10,7 @@ import net.codinux.log.LogWriter
 open class LogbackAppenderBase(
     protected open val isAppenderEnabled: Boolean,
     protected open val logWriter: LogWriter
-) : UnsynchronizedAppenderBase<ILoggingEvent>() {
-
-    protected open val config = logWriter.config.fields
+) : ConfigurableUnsynchronizedAppenderBase(logWriter.config) {
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
@@ -29,11 +26,11 @@ open class LogbackAppenderBase(
                 if (eventSupportsInstant) event.instant.toKotlinInstant() else Instant.fromEpochMilliseconds(event.timeStamp),
                 event.level.levelStr,
                 event.formattedMessage,
-                if (config.logsLoggerName) event.loggerName else null,
-                if (config.logsThreadName) event.threadName else null,
-                if (config.logsException) getThrowable(event) else null,
-                if (config.logsMdc) event.mdcPropertyMap else null,
-                if (config.logsMarker) event.marker?.name else null
+                if (fields.logsLoggerName) event.loggerName else null,
+                if (fields.logsThreadName) event.threadName else null,
+                if (fields.logsException) getThrowable(event) else null,
+                if (fields.logsMdc) event.mdcPropertyMap else null,
+                if (fields.logsMarker) event.marker?.name else null
             )
         }
     }
