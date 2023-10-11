@@ -1,7 +1,6 @@
-package net.codinux.log.jul
+package net.codinux.log
 
 import kotlinx.datetime.toKotlinInstant
-import net.codinux.log.LogWriter
 import java.util.logging.Handler
 
 open class JavaUtilLogAppenderBase(

@@ -1,11 +1,10 @@
-package net.codinux.log.logback
+package net.codinux.log
 
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toKotlinInstant
-import net.codinux.log.LogWriter
 import net.codinux.log.config.LogAppenderConfig
 
 abstract class LogbackAppenderBase(

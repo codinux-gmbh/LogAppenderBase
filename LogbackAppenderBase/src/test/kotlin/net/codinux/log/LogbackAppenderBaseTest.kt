@@ -1,4 +1,4 @@
-package net.codinux.log.logback
+package net.codinux.log
 
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
@@ -19,7 +19,9 @@ class LogbackAppenderBaseTest {
         every { this@mockk.config } returns this@LogbackAppenderBaseTest.config
     }
 
-    private val underTest = LogbackAppenderBase(true, logWriterMock).apply {
+    private val underTest = object : LogbackAppenderBase() {
+        override fun createLogWriter(config: LogAppenderConfig) = logWriterMock
+    }.apply {
         this.start()
     }
 

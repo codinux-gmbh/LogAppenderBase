@@ -1,4 +1,4 @@
-package net.codinux.log.jboss
+package net.codinux.log
 
 import org.jboss.logmanager.LogManager
 import org.jboss.logmanager.formatters.ColorPatternFormatter

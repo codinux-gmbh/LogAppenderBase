@@ -1,7 +1,6 @@
-package net.codinux.log.jboss
+package net.codinux.log
 
 import kotlinx.datetime.toKotlinInstant
-import net.codinux.log.LogWriter
 import org.jboss.logmanager.ExtFormatter
 import org.jboss.logmanager.ExtHandler
 import org.jboss.logmanager.ExtLogRecord

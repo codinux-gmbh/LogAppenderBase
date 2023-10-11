@@ -1,7 +1,6 @@
-package net.codinux.log.log4j2
+package net.codinux.log
 
 import kotlinx.datetime.Instant
-import net.codinux.log.LogWriter
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.Property

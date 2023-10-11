@@ -1,6 +1,5 @@
-package net.codinux.log.jboss.statelogger
+package net.codinux.log.statelogger
 
-import net.codinux.log.statelogger.AppenderStateLogger
 import org.jboss.logmanager.Level
 import org.jboss.logmanager.Logger
 

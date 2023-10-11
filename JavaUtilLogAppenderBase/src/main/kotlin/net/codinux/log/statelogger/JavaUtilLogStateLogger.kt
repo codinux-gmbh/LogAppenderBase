@@ -1,6 +1,5 @@
-package net.codinux.log.jul.statelogger
+package net.codinux.log.statelogger
 
-import net.codinux.log.statelogger.AppenderStateLogger
 import java.util.logging.Level
 import java.util.logging.Logger
 

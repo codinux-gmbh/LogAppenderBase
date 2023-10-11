@@ -1,6 +1,5 @@
-package net.codinux.log.logback.statelogger
+package net.codinux.log.statelogger
 
-import net.codinux.log.statelogger.AppenderStateLogger
 import org.slf4j.LoggerFactory
 
 open class LogbackStateLogger(loggerName: String) : AppenderStateLogger { // TODO: use ContextAware

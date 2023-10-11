@@ -1,4 +1,4 @@
-package net.codinux.log.jboss
+package net.codinux.log
 
 import java.util.logging.Handler
 import java.util.logging.LogManager
