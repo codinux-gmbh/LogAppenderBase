@@ -6,11 +6,13 @@ import ch.qos.logback.classic.spi.ThrowableProxy
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.LogWriter
+import net.codinux.log.config.LogAppenderConfig
 
-open class LogbackAppenderBase(
-    protected open val isAppenderEnabled: Boolean,
-    protected open val logWriter: LogWriter
-) : ConfigurableUnsynchronizedAppenderBase(logWriter.config) {
+abstract class LogbackAppenderBase(
+    config: LogAppenderConfig = LogAppenderConfig()
+) : ConfigurableUnsynchronizedAppenderBase(config) {
+
+    protected lateinit var logWriter: LogWriter
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
@@ -20,8 +22,18 @@ open class LogbackAppenderBase(
         false
     }
 
+
+    abstract fun createLogWriter(config: LogAppenderConfig): LogWriter
+
+    override fun start() {
+        // config is now loaded -> LogWriter can be created / started
+        this.logWriter = createLogWriter(config)
+
+        super.start()
+    }
+
     override fun append(event: ILoggingEvent?) {
-        if (isAppenderEnabled && event != null) {
+        if (config.enabled && event != null) {
             logWriter.writeRecord(
                 if (eventSupportsInstant) event.instant.toKotlinInstant() else Instant.fromEpochMilliseconds(event.timeStamp),
                 event.level.levelStr,
