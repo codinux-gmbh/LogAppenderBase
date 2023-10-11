@@ -42,8 +42,6 @@ open class LogRecordMapper(
         marker: String?,
         ndc: String?
     ) {
-        removeDynamicFields(fields)
-
         mapField(fields, config.includeLogLevel, config.logLevelFieldName, level)
         mapField(fields, config.includeLoggerName, config.loggerNameFieldName, loggerName)
         mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { loggerName?.let { extractLoggerClassName(it) } }
@@ -51,14 +49,6 @@ open class LogRecordMapper(
         mapMdcFields(fields, config.includeMdc && mdc != null, mdc)
         mapDynamicFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, marker)
         mapDynamicFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, ndc)
-    }
-
-    protected open fun removeDynamicFields(fields: MutableMap<String, String?>) {
-        if (config.includeMdc && config.mdcKeysPrefix != null) {
-            fields.keys.filter { it.startsWith(config.mdcKeysPrefix!!) }.forEach { mdcField ->
-                fields.remove(mdcField)
-            }
-        }
     }
 
     protected open fun mapField(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, valueSupplier: () -> String?) {
@@ -89,6 +79,14 @@ open class LogRecordMapper(
 
     protected open fun mapMdcFields(fields: MutableMap<String, String?>, includeMdc: Boolean, mdc: Map<String, String>?) {
         if (includeMdc) {
+            fields.forEach { (name, _) ->
+                // mdcKeysPrefix may is null or an empty String which is an illegal state as we a) then cannot remove it
+                // anymore (not a good reason) and b) MDC name may interfere with other field names like message, timestamp, ...
+                if (config.mdcKeysPrefix != null && name.startsWith(config.mdcKeysPrefix!!) && mdc?.none { name.endsWith(it.key) } == true) {
+                    fields.remove(name)
+                }
+            }
+
             if (mdc != null) {
                 val prefix = config.mdcKeysPrefix
 
