@@ -46,8 +46,8 @@ open class LogRecordMapper(
         mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { loggerName?.let { extractLoggerClassName(it) } }
 
         mapMdcFields(fields, config.includeMdc && mdc != null, mdc)
-        mapField(fields, config.includeMarker, config.markerFieldName, marker)
-        mapField(fields, config.includeNdc, config.ndcFieldName, ndc)
+        mapFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, marker)
+        mapFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, ndc)
     }
 
     protected open fun removeDynamicFields(fields: MutableMap<String, String?>) {
