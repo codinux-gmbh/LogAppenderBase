@@ -49,8 +49,8 @@ open class LogRecordMapper(
         mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { loggerName?.let { extractLoggerClassName(it) } }
 
         mapMdcFields(fields, config.includeMdc && mdc != null, mdc)
-        mapFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, marker)
-        mapFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, ndc)
+        mapDynamicFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, marker)
+        mapDynamicFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, ndc)
     }
 
     protected open fun removeDynamicFields(fields: MutableMap<String, String?>) {
@@ -58,14 +58,6 @@ open class LogRecordMapper(
             fields.keys.filter { it.startsWith(config.mdcKeysPrefix!!) }.forEach { mdcField ->
                 fields.remove(mdcField)
             }
-        }
-
-        if (config.includeMarker) {
-            fields.remove(config.markerFieldName)
-        }
-
-        if (config.includeNdc) {
-            fields.remove(config.ndcFieldName)
         }
     }
 
@@ -83,6 +75,16 @@ open class LogRecordMapper(
 
     protected open fun mapFieldIfNotNull(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, value: String?) {
         mapField(fields, includeField && value != null, fieldName, value)
+    }
+
+    protected open fun mapDynamicFieldIfNotNull(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, value: String?) {
+        if (includeField) {
+            if (value.isNullOrEmpty()) {
+                fields.remove(fieldName)
+            } else {
+                fields[fieldName] = value
+            }
+        }
     }
 
     protected open fun mapMdcFields(fields: MutableMap<String, String?>, includeMdc: Boolean, mdc: Map<String, String>?) {
