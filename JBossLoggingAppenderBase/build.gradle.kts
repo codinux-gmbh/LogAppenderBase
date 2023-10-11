@@ -7,7 +7,7 @@ java {
 
     toolchain {
         // ExtLogRecord.instant needs at least Java version 9
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(9))
     }
 }
 
