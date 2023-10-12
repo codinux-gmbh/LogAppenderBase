@@ -123,14 +123,14 @@ open class LogRecordMapper(
                 if (kubernetesFields.includeLabels) {
                     val labelsPrefix = prefix + kubernetesFields.labelsPrefix
                     info.labels.forEach { (labelName, value) ->
-                        mapField(fields, true, labelsPrefix + labelName, value)
+                        mapField(fields, true, labelsPrefix + escapeDynamicLabelName(labelName), value)
                     }
                 }
 
                 if (kubernetesFields.includeAnnotations) {
                     val annotationsPrefix = prefix + kubernetesFields.annotationsPrefix
                     info.annotations.forEach { (annotationName, value) ->
-                        mapField(fields, true, annotationsPrefix + annotationName, value)
+                        mapField(fields, true, annotationsPrefix + escapeDynamicLabelName(annotationName), value)
                     }
                 }
             }
