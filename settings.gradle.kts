@@ -28,7 +28,7 @@ include("Log4j2LogAppenderBase")
 include("JBossLoggingAppenderBase")
 include("JavaUtilLogAppenderBase")
 
-include("QuarksLogAppenderConfigBase")
+include("QuarkusLogAppenderConfigBase")
 
 
 /*      Kubernetes info retriever       */

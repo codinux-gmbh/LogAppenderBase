@@ -28,7 +28,7 @@ tasks.register("publishAllToMavenLocal") {
         ":JBossLoggingAppenderBase:publishToMavenLocal",
         ":JavaUtilLogAppenderBase:publishToMavenLocal",
 
-        ":QuarksLogAppenderConfigBase:publishToMavenLocal",
+        ":QuarkusLogAppenderConfigBase:publishToMavenLocal",
 
         ":CodinuxKubernetesInfoRetriever:publishToMavenLocal",
         ":Fabric8KubernetesInfoRetriever:publishToMavenLocal"
@@ -43,7 +43,7 @@ tasks.register("publishAll") {
         ":JBossLoggingAppenderBase:publish",
         ":JavaUtilLogAppenderBase:publish",
 
-        ":QuarksLogAppenderConfigBase:publish",
+        ":QuarkusLogAppenderConfigBase:publish",
 
         ":CodinuxKubernetesInfoRetriever:publish",
         ":Fabric8KubernetesInfoRetriever:publish"
