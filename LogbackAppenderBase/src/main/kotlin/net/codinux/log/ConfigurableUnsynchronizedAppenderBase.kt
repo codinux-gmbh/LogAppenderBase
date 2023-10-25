@@ -64,10 +64,6 @@ abstract class ConfigurableUnsynchronizedAppenderBase(
 
   /*    Fields Config      */
 
-  open fun setMessageFieldName(messageFieldName: String) {
-    fields.messageFieldName = messageFieldName
-  }
-
   open fun setIncludeLogLevel(includeLogLevel: Boolean) {
     fields.includeLogLevel = includeLogLevel
   }

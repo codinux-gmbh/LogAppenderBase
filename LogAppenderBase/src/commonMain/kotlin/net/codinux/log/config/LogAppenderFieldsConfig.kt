@@ -1,8 +1,6 @@
 package net.codinux.log.config
 
 open class LogAppenderFieldsConfig(
-    open var messageFieldName: String = MessageDefaultFieldName,
-
     open var includeLogLevel: Boolean = IncludeLogLevelDefaultValue,
     open var logLevelFieldName: String = LogLevelDefaultFieldName,
 
