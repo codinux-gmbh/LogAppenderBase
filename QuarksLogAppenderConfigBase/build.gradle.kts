@@ -14,11 +14,10 @@ java {
 val quarkusVersion: String by project
 
 dependencies {
-    implementation(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
-    implementation("io.quarkus:quarkus-core")
+    compileOnly(platform("io.quarkus:quarkus-bom:${quarkusVersion}"))
+    compileOnly("io.quarkus:quarkus-core")
 
-    implementation("$group:log-appender-base:$version")
-//    implementation(project(":log-appender-base"))
+    implementation(project(":LogAppenderBase"))
 }
 
 
