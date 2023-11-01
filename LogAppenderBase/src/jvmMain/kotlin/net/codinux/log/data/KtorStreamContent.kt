@@ -32,6 +32,9 @@ actual class KtorStreamContent actual constructor(
         }
 
         objectMapper.writeValue(outputStream, content)
+
+        outputStream.flush()
+        outputStream.close()
     }
 
 }
