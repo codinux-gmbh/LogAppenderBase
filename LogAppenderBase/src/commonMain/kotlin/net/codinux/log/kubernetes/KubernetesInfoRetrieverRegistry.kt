@@ -32,7 +32,8 @@ open class KubernetesInfoRetrieverRegistry(
 
     override suspend fun retrieveCurrentPodInfo(): PodInfo? {
         if (implementations.isEmpty()) {
-            stateLogger.error("No KubernetesInfoRetriever implementation found. Did you add a KubernetesInfoRetriever implementation, e.g. ?")
+            stateLogger.error("No KubernetesInfoRetriever implementation found. Did you add a KubernetesInfoRetriever implementation, e.g. " +
+                    "net.codinux.log.kubernetes:codinux-kubernetes-info-retriever or net.codinux.log.kubernetes:io.fabric8:kubernetes-client?")
             return null
         }
 
