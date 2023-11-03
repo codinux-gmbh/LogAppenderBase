@@ -1,16 +1,19 @@
 package net.codinux.log
 
 import kotlinx.coroutines.Dispatchers
+import kotlin.concurrent.thread
 import kotlin.coroutines.CoroutineContext
 
 actual val Dispatchers.IOorDefault: CoroutineContext
-    get() = Dispatchers.Default
+    get() = Dispatchers.IO
 
 
-internal actual object Platform {
+internal actual object PlatformFunctions {
 
     actual fun addShutdownHook(action: () -> Unit) {
-        // is there anything like a shutdown listener in Kotlin Native
+        Runtime.getRuntime().addShutdownHook(thread(start = false, name = "Shutdown Hook") {
+            action()
+        })
     }
 
 }
@@ -19,7 +22,7 @@ internal actual object Platform {
 internal actual object StdErr {
 
     actual fun println(message: String) {
-        kotlin.io.println(message) // TODO: how to write to stderr in Kotlin native?
+        System.err.println(message)
     }
 
 }

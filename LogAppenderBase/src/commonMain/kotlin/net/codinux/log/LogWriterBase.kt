@@ -70,7 +70,7 @@ abstract class LogWriterBase<T>(
                 retrievePodInfo()
             }
 
-            Platform.addShutdownHook {
+            PlatformFunctions.addShutdownHook {
                 close()
             }
 

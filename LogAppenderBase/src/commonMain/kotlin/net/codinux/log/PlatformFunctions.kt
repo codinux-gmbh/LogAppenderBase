@@ -6,7 +6,8 @@ import kotlin.coroutines.CoroutineContext
 internal expect val Dispatchers.IOorDefault: CoroutineContext
 
 
-internal expect object Platform {
+// do not name object `Platform` as this would conflict with net.codinux.log.Platform of kmp-log / klf
+internal expect object PlatformFunctions {
 
     fun addShutdownHook(action: () -> Unit)
 
