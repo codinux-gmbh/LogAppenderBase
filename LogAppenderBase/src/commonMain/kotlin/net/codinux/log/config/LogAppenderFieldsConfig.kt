@@ -21,6 +21,10 @@ open class LogAppenderFieldsConfig(
     open var appVersionFieldName: String = AppVersionDefaultFieldName,
     open var appVersion: String? = AppVersionDefaultValue,
 
+    open var includeJobName: Boolean = IncludeJobNameDefaultValue,
+    open var jobNameFieldName: String = JobNameDefaultFieldName,
+    open var jobName: String? = JobNameDefaultValue,
+
     open var includeHostName: Boolean = IncludeHostNameDefaultValue,
     open var hostNameFieldName: String = HostNameDefaultFieldName,
 
@@ -105,6 +109,12 @@ open class LogAppenderFieldsConfig(
         const val IncludeAppVersionDefaultValue = False
         const val IncludeAppVersionDefaultValueString = IncludeAppVersionDefaultValue.toString()
         const val AppVersionDefaultFieldName = "version"
+
+        val JobNameDefaultValue: String? = null
+        const val JobNameDefaultValueString = "null"
+        const val IncludeJobNameDefaultValue = False
+        const val IncludeJobNameDefaultValueString = IncludeJobNameDefaultValue.toString()
+        const val JobNameDefaultFieldName = "job"
 
         const val IncludeHostNameDefaultValue = False
         const val IncludeHostNameDefaultValueString = IncludeHostNameDefaultValue.toString()

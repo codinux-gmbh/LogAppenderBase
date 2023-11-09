@@ -120,6 +120,18 @@ abstract class ConfigurableUnsynchronizedAppenderBase(
     fields.appVersion = appVersion
   }
 
+  open fun setIncludeJobName(includeJobName: Boolean) {
+    fields.includeJobName = includeJobName
+  }
+
+  open fun setJobNameFieldName(jobNameFieldName: String) {
+    fields.jobNameFieldName = jobNameFieldName
+  }
+
+  open fun setJobName(jobName: String) {
+    fields.jobName = jobName
+  }
+
   open fun setIncludeHostName(includeHostName: Boolean) {
     fields.includeHostName = includeHostName
   }

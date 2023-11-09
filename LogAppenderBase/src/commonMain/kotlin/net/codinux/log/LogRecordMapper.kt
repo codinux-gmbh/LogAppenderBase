@@ -25,6 +25,7 @@ open class LogRecordMapper(
         mapField(fields, config.includeHostName, config.hostNameFieldName, processData.hostName)
         mapField(fields, config.includeAppName, config.appNameFieldName, config.appName)
         mapField(fields, config.includeAppVersion, config.appVersionFieldName, config.appVersion)
+        mapField(fields, config.includeJobName, config.jobNameFieldName, config.jobName)
 
         mapPodInfoFields(fields)
 
