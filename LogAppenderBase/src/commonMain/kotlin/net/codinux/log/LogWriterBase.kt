@@ -59,7 +59,9 @@ abstract class LogWriterBase<T>(
         protected set
 
     init {
-        initializeWriter()
+        if (config.enabled) {
+            initializeWriter()
+        }
     }
 
     protected open fun initializeWriter() {
