@@ -51,8 +51,6 @@ abstract class LogWriterBase<T>(
 
     protected open val receiverScope = CoroutineScope(Dispatchers.IOorDefault)
 
-    protected open var podInfo: PodInfo? = null
-
     protected open var isFullyInitialized = false // TODO: this is not thread safe / volatile
 
     var countSentRecords: Long = 0
@@ -69,7 +67,7 @@ abstract class LogWriterBase<T>(
             mapper.processData = processData ?: retrieveProcessData()
 
             if (config.fields.includeKubernetesInfo) {
-                retrievePodInfo()
+                mapper.podInfo = retrievePodInfo()
             }
 
             PlatformFunctions.addShutdownHook {
@@ -90,15 +88,15 @@ abstract class LogWriterBase<T>(
     protected open suspend fun retrieveProcessData() =
         ProcessDataRetriever(stateLogger).retrieveProcessData()
 
-    protected open suspend fun retrievePodInfo() {
-        try {
+    protected open suspend fun retrievePodInfo(): PodInfo? {
+        return try {
             KubernetesInfoRetrieverRegistry.init(stateLogger)
 
-            podInfo = KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
-            mapper.podInfo = podInfo
+            KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
         } catch (e: Throwable) {
-            // TODO: add a retry if retrieving Pod info fails?
             stateLogger.error("Could not retrieve Pod info from Kubernetes API server", e)
+
+            null
         }
     }
 
