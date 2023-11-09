@@ -17,8 +17,8 @@ import kotlin.math.min
 abstract class LogWriterBase<T>(
     override val config: LogAppenderConfig,
     override val stateLogger: AppenderStateLogger = StdOutStateLogger(),
-    protected open val processData: ProcessData = ProcessDataRetriever(stateLogger).retrieveProcessData(),
-    protected open val mapper: LogRecordMapper = LogRecordMapper(config.fields)
+    protected open val mapper: LogRecordMapper = LogRecordMapper(config.fields),
+    processData: ProcessData? = null
 ) : LogWriter {
 
     protected abstract fun instantiateMappedRecord(): T
@@ -60,14 +60,14 @@ abstract class LogWriterBase<T>(
 
     init {
         if (config.enabled) {
-            initializeWriter()
+            initializeWriter(processData)
         }
     }
 
-    protected open fun initializeWriter() {
-        mapper.processData = processData
-
+    protected open fun initializeWriter(processData: ProcessData?) {
         receiverScope.async {
+            mapper.processData = processData ?: retrieveProcessData()
+
             if (config.fields.includeKubernetesInfo) {
                 retrievePodInfo()
             }
@@ -86,6 +86,9 @@ abstract class LogWriterBase<T>(
             asyncWriteLoop(writerConfig.sendLogRecordsPeriodMillis)
         }
     }
+
+    protected open suspend fun retrieveProcessData() =
+        ProcessDataRetriever(stateLogger).retrieveProcessData()
 
     protected open suspend fun retrievePodInfo() {
         try {
