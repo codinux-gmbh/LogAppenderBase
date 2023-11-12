@@ -6,7 +6,6 @@ import io.mockk.*
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
 import net.codinux.log.config.LogAppenderConfig
-import net.codinux.log.LogWriter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
@@ -19,7 +18,7 @@ class LogbackAppenderBaseTest {
         every { this@mockk.config } returns this@LogbackAppenderBaseTest.config
     }
 
-    private val underTest = object : LogbackAppenderBase() {
+    private val underTest = object : LogbackAppenderBase(config) {
         override fun createLogWriter(config: LogAppenderConfig) = logWriterMock
     }.apply {
         this.start()
@@ -35,7 +34,18 @@ class LogbackAppenderBaseTest {
 
 
     @Test
-    fun stop() {
+    fun disabled_NothingGetsWrittenToLogWriter() {
+        config.enabled = false
+
+
+        log.error("Any")
+
+
+        verify { logWriterMock wasNot Called }
+    }
+
+    @Test
+    fun callToSlf4jLoggerCallsLogWriter() {
         val message = "Just a test, no animals have been harmed"
         val exception = RuntimeException("As i said, just a test")
 
