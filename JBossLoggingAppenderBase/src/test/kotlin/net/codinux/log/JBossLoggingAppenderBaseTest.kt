@@ -16,7 +16,7 @@ class JBossLoggingAppenderBaseTest {
         every { this@mockk.config } returns this@JBossLoggingAppenderBaseTest.config
     }
 
-    private val underTest = object : JBossLoggingAppenderBase(config.enabled, logWriterMock) { }
+    private val underTest = object : JBossLoggingAppenderBase(logWriterMock) { }
 
     private val log = Logger.getLogger(JBossLoggingAppenderBaseTest::class.java)
 

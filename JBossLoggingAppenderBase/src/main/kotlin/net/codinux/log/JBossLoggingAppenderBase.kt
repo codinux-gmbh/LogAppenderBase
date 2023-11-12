@@ -6,9 +6,10 @@ import org.jboss.logmanager.ExtHandler
 import org.jboss.logmanager.ExtLogRecord
 
 open class JBossLoggingAppenderBase(
-    protected open val isAppenderEnabled: Boolean,
     protected open val logWriter: LogWriter
 ) : ExtHandler() {
+
+    protected open val isAppenderEnabled = logWriter.config.enabled
 
     protected open val config = logWriter.config.fields
 
