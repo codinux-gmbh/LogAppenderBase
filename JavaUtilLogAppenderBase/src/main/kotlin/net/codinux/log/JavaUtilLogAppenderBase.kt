@@ -4,9 +4,10 @@ import kotlinx.datetime.toKotlinInstant
 import java.util.logging.Handler
 
 open class JavaUtilLogAppenderBase(
-    protected open val isAppenderEnabled: Boolean,
     protected open val logWriter: LogWriter
 ) : Handler() {
+
+    protected open val isAppenderEnabled = logWriter.config.enabled
 
     protected open val config = logWriter.config.fields
 

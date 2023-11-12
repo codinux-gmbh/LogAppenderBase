@@ -7,9 +7,10 @@ import org.apache.logging.log4j.core.config.Property
 
 open class Log4j2LogAppenderBase(
     appenderName: String,
-    protected open val isAppenderEnabled: Boolean,
     protected open val logWriter: LogWriter
 ): AbstractAppender(appenderName, null, null, true, Property.EMPTY_ARRAY) {
+
+    protected open val isAppenderEnabled = logWriter.config.enabled
 
     protected open val config = logWriter.config.fields
 
