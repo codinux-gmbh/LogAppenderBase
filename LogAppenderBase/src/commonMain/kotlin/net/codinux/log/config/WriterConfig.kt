@@ -24,9 +24,9 @@ open class WriterConfig(
         val PasswordNotSet: String? = null
         const val PasswordNotSetString = "null"
 
-        const val MaxBufferedLogRecordsDefaultValue = 5000
-        const val MaxLogRecordsPerBatchDefaultValue = 100
-        const val SendLogRecordsPeriodMillisDefaultValue = 100L
+        const val MaxBufferedLogRecordsDefaultValue = 25000
+        const val MaxLogRecordsPerBatchDefaultValue = 250
+        const val SendLogRecordsPeriodMillisDefaultValue = 40L
 
         val ConnectTimeoutNotSet: Long? = null
 
