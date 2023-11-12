@@ -11,7 +11,7 @@ abstract class LogbackAppenderBase(
     config: LogAppenderConfig = LogAppenderConfig()
 ) : ConfigurableUnsynchronizedAppenderBase(config) {
 
-    protected lateinit var logWriter: LogWriter
+    protected var logWriter: LogWriter? = null
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
@@ -26,14 +26,16 @@ abstract class LogbackAppenderBase(
 
     override fun start() {
         // config is now loaded -> LogWriter can be created / started
-        this.logWriter = createLogWriter(config)
+        if (config.enabled) {
+            this.logWriter = createLogWriter(config)
+        }
 
         super.start()
     }
 
     override fun append(event: ILoggingEvent?) {
         if (config.enabled && event != null) {
-            logWriter.writeRecord(
+            logWriter?.writeRecord(
                 if (eventSupportsInstant) event.instant.toKotlinInstant() else Instant.fromEpochMilliseconds(event.timeStamp),
                 event.level.levelStr,
                 event.formattedMessage,
@@ -48,7 +50,7 @@ abstract class LogbackAppenderBase(
 
 
     override fun stop() {
-        logWriter.close()
+        logWriter?.close()
 
         super.stop()
     }
@@ -76,7 +78,7 @@ abstract class LogbackAppenderBase(
 
             return throwable
         } catch (e: Exception) {
-            logWriter.stateLogger.error("Could not get Throwable from IThrowableProxy", e)
+            logWriter?.stateLogger?.error("Could not get Throwable from IThrowableProxy", e)
         }
 
         return null
