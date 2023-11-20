@@ -77,7 +77,7 @@ abstract class LogWriterBase<T>(
             isFullyInitialized = true
 
             // pre-cache mapped record objects
-            IntRange(0, min(1_000, writerConfig.maxBufferedLogRecords / 2)).forEach {
+            for (i in 0 until min(1_000, writerConfig.maxBufferedLogRecords / 2)) {
                 cachedMappedRecords.send(instantiateMappedRecord())
             }
 
