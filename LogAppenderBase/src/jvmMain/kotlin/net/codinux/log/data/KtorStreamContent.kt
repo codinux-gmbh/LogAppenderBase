@@ -18,11 +18,11 @@ actual class KtorStreamContent actual constructor(
 
         actual val supportsGZip = true
 
-    }
+        // to not instantiate it per web call / KtorStreamContent instance creation
+        private val objectMapper = ObjectMapper().apply {
+            registerModule(KotlinModule.Builder().build())
+        }
 
-
-    private val objectMapper = ObjectMapper().apply {
-        registerModule(KotlinModule.Builder().build())
     }
 
     override suspend fun writeTo(channel: ByteWriteChannel) {
