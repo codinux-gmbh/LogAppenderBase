@@ -25,4 +25,6 @@ class LogRecord<T>(
 
     var ndc: String? = null
 
+    var dynamicFields: MutableList<String> = mutableListOf()
+
 }

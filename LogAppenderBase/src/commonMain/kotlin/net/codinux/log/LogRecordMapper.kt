@@ -35,7 +35,7 @@ open class LogRecordMapper(
         mapField(fields, config.includeLoggerName, config.loggerNameFieldName, record.loggerName)
         mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { record.loggerName?.let { extractLoggerClassName(it) } }
 
-        mapMdcFields(fields, config.includeMdc && record.mdc != null, record.mdc)
+        mapMdcFields(record, fields, config.includeMdc && record.mdc != null, record.mdc)
         mapDynamicFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, record.marker)
         mapDynamicFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, record.ndc)
     }
@@ -66,21 +66,19 @@ open class LogRecordMapper(
         }
     }
 
-    protected open fun mapMdcFields(fields: MutableMap<String, String?>, includeMdc: Boolean, mdc: Map<String, String>?) {
+    protected open fun <T> mapMdcFields(record: LogRecord<T>, fields: MutableMap<String, String?>, includeMdc: Boolean, mdc: Map<String, String>?) {
         if (includeMdc) {
-            fields.forEach { (name, _) ->
-                // mdcKeysPrefix may is null or an empty String which is an illegal state as we a) then cannot remove it
-                // anymore (not a good reason) and b) MDC name may interfere with other field names like message, timestamp, ...
-                if (config.mdcKeysPrefix != null && name.startsWith(config.mdcKeysPrefix!!) && mdc?.none { name.endsWith(it.key) } == true) {
-                    fields.remove(name)
-                }
+            record.dynamicFields.forEach { name ->
+                fields.remove(name)
             }
 
             if (mdc != null) {
                 val prefix = config.mdcKeysPrefix
 
                 mdc.mapNotNull { (key, value) ->
-                    mapField(fields, true, prefix + escapeDynamicLabelName(key), value)
+                    val fieldName = prefix + escapeDynamicLabelName(key)
+                    record.dynamicFields.add(fieldName)
+                    mapField(fields, true, fieldName, value)
                 }
             }
         }
