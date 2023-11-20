@@ -21,21 +21,11 @@ abstract class LogWriterBase<T>(
     processData: ProcessData? = null
 ) : LogWriter {
 
-    protected abstract fun instantiateMappedRecord(): T
+    protected abstract fun instantiateMappedRecord(): LogRecord<T>
 
-    protected abstract suspend fun mapRecord(
-        timestamp: Instant,
-        level: String,
-        message: String,
-        loggerName: String?,
-        threadName: String?,
-        exception: Throwable?,
-        mdc: Map<String, String>?,
-        marker: String?,
-        ndc: String?
-    ): T
+    protected abstract suspend fun mapRecord(record: LogRecord<T>)
 
-    protected abstract suspend fun writeRecords(records: List<T>): List<T>
+    protected abstract suspend fun writeRecords(records: List<LogRecord<T>>): List<LogRecord<T>>
 
 
     protected open val writerConfig = config.writer
@@ -113,7 +103,21 @@ abstract class LogWriterBase<T>(
     ) {
         senderScope.async {
             try {
-                recordsToWrite.send(mapRecord(timestamp, level, message, loggerName, threadName, exception, mdc, marker, ndc))
+                val record = getMappedRecordObject().apply {
+                    this.timestamp = timestamp
+                    this.level = level
+                    this.message = message
+                    this.loggerName = loggerName
+                    this.threadName = threadName
+                    this.exception = exception
+                    this.mdc = mdc
+                    this.marker = marker
+                    this.ndc = ndc
+                }
+
+                mapRecord(record)
+
+                recordsToWrite.send(record)
             } catch (e: Throwable) {
                 if (e !is CancellationException) {
                     stateLogger.error("Could not write log record '$timestamp $level $message'", e)
@@ -122,7 +126,7 @@ abstract class LogWriterBase<T>(
         }
     }
 
-    protected open suspend fun getMappedRecordObject(): T {
+    protected open suspend fun getMappedRecordObject(): LogRecord<T> {
         // if writer is not fully initialized (e.g. PodInfo hasn't been retrieved yet), then wait till it is initialized and pre-allocates mapped record objects
         return if (cachedMappedRecords.isNotEmpty || isFullyInitialized == false) {
             cachedMappedRecords.receive()
@@ -131,7 +135,7 @@ abstract class LogWriterBase<T>(
         }
     }
 
-    protected open suspend fun releaseMappedRecords(records: List<T>) {
+    protected open suspend fun releaseMappedRecords(records: List<LogRecord<T>>) {
         records.forEach {
             cachedMappedRecords.send(it)
         }
@@ -139,7 +143,7 @@ abstract class LogWriterBase<T>(
 
 
     protected open suspend fun asyncWriteLoop(writeLogRecordsPeriodMillis: Long) {
-        var failedRecords: List<T> = emptyList()
+        var failedRecords: List<LogRecord<T>> = emptyList()
 
         while (senderScope.isActive && receiverScope.isActive) { // may find a better signal
             try {
@@ -174,7 +178,7 @@ abstract class LogWriterBase<T>(
         asyncWriteLoopStopped(failedRecords)
     }
 
-    private suspend fun asyncWriteLoopStopped(failedRecords: List<T>) {
+    private suspend fun asyncWriteLoopStopped(failedRecords: List<LogRecord<T>>) {
         stateLogger.info("Stopping asyncWriteLoop()")
 
         if (failedRecords.isNotEmpty()) {

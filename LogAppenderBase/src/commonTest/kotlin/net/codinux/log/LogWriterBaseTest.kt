@@ -53,7 +53,7 @@ class LogWriterBaseTest {
         // on first call we say all records with an odd index fail
         val recordsToFailOnFirstWriteCall = testRecords
             .filterIndexed { index, _ -> index % 2 == 0 }
-            .map { this@LogWriterBaseTest.serializeRecord(it) }
+            .onEach { it.mappedRecord = this@LogWriterBaseTest.serializeRecord(it) }
         val sendPeriod = 50L
 
         val writtenRecords = mutableMapOf<Int, List<String>>()
@@ -61,24 +61,14 @@ class LogWriterBaseTest {
 
         val underTest = object : LogWriterBase<String>(createConfig(sendPeriod)) {
 
-            override fun instantiateMappedRecord() = "" // not used by this implementation
+            override fun instantiateMappedRecord() = LogRecord("") // not used by this implementation
 
-            override suspend fun mapRecord(
-                timestamp: Instant,
-                level: String,
-                message: String,
-                loggerName: String?,
-                threadName: String?,
-                exception: Throwable?,
-                mdc: Map<String, String>?,
-                marker: String?,
-                ndc: String?
-            ): String =
-                this@LogWriterBaseTest.serializeRecord(timestamp, level,
-                    message, loggerName, threadName, exception, mdc, marker, ndc)
+            override suspend fun mapRecord(record: LogRecord<String>) {
+                record.mappedRecord = this@LogWriterBaseTest.serializeRecord(record)
+            }
 
-            override suspend fun writeRecords(records: List<String>): List<String> {
-                writtenRecords[countWriteRecordCalls++] = records.toList() // make a copy, releasing records modifies list if records fail
+            override suspend fun writeRecords(records: List<LogRecord<String>>): List<LogRecord<String>> {
+                writtenRecords[countWriteRecordCalls++] = records.map { it.mappedRecord } // make a copy, releasing records modifies list if records fail
 
                 return if ((countWriteRecordCalls == 1 && records.size == testRecords.size) || // on first call we say writing some of the records fails
                     (countWriteRecordCalls == 2 && records != recordsToFailOnFirstWriteCall)) { // sometimes the first call contains only a part of testRecords, then return failed records on second call
@@ -113,7 +103,7 @@ class LogWriterBaseTest {
     }
 
 
-    private fun assertWrittenRecords(sendRecords: List<LogRecord>, writtenRecords: List<WrittenRecord>): List<WrittenRecord> {
+    private fun assertWrittenRecords(sendRecords: List<LogRecord<String>>, writtenRecords: List<WrittenRecord>): List<WrittenRecord> {
         val writtenLogRecords = writtenRecords.flatMap { it.records }
 
         sendRecords.shouldHaveSize(writtenLogRecords.size)
@@ -123,30 +113,20 @@ class LogWriterBaseTest {
         return writtenRecords
     }
 
-    private suspend fun writeRecords(sendPeriod: Long = 50L, records: List<LogRecord>): List<WrittenRecord> {
+    private suspend fun writeRecords(sendPeriod: Long = 50L, records: List<LogRecord<String>>): List<WrittenRecord> {
         val config = createConfig(sendPeriod)
         val writtenRecords = mutableListOf<WrittenRecord>()
 
         val underTest = object : LogWriterBase<String>(config) {
 
-            override fun instantiateMappedRecord() = "" // not used by this implementation
+            override fun instantiateMappedRecord() = LogRecord("") // not used by this implementation
 
-            override suspend fun mapRecord(
-                timestamp: Instant,
-                level: String,
-                message: String,
-                loggerName: String?,
-                threadName: String?,
-                exception: Throwable?,
-                mdc: Map<String, String>?,
-                marker: String?,
-                ndc: String?
-            ): String =
-                this@LogWriterBaseTest.serializeRecord(timestamp, level,
-                    message, loggerName, threadName, exception, mdc, marker, ndc)
+            override suspend fun mapRecord(record: LogRecord<String>) {
+                record.mappedRecord = this@LogWriterBaseTest.serializeRecord(record)
+            }
 
-            override suspend fun writeRecords(records: List<String>): List<String> {
-                writtenRecords.add(WrittenRecord(now(), records))
+            override suspend fun writeRecords(records: List<LogRecord<String>>): List<LogRecord<String>> {
+                writtenRecords.add(WrittenRecord(now(), records.map { it.mappedRecord }))
 
                 return emptyList()
             }
@@ -164,12 +144,12 @@ class LogWriterBaseTest {
         return writtenRecords
     }
 
-    private fun writeRecord(writer: LogWriterBase<String>, record: LogRecord) {
+    private fun writeRecord(writer: LogWriterBase<String>, record: LogRecord<String>) {
         writer.writeRecord(record.timestamp, record.level,
             record.message, record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
     }
 
-    private fun serializeRecord(record: LogRecord) =
+    private fun serializeRecord(record: LogRecord<String>) =
         serializeRecord(record.timestamp, record.level, record.message,
             record.loggerName, record.threadName, record.exception, record.mdc, record.marker, record.ndc)
 
@@ -188,10 +168,8 @@ class LogWriterBaseTest {
     private fun createConfig(sendPeriod: Long) =
         LogAppenderConfig(writer = WriterConfig(sendLogRecordsPeriodMillis = sendPeriod))
 
-    private fun createRecord(message: String = "Test message"): LogRecord {
-        val now = now()
-
-        return LogRecord(message, now, "INFO", "", "")
+    private fun createRecord(message: String = "Test message"): LogRecord<String> {
+        return LogRecord(message)
     }
 
     private fun now() = Clock.System.now()

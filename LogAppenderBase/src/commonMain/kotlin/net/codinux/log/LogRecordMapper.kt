@@ -28,28 +28,16 @@ open class LogRecordMapper(
         mapField(fields, config.includeJobName, config.jobNameFieldName, config.jobName)
 
         mapPodInfoFields(fields)
-
-        // pre-allocate per log event fields in Map
-        mapLogEventFields(fields, "", "", "", null, null, null, null)
     }
 
-    open fun mapLogEventFields(
-        fields: MutableMap<String, String?>,
-        level: String,
-        loggerName: String?,
-        threadName: String?,
-        exception: Throwable?,
-        mdc: Map<String, String>?,
-        marker: String?,
-        ndc: String?
-    ) {
-        mapField(fields, config.includeLogLevel, config.logLevelFieldName, level)
-        mapField(fields, config.includeLoggerName, config.loggerNameFieldName, loggerName)
-        mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { loggerName?.let { extractLoggerClassName(it) } }
+    open fun <T> mapLogEventFields(record: LogRecord<T>, fields: MutableMap<String, String?>) {
+        mapField(fields, config.includeLogLevel, config.logLevelFieldName, record.level)
+        mapField(fields, config.includeLoggerName, config.loggerNameFieldName, record.loggerName)
+        mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { record.loggerName?.let { extractLoggerClassName(it) } }
 
-        mapMdcFields(fields, config.includeMdc && mdc != null, mdc)
-        mapDynamicFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, marker)
-        mapDynamicFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, ndc)
+        mapMdcFields(fields, config.includeMdc && record.mdc != null, record.mdc)
+        mapDynamicFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, record.marker)
+        mapDynamicFieldIfNotNull(fields, config.includeNdc, config.ndcFieldName, record.ndc)
     }
 
     protected open fun mapField(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, valueSupplier: () -> String?) {
