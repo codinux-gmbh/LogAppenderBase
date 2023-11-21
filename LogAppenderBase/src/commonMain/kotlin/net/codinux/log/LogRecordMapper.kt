@@ -6,6 +6,8 @@ import net.codinux.log.kubernetes.PodInfo
 
 open class LogRecordMapper(
     protected open val config: LogAppenderFieldsConfig,
+    // Loki does not allow null values in Stream / fields
+    open var allowNullAsFieldValue: Boolean = true,
     open var escapeControlCharacters: Boolean = true
 ) {
 
@@ -48,7 +50,12 @@ open class LogRecordMapper(
 
     protected open fun mapField(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, value: String?) {
         if (includeField) {
-            fields[fieldName] = value
+            // Loki returns 400 Bad request if a stream value is null. Assure that only fields with value != null get added to Stream
+            if (value != null || allowNullAsFieldValue) {
+                fields[fieldName] = value
+            } else {
+                fields.remove(fieldName)
+            }
         }
     }
 
