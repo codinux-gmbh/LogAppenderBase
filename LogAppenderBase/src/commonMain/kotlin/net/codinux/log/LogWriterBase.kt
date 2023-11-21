@@ -30,9 +30,9 @@ abstract class LogWriterBase<T>(
 
     protected open val writerConfig = config.writer
 
-    protected open val cachedMappedRecords = Channel<T>(writerConfig.maxBufferedLogRecords)
+    protected open val cachedMappedRecords = Channel<LogRecord<T>>(writerConfig.maxBufferedLogRecords)
 
-    protected open val recordsToWrite = Channel<T>(writerConfig.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
+    protected open val recordsToWrite = Channel<LogRecord<T>>(writerConfig.maxBufferedLogRecords, BufferOverflow.DROP_OLDEST) {
         stateLogger.warn("Message queue is full, dropped one log record. Either increase queue size (via config parameter maxBufferedLogRecords) " +
                 "or the count log records to write per batch (maxLogRecordsPerBatch) or decrease the period to write logs (sendLogRecordsPeriodMillis).")
     }
