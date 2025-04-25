@@ -8,7 +8,6 @@ allprojects {
     repositories {
         mavenCentral()
         google()
-        mavenLocal()
     }
 
     group = "net.codinux.log"
