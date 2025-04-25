@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 open class Slf4jStateLogger(
     protected open val log: Logger
-) : AppenderStateLogger {
+) : AppenderStateLoggerBase(), AppenderStateLogger {
 
     constructor(loggerName: String) : this(LoggerFactory.getLogger(loggerName))
 

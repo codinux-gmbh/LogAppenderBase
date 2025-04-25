@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 
 open class LogbackStateLogger(
     protected open val log: Logger
-) : AppenderStateLogger { // TODO: use ContextAware
+) : AppenderStateLoggerBase(), AppenderStateLogger { // TODO: use ContextAware
 
     constructor(loggerName: String) : this(LoggerFactory.getLogger(loggerName))
 

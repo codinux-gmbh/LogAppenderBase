@@ -3,7 +3,7 @@ package net.codinux.log.statelogger
 import java.util.logging.Level
 import java.util.logging.Logger
 
-open class JavaUtilLogStateLogger(loggerName: String) : AppenderStateLogger {
+open class JavaUtilLogStateLogger(loggerName: String) : AppenderStateLoggerBase(), AppenderStateLogger {
 
     constructor(loggerClass: Class<*>) : this(loggerClass.name)
 

@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger
 
 open class Log4j2StateLogger protected constructor(
     protected open val log: Logger
-) : AppenderStateLogger {
+) : AppenderStateLoggerBase(), AppenderStateLogger {
 
     constructor(loggerName: String) : this(LogManager.getLogger(loggerName))
 

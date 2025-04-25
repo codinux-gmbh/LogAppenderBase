@@ -3,7 +3,7 @@ package net.codinux.log.statelogger
 import org.jboss.logmanager.Level
 import org.jboss.logmanager.Logger
 
-open class JBossLoggingStateLogger(loggerName: String) : AppenderStateLogger {
+open class JBossLoggingStateLogger(loggerName: String) : AppenderStateLoggerBase(), AppenderStateLogger {
 
     constructor(loggerClass: Class<*>) : this(loggerClass.name)
 

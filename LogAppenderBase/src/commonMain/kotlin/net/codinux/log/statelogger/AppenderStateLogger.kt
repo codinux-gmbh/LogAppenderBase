@@ -1,5 +1,7 @@
 package net.codinux.log.statelogger
 
+import kotlin.time.Duration
+
 interface AppenderStateLogger {
 
     fun info(message: String)
@@ -7,5 +9,7 @@ interface AppenderStateLogger {
     fun warn(message: String)
 
     fun error(message: String, e: Throwable? = null)
+
+    fun error(message: String, e: Throwable?, logAtMaximumEach: Duration, category: String = message)
 
 }
