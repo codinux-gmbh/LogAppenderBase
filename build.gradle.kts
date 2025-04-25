@@ -1,3 +1,11 @@
+// don't know why but we have to add jvm plugin this way otherwise compilation fails
+plugins {
+//    val kotlinVersion: String by settings
+    val kotlinVersion = "1.9.23"
+
+    kotlin("jvm") version kotlinVersion apply(false)
+}
+
 
 allprojects {
     repositories {

@@ -8,14 +8,11 @@ pluginManagement {
     }
 
     plugins {
-        kotlin("multiplatform") version kotlinVersion
-        kotlin("jvm") version kotlinVersion
+        kotlin("multiplatform") version kotlinVersion apply(false)
         kotlin("plugin.serialization") version kotlinVersion
 
         id("io.quarkus") version quarkusVersion
         id("io.quarkus.extension") version quarkusVersion
-
-        id("me.champeau.jmh") version "0.7.1"
     }
 }
 
@@ -46,6 +43,4 @@ project(":CodinuxKubernetesInfoRetriever").apply {
 }
 
 
-// include to run benchmarks but breaks publishing libraries with error:
-// The Kotlin Gradle plugin was loaded multiple times in different subprojects, which is not supported and may break the build.
-//include("benchmarks")
+include("benchmarks")
