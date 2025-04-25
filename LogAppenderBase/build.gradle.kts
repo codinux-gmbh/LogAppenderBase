@@ -102,7 +102,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                compileOnly("io.ktor:ktor-client-cio:$ktorVersion")
+                compileOnly("io.ktor:ktor-client-core:$ktorVersion")
                 compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
             }
         }
