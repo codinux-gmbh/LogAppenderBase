@@ -13,12 +13,15 @@ import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
 import net.dankito.datetime.Instant
 import kotlin.math.min
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 abstract class LogWriterBase<T>(
     override val config: LogAppenderConfig,
     override val stateLogger: AppenderStateLogger = StdOutStateLogger(),
     protected open val mapper: LogRecordMapper = LogRecordMapper(config.fields),
-    processData: ProcessData? = null
+    processData: ProcessData? = null,
+    protected val logErrorMessagesAtMaximumOncePer: Duration = 5.minutes,
 ) : LogWriter {
 
     protected abstract fun instantiateMappedRecord(): LogRecord<T>
@@ -120,7 +123,8 @@ abstract class LogWriterBase<T>(
                 recordsToWrite.send(record)
             } catch (e: Throwable) {
                 if (e !is CancellationException) {
-                    stateLogger.error("Could not write log record '$timestamp $level $message'", e)
+                    stateLogger.error("Could not write log record '$timestamp $level $message'", e,
+                        logErrorMessagesAtMaximumOncePer, "Could not write log record")
                 }
             }
         }
