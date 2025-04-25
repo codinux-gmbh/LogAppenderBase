@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm")
-    id("me.champeau.jmh") version "0.7.1"
+    id("me.champeau.jmh")
 }
 
 val jmhDepVersion = "1.37"
