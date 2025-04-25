@@ -3,9 +3,9 @@ package net.codinux.log
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import io.mockk.*
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toJavaInstant
 import net.codinux.log.config.LogAppenderConfig
+import net.dankito.datetime.Instant
+import net.dankito.datetime.toJavaInstant
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory

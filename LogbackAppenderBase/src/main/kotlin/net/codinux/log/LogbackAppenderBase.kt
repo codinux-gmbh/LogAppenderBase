@@ -3,9 +3,9 @@ package net.codinux.log
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
-import kotlinx.datetime.Instant
-import kotlinx.datetime.toKotlinInstant
 import net.codinux.log.config.LogAppenderConfig
+import net.dankito.datetime.Instant
+import net.dankito.datetime.toKmpInstant
 
 abstract class LogbackAppenderBase(
     config: LogAppenderConfig = LogAppenderConfig()
@@ -36,7 +36,7 @@ abstract class LogbackAppenderBase(
     override fun append(event: ILoggingEvent?) {
         if (config.enabled && event != null) {
             logWriter?.writeRecord(
-                if (eventSupportsInstant) event.instant.toKotlinInstant() else Instant.fromEpochMilliseconds(event.timeStamp),
+                if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
                 event.level.levelStr,
                 event.formattedMessage,
                 if (fields.logsLoggerName) event.loggerName else null,

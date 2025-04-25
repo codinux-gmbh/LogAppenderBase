@@ -1,6 +1,6 @@
 package net.codinux.log
 
-import kotlinx.datetime.Instant
+import net.dankito.datetime.Instant
 import org.apache.logging.log4j.core.LogEvent
 import org.apache.logging.log4j.core.appender.AbstractAppender
 import org.apache.logging.log4j.core.config.Property
@@ -26,7 +26,7 @@ open class Log4j2LogAppenderBase(
     override fun append(event: LogEvent?) {
         if (isAppenderEnabled && event != null) {
             logWriter.writeRecord(
-                if (eventSupportsInstant) convertInstant(event.instant) else Instant.fromEpochMilliseconds(event.timeMillis),
+                if (eventSupportsInstant) convertInstant(event.instant) else Instant.ofEpochMilli(event.timeMillis),
                 event.level.name(),
                 event.message.formattedMessage,
                 if (config.logsLoggerName) event.loggerName else null,
@@ -39,6 +39,6 @@ open class Log4j2LogAppenderBase(
     }
 
     protected open fun convertInstant(instant: org.apache.logging.log4j.core.time.Instant) =
-        Instant.fromEpochSeconds(instant.epochSecond, instant.nanoOfSecond)
+        Instant(instant.epochSecond, instant.nanoOfSecond)
 
 }

@@ -1,6 +1,6 @@
 package net.codinux.log
 
-import kotlinx.datetime.toKotlinInstant
+import net.dankito.datetime.toKmpInstant
 import java.util.logging.Handler
 
 open class JavaUtilLogAppenderBase(
@@ -21,7 +21,7 @@ open class JavaUtilLogAppenderBase(
             }
 
             logWriter.writeRecord(
-                record.instant.toKotlinInstant(),
+                record.instant.toKmpInstant(),
                 record.level.name,
                 message,
                 if (config.logsLoggerName) record.loggerName else null,

@@ -1,13 +1,12 @@
 package net.codinux.log
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import net.dankito.datetime.Instant
 
 class LogRecord<T>(
     var mappedRecord: T
 ) {
 
-    var timestamp: Instant = Clock.System.now()
+    var timestamp: Instant = Instant.now()
 
     var level: String = ""
 

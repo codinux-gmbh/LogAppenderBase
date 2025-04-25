@@ -5,10 +5,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.config.WriterConfig
+import net.dankito.datetime.Instant
 import kotlin.js.JsName
 import kotlin.test.Test
 
@@ -172,7 +171,7 @@ class LogWriterBaseTest {
         return LogRecord(message)
     }
 
-    private fun now() = Clock.System.now()
+    private fun now() = Instant.now()
 
     private suspend fun delay(millis: Long) {
         withContext(Dispatchers.Default) { // use Dispatchers.Default as otherwise delay() calls will be ignored

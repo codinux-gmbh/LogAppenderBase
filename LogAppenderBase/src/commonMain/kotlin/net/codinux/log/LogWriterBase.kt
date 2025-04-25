@@ -4,7 +4,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
-import kotlinx.datetime.Instant
 import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.data.*
 import net.codinux.log.extensions.cancelSafely
@@ -12,6 +11,7 @@ import net.codinux.log.extensions.isNotEmpty
 import net.codinux.log.kubernetes.*
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
+import net.dankito.datetime.Instant
 import kotlin.math.min
 
 abstract class LogWriterBase<T>(

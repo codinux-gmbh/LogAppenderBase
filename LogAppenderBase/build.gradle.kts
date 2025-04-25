@@ -78,8 +78,10 @@ kotlin {
 
 
     val coroutinesVersion: String by project
-    val kotlinxDatetimeVersion: String by project
     val ktorVersion: String by project
+
+    val kmpDateTimeVersion: String by project
+
     val kotestVersion: String by project
 
     sourceSets {
@@ -87,7 +89,7 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
-                api("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
+                api("net.dankito.datetime:kmp-datetime:$kmpDateTimeVersion")
             }
         }
         val commonTest by getting {

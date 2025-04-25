@@ -1,6 +1,6 @@
 package net.codinux.log
 
-import kotlinx.datetime.toKotlinInstant
+import net.dankito.datetime.toKmpInstant
 import org.jboss.logmanager.ExtFormatter
 import org.jboss.logmanager.ExtHandler
 import org.jboss.logmanager.ExtLogRecord
@@ -28,7 +28,7 @@ open class JBossLoggingAppenderBase(
             val ndc = if (config.logsNdc && record.ndc.isNullOrBlank() == false) record.ndc else null
 
             logWriter.writeRecord(
-                record.instant.toKotlinInstant(),
+                record.instant.toKmpInstant(),
                 record.level.name,
                 message,
                 if (config.logsLoggerName) record.loggerName else null,
