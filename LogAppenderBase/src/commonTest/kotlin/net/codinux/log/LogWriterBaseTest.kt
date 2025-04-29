@@ -2,7 +2,6 @@ package net.codinux.log
 
 import io.kotest.matchers.collections.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import net.codinux.log.config.LogAppenderConfig
@@ -11,7 +10,6 @@ import net.dankito.datetime.Instant
 import kotlin.js.JsName
 import kotlin.test.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class LogWriterBaseTest {
 
     companion object {
