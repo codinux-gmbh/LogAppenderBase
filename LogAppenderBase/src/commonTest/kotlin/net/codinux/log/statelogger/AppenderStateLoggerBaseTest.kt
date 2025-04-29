@@ -34,15 +34,32 @@ class AppenderStateLoggerBaseTest {
     fun assertGetsOnlyLoggedOncePerPeriod() {
         val category = "TestCategory"
         val logAtMaximumEach = 5.minutes
+        val addDurationToLogMessage = false
 
-        underTest.error("Message 1", null, logAtMaximumEach, category)
+        underTest.error("Message 1", null, logAtMaximumEach, category, addDurationToLogMessage)
 
         (2..10_000).forEach {
-            underTest.error("Message $it", null, logAtMaximumEach, category)
+            underTest.error("Message $it", null, logAtMaximumEach, category, addDurationToLogMessage)
         }
 
         assertTrue(errorLogs.size == 1)
         assertContains(errorLogs.values, "Message 1")
+    }
+
+    @Test
+    fun assertDurationGetsAddedIfAddDurationToLogMessageIsTrue() {
+        val category = "TestCategory"
+        val logAtMaximumEach = 5.minutes
+        val addDurationToLogMessage = true
+
+        underTest.error("Message 1.", null, logAtMaximumEach, category, addDurationToLogMessage)
+
+        (2..10_000).forEach {
+            underTest.error("Message $it", null, logAtMaximumEach, category, addDurationToLogMessage)
+        }
+
+        assertTrue(errorLogs.size == 1)
+        assertContains(errorLogs.values, "Message 1. This message is logged only once every 5m.")
     }
 
 }

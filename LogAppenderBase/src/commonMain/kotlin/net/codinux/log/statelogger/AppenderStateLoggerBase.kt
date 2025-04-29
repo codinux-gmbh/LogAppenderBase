@@ -8,12 +8,18 @@ abstract class AppenderStateLoggerBase : AppenderStateLogger {
     protected open val lastErrorCalls = mutableMapOf<String, Instant>() // TODO: use thread safe Map
 
 
-    override fun error(message: String, e: Throwable?, logAtMaximumEach: Duration, category: String) {
+    override fun error(message: String, e: Throwable?, logAtMaximumEach: Duration, category: String, addDurationToLogMessage: Boolean) {
         val lastErrorCall = lastErrorCalls[category]
 
         if (lastErrorCall == null || minimumTimeElapsed(lastErrorCall, logAtMaximumEach)) {
             lastErrorCalls[category] = Instant.now()
-            error(message, e)
+
+            if (addDurationToLogMessage) {
+                // TODO: later convert Duration to a nicer string, e.g. "5m" -> "5 min"
+                error("$message This message is logged only once every $logAtMaximumEach.", e)
+            } else {
+                error(message, e)
+            }
         }
     }
 

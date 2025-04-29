@@ -10,6 +10,6 @@ interface AppenderStateLogger {
 
     fun error(message: String, e: Throwable? = null)
 
-    fun error(message: String, e: Throwable?, logAtMaximumEach: Duration, category: String = message)
+    fun error(message: String, e: Throwable?, logAtMaximumEach: Duration, category: String = message, addDurationToLogMessage: Boolean = true)
 
 }
