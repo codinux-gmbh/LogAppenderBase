@@ -26,9 +26,7 @@ abstract class AppenderStateLoggerBase : AppenderStateLogger {
     protected open fun minimumTimeElapsed(lastErrorCall: Instant, logAtMaximumEach: Duration): Boolean {
         val now = Instant.now()
 
-        // yes, milliseconds would be more correct, but saves same calculation time to simply use property epochSeconds
-//        return lastErrorCall.toEpochMilliseconds() + logAtMaximumEach.inWholeMilliseconds < now.toEpochMilliseconds()
-        return lastErrorCall.epochSeconds + logAtMaximumEach.inWholeSeconds < now.epochSeconds
+        return lastErrorCall.toEpochMilliseconds() + logAtMaximumEach.inWholeMilliseconds < now.toEpochMilliseconds()
     }
 
 }
