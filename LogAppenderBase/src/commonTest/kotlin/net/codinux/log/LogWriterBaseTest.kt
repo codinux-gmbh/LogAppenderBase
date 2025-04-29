@@ -1,6 +1,7 @@
 package net.codinux.log
 
-import io.kotest.matchers.collections.*
+import assertk.assertThat
+import assertk.assertions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
@@ -26,7 +27,7 @@ class LogWriterBaseTest {
         val writtenRecords = writeRecords(sendPeriod, testRecord)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecord, writtenRecords)
-        receivedWriteRecordsEvents.shouldHaveSize(1)
+        assertThat(receivedWriteRecordsEvents).hasSize(1)
     }
 
 
@@ -39,7 +40,7 @@ class LogWriterBaseTest {
         val writtenRecords = writeRecords(sendPeriod, testRecords)
 
         val receivedWriteRecordsEvents = assertWrittenRecords(testRecords, writtenRecords)
-        receivedWriteRecordsEvents.shouldHaveAtMostSize(2) // as records are send in batches writeRecords() is called less than 5 times
+        assertThat(receivedWriteRecordsEvents.size).isLessThanOrEqualTo(2) // as records are send in batches writeRecords() is called less than 5 times
     }
 
 
@@ -87,25 +88,25 @@ class LogWriterBaseTest {
         underTest.close()
 
 
-        writtenRecords.size.shouldBeIn(2, 3) // as on first call some records failed there has to be another call with the failed records
+        assertThat(writtenRecords.size).isIn(2, 3) // as on first call some records failed there has to be another call with the failed records
 
         // the original 5 records may get send in different chunks, not all in one chunks
         val originalRecords = if (writtenRecords.size == 2) writtenRecords[0]!!
                                 else writtenRecords[0]!! + writtenRecords[1]!!
-        originalRecords.shouldContainExactlyInAnyOrder(testRecords.map { serializeRecord(it) })
+        assertThat(originalRecords).containsExactlyInAnyOrder(*testRecords.map { serializeRecord(it) }.toTypedArray())
 
         val failedRecords = if (writtenRecords.size == 2) writtenRecords[1]!! else writtenRecords[2]!!
-        failedRecords.shouldHaveSize(3)
-        failedRecords.shouldContainExactlyInAnyOrder(serializeRecord(testRecords[0]), serializeRecord(testRecords[2]), serializeRecord(testRecords[4]))
+        assertThat(failedRecords).hasSize(3)
+        assertThat(failedRecords).containsExactlyInAnyOrder(serializeRecord(testRecords[0]), serializeRecord(testRecords[2]), serializeRecord(testRecords[4]))
     }
 
 
     private fun assertWrittenRecords(sendRecords: List<LogRecord<String>>, writtenRecords: List<WrittenRecord>): List<WrittenRecord> {
         val writtenLogRecords = writtenRecords.flatMap { it.records }
 
-        sendRecords.shouldHaveSize(writtenLogRecords.size)
+        assertThat(sendRecords).hasSize(writtenLogRecords.size)
 
-        writtenLogRecords.shouldContainAll(sendRecords.map { serializeRecord(it) })
+        assertThat(writtenLogRecords).containsAtLeast(*sendRecords.map { serializeRecord(it) }.toTypedArray())
 
         return writtenRecords
     }

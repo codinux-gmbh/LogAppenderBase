@@ -93,7 +93,7 @@ kotlin {
 
     val kmpDateTimeVersion: String by project
 
-    val kotestVersion: String by project
+    val assertKVersion: String by project
 
     sourceSets {
         val commonMain by getting {
@@ -109,7 +109,7 @@ kotlin {
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion")
 
-                implementation("io.kotest:kotest-assertions-core:$kotestVersion")
+                implementation("com.willowtreeapps.assertk:assertk:$assertKVersion")
             }
         }
 
