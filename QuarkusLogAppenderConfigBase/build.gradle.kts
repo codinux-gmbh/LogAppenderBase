@@ -14,8 +14,7 @@ java {
 val quarkusVersion: String by project
 
 dependencies {
-    compileOnly(platform("io.quarkus:quarkus-bom:$quarkusVersion"))
-    compileOnly("io.quarkus:quarkus-core")
+    compileOnly("io.quarkus:quarkus-core:$quarkusVersion")
 
     implementation(project(":LogAppenderBase"))
 }
