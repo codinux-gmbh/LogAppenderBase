@@ -16,13 +16,13 @@ Used e.g. for [LokiLogAppender](https://github.com/codinux-gmbh/LokiLogAppender)
 #### Base
 
 ```
-implementation("net.codinux.log:log-appender-base:0.5.5")
+implementation("net.codinux.log:log-appender-base:0.6.1")
 ```
 
 #### Specific Log framework, e.g. Logback
 
 ```
-implementation("net.codinux.log:logback-appender-base:0.5.5")
+implementation("net.codinux.log:logback-appender-base:0.6.1")
 ```
 
 ### Maven
@@ -31,7 +31,7 @@ implementation("net.codinux.log:logback-appender-base:0.5.5")
 <dependency>
    <groupId>net.codinux.log</groupId>
    <artifactId>log-appender-base-jvm</artifactId>
-   <version>0.5.5</version>
+   <version>0.6.1</version>
 </dependency>
 ```
 
