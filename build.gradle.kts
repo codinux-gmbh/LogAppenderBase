@@ -17,7 +17,7 @@ allprojects {
     version = "0.7.0-SNAPSHOT"
 
 
-    ext["sourceCodeRepositoryBaseUrl"] = "github.com/codinux/LogAppenderBase"
+    ext["sourceCodeRepositoryBaseUrl"] = "github.com/codinux-gmbh/LogAppenderBase"
 
     ext["projectDescription"] = "Common log appender implementation for log appenders like ElasticSearchLogAppender and LokiLogAppender"
 }
