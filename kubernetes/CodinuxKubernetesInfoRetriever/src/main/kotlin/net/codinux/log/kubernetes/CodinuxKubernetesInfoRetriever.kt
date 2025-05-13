@@ -1,27 +1,12 @@
 package net.codinux.log.kubernetes
 
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import kotlinx.serialization.json.Json
 import net.codinux.log.kubernetes.model.Pod
+import net.codinux.log.kubernetes.web.KtorWebClient
+import net.codinux.log.kubernetes.web.WebClient
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
 import java.io.File
 import java.net.InetAddress
-import java.security.KeyStore
-import java.security.cert.Certificate
-import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
 
 class CodinuxKubernetesInfoRetriever(
     private val stateLogger: AppenderStateLogger = StdOutStateLogger()
@@ -29,16 +14,6 @@ class CodinuxKubernetesInfoRetriever(
 
     companion object {
         private val KubernetesSecretsFolder = File("/run/secrets/kubernetes.io/serviceaccount/")
-    }
-
-
-    // fallback trust store if Kube server certificate is not mounted to pod
-    private val trustAllCertificatesTrustManager = object : X509TrustManager {
-        override fun getAcceptedIssuers(): Array<X509Certificate?> = arrayOf()
-        override fun checkClientTrusted(certs: Array<X509Certificate?>?, authType: String?) { }
-        override fun checkServerTrusted(certs: Array<X509Certificate?>?, authType: String?) {
-            // trust all certificates
-        }
     }
 
 
@@ -79,19 +54,17 @@ class CodinuxKubernetesInfoRetriever(
                             else "https://kubernetes.default.svc:443"
             val url = "$apiServer/api/v1/namespaces/$namespace/pods/$podName"
 
-            val client = createClientForCertificate(kubeApiCertificate)
+            val client: WebClient = KtorWebClient(accessToken, kubeApiCertificate, stateLogger)
 
-            val response = client.get(url) {
-                bearerAuth(accessToken)
-            }
+            val response = client.get(url)
 
-            if (response.status.isSuccess()) {
-                return mapPodResponse(response.body(), namespace, podName, podIp)
+            if (response.isSuccess && response.responseBody != null) {
+                return mapPodResponse(response.responseBody, namespace, podName, podIp)
             } else {
-                if (response.status == HttpStatusCode.Forbidden) {
+                if (response.statusCode == 403) {
                     stateLogger.error("Access to Pod information is forbidden. Did you add the privilege to read pod information to your pod's ServiceAccount? (see )")
                 } else {
-                    stateLogger.error("Could not retrieve Pod information: ${response.status} ${response.bodyAsText()}")
+                    stateLogger.error("Could not retrieve Pod information: ${response.statusCode}", response.error)
                 }
             }
         } catch (e: Throwable) {
@@ -101,57 +74,6 @@ class CodinuxKubernetesInfoRetriever(
         return PodInfo(namespace, podName, podIp)
     }
 
-    private fun createClientForCertificate(certificate: String?): HttpClient {
-        return HttpClient(CIO) {
-            install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                })
-            }
-            engine {
-                https {
-                    trustManager = createTrustManagerForCertificate(certificate)
-                }
-            }
-        }
-    }
-
-    private fun createTrustManagerForCertificate(certificateString: String?): TrustManager {
-        try {
-            if (certificateString != null) {
-                val certificateFactory = CertificateFactory.getInstance("X.509")
-                val certificate = certificateFactory.generateCertificate(certificateString.byteInputStream())
-
-                return createTrustManagerForCertificate(certificate)
-            }
-        } catch (e: Throwable) { // should never occur
-            stateLogger.error("Could not add Kubernetes server certificate to KeyStore: $e")
-        }
-
-        return trustAllCertificatesTrustManager
-    }
-
-    private fun createTrustManagerForCertificate(certificate: Certificate): X509TrustManager {
-        val keyStore = KeyStore.getInstance(KeyStore.getDefaultType()).apply {
-            this.load(null) // not really needed
-
-            this.setCertificateEntry("KubeServer", certificate) // use a random name?
-        }
-
-        return createTrustManagerForKeyStore(keyStore)
-    }
-
-    private fun createTrustManagerForKeyStore(keyStore: KeyStore): X509TrustManager {
-        val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
-            this.init(keyStore)
-        }
-
-        val sslContext = SSLContext.getInstance("TLS").apply {
-            this.init(null, trustManagerFactory.trustManagers, null)
-        }
-
-        return trustManagerFactory.trustManagers.filterIsInstance<X509TrustManager>().first()
-    }
 
     private fun mapPodResponse(pod: Pod?, namespace: String, podName: String, podIp: String) = pod?.let {
         // TODO: find the container we are running in. Till then we simply take the first container
