@@ -1,97 +1,96 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithName;
 
 @ConfigGroup
-public class QuarkusKubernetesFieldsConfig {
+public interface QuarkusKubernetesFieldsConfig {
 
     /**
      * Config for the Kubernetes namespace the Pod is running in.
      */
-    @ConfigItem(name = "namespace")
-    public NamespaceConfig namespace;
+    NamespaceConfig namespace();
 
 
     /**
      * Config for the Pod name index field.
      */
-    @ConfigItem(name = "podname")
-    public PodNameConfig podName;
+    @WithName("podname")
+    PodNameConfig podName();
 
     /**
      * Config for the container name index field.
      */
-    @ConfigItem(name = "containername")
-    public ContainerNameConfig containerName;
+    @WithName("containername")
+    ContainerNameConfig containerName();
 
     /**
      * Config for the image name index field.
      */
-    @ConfigItem(name = "imagename")
-    public ImageNameConfig imageName;
+    @WithName("imagename")
+    ImageNameConfig imageName();
 
 
     /**
      * Config for the node name index field.
      */
-    @ConfigItem(name = "nodename")
-    public NodeNameConfig nodeName;
+    @WithName("nodename")
+    NodeNameConfig nodeName();
 
     /**
      * Config for the node IP index field.
      */
-    @ConfigItem(name = "nodeip")
-    public NodeIpConfig nodeIp;
+    @WithName("nodeip")
+    NodeIpConfig nodeIp();
 
     /**
      * Config for the POD IP index field.
      */
-    @ConfigItem(name = "podip")
-    public PodIpConfig podIp;
+    @WithName("podip")
+    PodIpConfig podIp();
 
 
     /**
      * Config for the container start time index field.
      */
-    @ConfigItem(name = "starttime")
-    public StartTimeConfig startTime;
+    @WithName("starttime")
+    StartTimeConfig startTime();
 
     /**
      * Config for the container restart count index field.
      */
-    @ConfigItem(name = "restartcount")
-    public RestartCountConfig restartCount;
+    @WithName("restartcount")
+    RestartCountConfig restartCount();
 
 
     /**
      * Config for the Pod UID index field.
      */
-    @ConfigItem(name = "poduid")
-    public PodUidConfig podUid;
+    @WithName("poduid")
+    PodUidConfig podUid();
 
     /**
      * Config for the container id index field.
      */
-    @ConfigItem(name = "containerid")
-    public ContainerIdConfig containerId;
+    @WithName("containerid")
+    ContainerIdConfig containerId();
 
     /**
      * Config for the image id index field.
      */
-    @ConfigItem(name = "iamgeid")
-    public ImageIdConfig imageId;
+    @WithName("iamgeid")
+    ImageIdConfig imageId();
 
 
     /**
      * Config for the Kubernetes labels index fields.
      */
-    public KubernetesLabelsConfig labels;
+    KubernetesLabelsConfig labels();
 
 
     /**
      * Config for the Kubernetes annotations index fields.
      */
-    public KubernetesAnnotationsConfig annotations;
+    KubernetesAnnotationsConfig annotations();
 
 }

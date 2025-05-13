@@ -1,79 +1,79 @@
 package net.codinux.log.quarkus.config.fields;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithName;
 import net.codinux.log.quarkus.config.fields.kubernetes.KubernetesInfoConfig;
 
 @ConfigGroup
-public class QuarkusLogAppenderFieldsConfig {
+public interface QuarkusLogAppenderFieldsConfig {
 
-    public MessageConfig message;
+    MessageConfig message();
 
     /**
      * Config for the log level.
      */
-    @ConfigItem(name = "level")
-    public LogLevelConfig logLevel;
+    @WithName("level")
+    LogLevelConfig logLevel();
 
-    @ConfigItem(name = "loggername")
-    public LoggerNameConfig loggerName;
+    @WithName("loggername")
+    LoggerNameConfig loggerName();
 
     /**
      * Config for the logger name.
      */
-    @ConfigItem(name = "loggerclass")
-    public LoggerClassNameConfig loggerClassName;
+    @WithName("loggerclass")
+    LoggerClassNameConfig loggerClassName();
 
     /**
      * Config for the host name.
      */
-    @ConfigItem(name = "hostname")
-    public HostNameConfig hostName;
+    @WithName("hostname")
+    HostNameConfig hostName();
 
     /**
      * Config for the host IP.
      */
-    @ConfigItem(name = "hostip")
-    public HostNameConfig hostIp;
+    @WithName("hostip")
+    HostIpConfig hostIp();
 
     /**
      * Config for the app name.
      */
-    @ConfigItem(name = "app")
-    public AppNameConfig appName;
+    @WithName("app")
+    AppNameConfig appName();
 
     /**
      * Config for the app version.
      */
-    @ConfigItem(name = "version")
-    public AppVersionConfig appVersion;
+    @WithName("version")
+    AppVersionConfig appVersion();
 
     /**
      * Config for the job name.
      */
-    @ConfigItem(name = "job")
-    public JobNameConfig jobName;
+    @WithName("job")
+    JobNameConfig jobName();
 
     /**
      * Config for the thread name.
      */
-    @ConfigItem(name = "threadname")
-    public ThreadNameConfig threadName;
+    @WithName("threadname")
+    ThreadNameConfig threadName();
 
-    public StacktraceConfig stacktrace;
+    StacktraceConfig stacktrace();
 
 
-    public MdcConfig mdc;
+    MdcConfig mdc();
 
-    public MarkerConfig marker;
+    MarkerConfig marker();
 
-    public NdcConfig ndc;
+    NdcConfig ndc();
 
 
     /**
      * Configure which Kubernetes values to include in log.
      */
-    @ConfigItem(name = "kubernetes")
-    public KubernetesInfoConfig kubernetesInfo;
+    @WithName("kubernetes")
+    KubernetesInfoConfig kubernetesInfo();
 
 }

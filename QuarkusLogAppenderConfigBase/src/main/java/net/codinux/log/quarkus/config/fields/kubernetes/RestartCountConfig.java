@@ -1,22 +1,24 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.KubernetesFieldsConfig;
 
 @ConfigGroup
-public class RestartCountConfig {
+public interface RestartCountConfig {
 
     /**
      * If container's restart count should be included in index.
      */
-    @ConfigItem(defaultValue = KubernetesFieldsConfig.IncludeRestartCountDefaultValueString)
-    public boolean include;
+    @WithDefault(KubernetesFieldsConfig.IncludeRestartCountDefaultValueString)
+    boolean include();
 
     /**
      * The name of the container restart count index field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = KubernetesFieldsConfig.RestartCountDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(KubernetesFieldsConfig.RestartCountDefaultFieldName)
+    String fieldName();
 
 }

@@ -1,22 +1,24 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.KubernetesFieldsConfig;
 
 @ConfigGroup
-public class NamespaceConfig {
+public interface NamespaceConfig {
 
     /**
      * If Kubernetes namespace the Pod is running in should be included in index.
      */
-    @ConfigItem(defaultValue = KubernetesFieldsConfig.IncludeNamespaceDefaultValueString)
-    public boolean include;
+    @WithDefault(KubernetesFieldsConfig.IncludeNamespaceDefaultValueString)
+    boolean include();
 
     /**
      * The name of the Kubernetes namespace index field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = KubernetesFieldsConfig.NamespaceDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(KubernetesFieldsConfig.NamespaceDefaultFieldName)
+    String fieldName();
 
 }

@@ -1,22 +1,24 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.KubernetesFieldsConfig;
 
 @ConfigGroup
-public class PodUidConfig {
+public interface PodUidConfig {
 
     /**
      * If the Pod UID should be included in index.
      */
-    @ConfigItem(defaultValue = KubernetesFieldsConfig.IncludePodUidDefaultValueString)
-    public boolean include;
+    @WithDefault(KubernetesFieldsConfig.IncludePodUidDefaultValueString)
+    boolean include();
 
     /**
      * The name of the Pod UID index field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = KubernetesFieldsConfig.PodUidDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(KubernetesFieldsConfig.PodUidDefaultFieldName)
+    String fieldName();
 
 }

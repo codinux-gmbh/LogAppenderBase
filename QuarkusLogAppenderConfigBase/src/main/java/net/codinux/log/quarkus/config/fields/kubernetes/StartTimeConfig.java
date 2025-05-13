@@ -1,22 +1,24 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.KubernetesFieldsConfig;
 
 @ConfigGroup
-public class StartTimeConfig {
+public interface StartTimeConfig {
 
     /**
      * If the container start time should be included in index.
      */
-    @ConfigItem(defaultValue = KubernetesFieldsConfig.IncludeStartTimeDefaultValueString)
-    public boolean include;
+    @WithDefault(KubernetesFieldsConfig.IncludeStartTimeDefaultValueString)
+    boolean include();
 
     /**
      * The name of the container start time index field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = KubernetesFieldsConfig.StartTimeDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(KubernetesFieldsConfig.StartTimeDefaultFieldName)
+    String fieldName();
 
 }

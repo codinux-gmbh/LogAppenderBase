@@ -1,28 +1,31 @@
 package net.codinux.log.quarkus.config.fields;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.LogAppenderFieldsConfig;
 
 @ConfigGroup
-public class StacktraceConfig {
+public interface StacktraceConfig {
 
     /**
      * If the stacktrace field should be included in Elasticsearch index.
      */
-    @ConfigItem(defaultValue = LogAppenderFieldsConfig.IncludeStacktraceDefaultValueString)
-    public boolean include;
+    @WithDefault(LogAppenderFieldsConfig.IncludeStacktraceDefaultValueString)
+    boolean include();
 
     /**
      * The name of the stacktrace field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = LogAppenderFieldsConfig.StacktraceDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(LogAppenderFieldsConfig.StacktraceDefaultFieldName)
+    String fieldName();
 
     /**
      * The name of the stacktrace field.
      */
-    @ConfigItem(name = "maxFieldLength", defaultValue = LogAppenderFieldsConfig.StacktraceMaxFieldLengthDefaultValueString)
-    public int maxFieldLength;
+    @WithName("maxFieldLength")
+    @WithDefault(LogAppenderFieldsConfig.StacktraceMaxFieldLengthDefaultValueString)
+    int maxFieldLength();
 
 }

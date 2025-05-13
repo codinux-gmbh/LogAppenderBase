@@ -1,19 +1,20 @@
 package net.codinux.log.quarkus.config.fields;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
-import io.quarkus.runtime.annotations.ConvertWith;
+import io.smallrye.config.WithConverter;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.LogAppenderFieldsConfig;
 import net.codinux.log.quarkus.converter.FieldNamePrefixConverter;
 
 @ConfigGroup
-public class MdcConfig {
+public interface MdcConfig {
 
     /**
      * If MDC (Mapped Diagnostic Context) should be included in Elasticsearch index.
      */
-    @ConfigItem(defaultValue = LogAppenderFieldsConfig.IncludeMdcDefaultValueString)
-    public boolean include;
+    @WithDefault(LogAppenderFieldsConfig.IncludeMdcDefaultValueString)
+    boolean include();
 
     /**
      * Sets a prefix for all MDC keys.
@@ -26,8 +27,9 @@ public class MdcConfig {
      *  key_1=value_1
      *  key_2=value_2
      */
-    @ConfigItem(defaultValue = LogAppenderFieldsConfig.MdcFieldsPrefixDefaultValue)
-    @ConvertWith(FieldNamePrefixConverter.class)
-    public String prefix;
+    @WithName("fieldname")
+    @WithDefault(LogAppenderFieldsConfig.MdcFieldsPrefixDefaultValue)
+    @WithConverter(FieldNamePrefixConverter.class)
+    String prefix();
 
 }

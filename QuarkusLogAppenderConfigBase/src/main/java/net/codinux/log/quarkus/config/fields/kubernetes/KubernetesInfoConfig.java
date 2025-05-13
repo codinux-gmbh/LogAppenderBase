@@ -1,34 +1,35 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
-import io.quarkus.runtime.annotations.ConvertWith;
+import io.smallrye.config.WithConverter;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.LogAppenderFieldsConfig;
 import net.codinux.log.quarkus.converter.FieldNamePrefixConverter;
 
 @ConfigGroup
-public class KubernetesInfoConfig {
+public interface KubernetesInfoConfig {
 
     /**
      * If Pod and Kubernetes info should be included in Elasticsearch index.
      */
-    @ConfigItem(defaultValue = LogAppenderFieldsConfig.IncludeKubernetesInfoDefaultValueString)
-    public boolean include;
+    @WithDefault(LogAppenderFieldsConfig.IncludeKubernetesInfoDefaultValueString)
+    boolean include();
 
     /**
      * Sets a prefix for all Kubernetes info keys. Defaults to "k8s".
      *
      * Empty string or special value "off" turns prefix off.
      */
-    @ConfigItem(defaultValue = LogAppenderFieldsConfig.KubernetesFieldsPrefixDefaultValue)
-    @ConvertWith(FieldNamePrefixConverter.class)
-    public String prefix;
+    @WithDefault(LogAppenderFieldsConfig.KubernetesFieldsPrefixDefaultValue)
+    @WithConverter(FieldNamePrefixConverter.class)
+    String prefix();
 
 
     /**
      * Config for logged Kubernetes fields.
      */
-    @ConfigItem(name = "field")
-    public QuarkusKubernetesFieldsConfig fields;
+    @WithName("field")
+    QuarkusKubernetesFieldsConfig fields();
 
 }

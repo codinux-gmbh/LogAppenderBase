@@ -1,22 +1,24 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.KubernetesFieldsConfig;
 
 @ConfigGroup
-public class NodeNameConfig {
+public interface NodeNameConfig {
 
     /**
      * If the node name should be included in index.
      */
-    @ConfigItem(defaultValue = KubernetesFieldsConfig.IncludeNodeNameDefaultValueString)
-    public boolean include;
+    @WithDefault(KubernetesFieldsConfig.IncludeNodeNameDefaultValueString)
+    boolean include();
 
     /**
      * The name of the node name index field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = KubernetesFieldsConfig.NodeNameDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(KubernetesFieldsConfig.NodeNameDefaultFieldName)
+    String fieldName();
 
 }

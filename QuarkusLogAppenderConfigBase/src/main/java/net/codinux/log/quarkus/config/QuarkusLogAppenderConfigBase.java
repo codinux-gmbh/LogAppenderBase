@@ -1,83 +1,80 @@
 package net.codinux.log.quarkus.config;
 
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.RegisterForReflection;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.LogAppenderConfig;
 import net.codinux.log.config.WriterConfig;
 import net.codinux.log.quarkus.config.fields.QuarkusLogAppenderFieldsConfig;
+
 import java.time.Duration;
 import java.util.Optional;
 
 @RegisterForReflection
-public class QuarkusLogAppenderConfigBase {
+public interface QuarkusLogAppenderConfigBase {
 
     /**
      * If logging to Elasticsearch should be enabled or not.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.EnabledDefaultValueString)
-    public boolean enable;
+    @WithDefault(LogAppenderConfig.EnabledDefaultValueString)
+    boolean enable();
 
     /**
      * The logger name under which the internal state and errors get logged.
      */
-    @ConfigItem(defaultValue = LogAppenderConfig.StateLoggerNotSetString)
-    public String stateLoggerName;
+    Optional<String> stateLoggerName();
 
     /**
      * URL of the endpoint where to reach ElasticSearch / Loki (e.g. http://localhost:9200 / http://localhost:3100).
      */
-    @ConfigItem(name = "host-url")
-    public String hostUrl;
+    @WithName("host-url")
+    String hostUrl();
 
     /**
      * For password protected Loki instances, to Username to authenticate to Loki.
      */
-    @ConfigItem(defaultValue = WriterConfig.UsernameNotSetString)
-    public String username = null;
+    Optional<String> username();
 
     /**
      * For password protected Loki instances, to Password to authenticate to Loki.
      */
-    @ConfigItem(defaultValue = WriterConfig.PasswordNotSetString)
-    public String password = null;
+    Optional<String> password();
 
 
     /**
      * Config for logged fields.
      */
-    @ConfigItem(name = "field")
-    public QuarkusLogAppenderFieldsConfig fields;
+    @WithName("field")
+    QuarkusLogAppenderFieldsConfig fields();
 
 
     /**
      * The maximum number of log records that are send in one batch to Elasticsearch.
      */
-    @ConfigItem(defaultValue = "" + WriterConfig.MaxLogRecordsPerBatchDefaultValue)
-    public int maxLogRecordsPerBatch;
+    @WithDefault("" + WriterConfig.MaxLogRecordsPerBatchDefaultValue)
+    int maxLogRecordsPerBatch();
 
     /**
      * The maximum number of log records being buffered before the get dropped and therefore irrevocably get lost.
      */
-    @ConfigItem(defaultValue = "" + WriterConfig.MaxBufferedLogRecordsDefaultValue)
-    public int maxBufferedLogRecords;
+    @WithDefault("" + WriterConfig.MaxBufferedLogRecordsDefaultValue)
+    int maxBufferedLogRecords();
 
     /**
      * The interval in which log records get send to Elasticsearch in milliseconds.
      */
-    @ConfigItem(defaultValue = "" + WriterConfig.SendLogRecordsPeriodMillisDefaultValue)
-    public int sendLogRecordsPeriodMillis;
+    @WithDefault("" + WriterConfig.SendLogRecordsPeriodMillisDefaultValue)
+    int sendLogRecordsPeriodMillis();
 
     /**
      * Sets the connection timeout, that is the time period in which a client should establish a connection with a server.
      */
-    @ConfigItem
-    public Optional<Duration> connectTimeout = Optional.empty();
+    Optional<Duration> connectTimeout();
 
     /**
      * Sets the request timeout, that is the time period required to process an HTTP call: from sending a request to receiving a response..
      */
-    @ConfigItem
-    public Optional<Duration> requestTimeout = Optional.empty();
+    Optional<Duration> requestTimeout();
 
 //    /**
 //     * To not flood logs with errors like ConnectionException internal errors get logged only once per a configurable period (default: once per 30 minutes).

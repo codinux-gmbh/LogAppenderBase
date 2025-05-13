@@ -1,22 +1,24 @@
 package net.codinux.log.quarkus.config.fields.kubernetes;
 
 import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
+import io.smallrye.config.WithDefault;
+import io.smallrye.config.WithName;
 import net.codinux.log.config.KubernetesFieldsConfig;
 
 @ConfigGroup
-public class ContainerIdConfig {
+public interface ContainerIdConfig {
 
     /**
      * If the container id should be included in index.
      */
-    @ConfigItem(defaultValue = KubernetesFieldsConfig.IncludeContainerIdDefaultValueString)
-    public boolean include;
+    @WithDefault(KubernetesFieldsConfig.IncludeContainerIdDefaultValueString)
+    boolean include();
 
     /**
      * The name of the container id index field.
      */
-    @ConfigItem(name = "fieldname", defaultValue = KubernetesFieldsConfig.ContainerIdDefaultFieldName)
-    public String fieldName;
+    @WithName("fieldname")
+    @WithDefault(KubernetesFieldsConfig.ContainerIdDefaultFieldName)
+    String fieldName();
 
 }
