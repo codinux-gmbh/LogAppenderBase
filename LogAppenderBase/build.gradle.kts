@@ -89,9 +89,9 @@ kotlin {
 
 
     val coroutinesVersion: String by project
-    val ktorVersion: String by project
 
     val kmpDateTimeVersion: String by project
+    val slf4jVersion: String by project
 
     val assertKVersion: String by project
 
@@ -115,8 +115,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                compileOnly("io.ktor:ktor-client-core:$ktorVersion")
-                compileOnly("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
+                compileOnly("org.slf4j:slf4j-api:$slf4jVersion")
             }
         }
         val jvmTest by getting
