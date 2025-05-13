@@ -78,7 +78,7 @@ public interface QuarkusKubernetesFieldsConfig {
     /**
      * Config for the image id index field.
      */
-    @WithName("iamgeid")
+    @WithName("imageid")
     ImageIdConfig imageId();
 
 
