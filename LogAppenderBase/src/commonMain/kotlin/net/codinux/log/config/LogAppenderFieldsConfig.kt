@@ -100,7 +100,7 @@ open class LogAppenderFieldsConfig(
 
         val AppNameDefaultValue: String? = null
         const val AppNameDefaultValueString = "null"
-        const val IncludeAppNameDefaultValue = False
+        const val IncludeAppNameDefaultValue = True
         const val IncludeAppNameDefaultValueString = IncludeAppNameDefaultValue.toString()
         const val AppNameDefaultFieldName = "app"
 
