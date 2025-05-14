@@ -12,6 +12,10 @@ open class LogbackStateLogger(
     constructor(loggerClass: Class<*>) : this(LoggerFactory.getLogger(loggerClass))
 
 
+    override fun debug(message: String) {
+        log.debug(message)
+    }
+
     override fun info(message: String) {
         log.info(message)
     }

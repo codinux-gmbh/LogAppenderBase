@@ -183,7 +183,7 @@ abstract class LogWriterBase<T>(
     }
 
     private suspend fun asyncWriteLoopStopped(failedRecords: List<LogRecord<T>>) {
-        stateLogger.info("Stopping asyncWriteLoop()")
+        stateLogger.debug("Stopping asyncWriteLoop()")
 
         if (failedRecords.isNotEmpty()) {
             writeRecords(failedRecords)
@@ -191,7 +191,7 @@ abstract class LogWriterBase<T>(
 
         flushRecords()
 
-        stateLogger.info("asyncWriteLoop() has stopped")
+        stateLogger.debug("asyncWriteLoop() has stopped")
     }
 
     protected open suspend fun flushRecords() {
@@ -214,7 +214,7 @@ abstract class LogWriterBase<T>(
 
     override fun close() {
         try {
-            stateLogger.info("close() called")
+            stateLogger.debug("close() called")
 
             senderScope.cancelSafely()
 

@@ -4,6 +4,8 @@ import kotlin.time.Duration
 
 interface AppenderStateLogger {
 
+    fun debug(message: String)
+
     fun info(message: String)
 
     fun warn(message: String)

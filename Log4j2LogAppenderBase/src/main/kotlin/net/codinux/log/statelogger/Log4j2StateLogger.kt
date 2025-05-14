@@ -12,6 +12,10 @@ open class Log4j2StateLogger protected constructor(
     constructor(loggerClass: Class<*>) : this(LogManager.getLogger(loggerClass))
 
 
+    override fun debug(message: String) {
+        log.debug(message)
+    }
+
     override fun info(message: String) =
         log.info(message)
 

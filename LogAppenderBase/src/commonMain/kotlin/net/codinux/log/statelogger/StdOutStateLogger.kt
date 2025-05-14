@@ -4,6 +4,10 @@ import net.codinux.log.StdErr
 
 open class StdOutStateLogger : AppenderStateLoggerBase(), AppenderStateLogger {
 
+    override fun debug(message: String) {
+        println(message)
+    }
+
     override fun info(message: String) {
         println(message)
     }

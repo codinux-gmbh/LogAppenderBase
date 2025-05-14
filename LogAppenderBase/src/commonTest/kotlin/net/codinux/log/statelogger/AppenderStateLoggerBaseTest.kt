@@ -12,11 +12,11 @@ class AppenderStateLoggerBaseTest {
     private val errorLogs = mutableMapOf<Instant, String>()
 
     private val underTest = object : AppenderStateLoggerBase() {
-        override fun info(message: String) {
-        }
+        override fun debug(message: String) { }
 
-        override fun warn(message: String) {
-        }
+        override fun info(message: String) { }
+
+        override fun warn(message: String) { }
 
         override fun error(message: String, e: Throwable?) {
             errorLogs[Instant.now()] = message
