@@ -62,7 +62,7 @@ class CodinuxKubernetesInfoRetriever(
                 return mapPodResponse(response.responseBody, namespace, podName, podIp)
             } else {
                 if (response.statusCode == 403) {
-                    stateLogger.error("Access to Pod information is forbidden. Did you add the privilege to read pod information to your pod's ServiceAccount? (see )")
+                    stateLogger.error("Access to Pod information is forbidden. Did you add the privilege to read pod information to your pod's ServiceAccount? (see https://github.com/codinux-gmbh/ElasticsearchLogger#kubernetes-info)")
                 } else {
                     stateLogger.error("Could not retrieve Pod information: ${response.statusCode}", response.error)
                 }
