@@ -36,7 +36,7 @@ object CertificateTrustManager {
                 return createTrustManagerForCertificate(certificate)
             }
         } catch (e: Throwable) { // should never occur
-            stateLogger.error("Could not add Kubernetes server certificate to KeyStore: $e")
+            stateLogger.error("Could not add Kubernetes server certificate to KeyStore", e)
         }
 
         return TrustAllCertificatesTrustManager
