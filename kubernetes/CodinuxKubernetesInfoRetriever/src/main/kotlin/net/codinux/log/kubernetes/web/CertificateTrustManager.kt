@@ -22,6 +22,11 @@ object CertificateTrustManager {
     }
 
 
+    fun createSslContextForCertificate(certificateString: String?, stateLogger: AppenderStateLogger): SSLContext =
+        SSLContext.getInstance("TLS").apply {
+            this.init(null, arrayOf(createTrustManagerForCertificate(certificateString, stateLogger)), null)
+        }
+
     fun createTrustManagerForCertificate(certificateString: String?, stateLogger: AppenderStateLogger): TrustManager {
         try {
             if (certificateString != null) {
@@ -50,10 +55,6 @@ object CertificateTrustManager {
     private fun createTrustManagerForKeyStore(keyStore: KeyStore): X509TrustManager {
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply {
             this.init(keyStore)
-        }
-
-        val sslContext = SSLContext.getInstance("TLS").apply {
-            this.init(null, trustManagerFactory.trustManagers, null)
         }
 
         return trustManagerFactory.trustManagers.filterIsInstance<X509TrustManager>().first()

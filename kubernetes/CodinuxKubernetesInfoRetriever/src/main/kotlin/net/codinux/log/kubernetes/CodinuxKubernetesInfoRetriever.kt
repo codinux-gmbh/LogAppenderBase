@@ -1,7 +1,7 @@
 package net.codinux.log.kubernetes
 
 import net.codinux.log.kubernetes.model.Pod
-import net.codinux.log.kubernetes.web.KtorWebClient
+import net.codinux.log.kubernetes.web.JavaWebClient
 import net.codinux.log.kubernetes.web.WebClient
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.codinux.log.statelogger.StdOutStateLogger
@@ -54,7 +54,7 @@ class CodinuxKubernetesInfoRetriever(
                             else "https://kubernetes.default.svc:443"
             val url = "$apiServer/api/v1/namespaces/$namespace/pods/$podName"
 
-            val client: WebClient = KtorWebClient(accessToken, kubeApiCertificate, stateLogger)
+            val client: WebClient = JavaWebClient(accessToken, kubeApiCertificate, stateLogger)
 
             val response = client.get(url)
 
