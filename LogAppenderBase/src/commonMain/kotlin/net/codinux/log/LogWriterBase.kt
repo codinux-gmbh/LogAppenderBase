@@ -4,6 +4,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
+import net.codinux.kotlin.concurrent.atomic.AtomicBoolean
 import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.data.*
 import net.codinux.log.extensions.cancelSafely
@@ -44,7 +45,7 @@ abstract class LogWriterBase<T>(
 
     protected open val receiverScope = CoroutineScope(Dispatchers.IOorDefault)
 
-    protected open var isFullyInitialized = false // TODO: this is not thread safe / volatile
+    protected open var isFullyInitialized = AtomicBoolean(false)
 
     var countSentRecords: Long = 0
         protected set
@@ -67,7 +68,7 @@ abstract class LogWriterBase<T>(
                 close()
             }
 
-            isFullyInitialized = true
+            isFullyInitialized.set(true)
 
             // pre-cache mapped record objects
             for (i in 0 until min(1_000, writerConfig.maxBufferedLogRecords / 2)) {
@@ -132,7 +133,7 @@ abstract class LogWriterBase<T>(
 
     protected open suspend fun getMappedRecordObject(): LogRecord<T> {
         // if writer is not fully initialized (e.g. PodInfo hasn't been retrieved yet), then wait till it is initialized and pre-allocates mapped record objects
-        return if (cachedMappedRecords.isNotEmpty || isFullyInitialized == false) {
+        return if (cachedMappedRecords.isNotEmpty || isFullyInitialized.get() == false) {
             cachedMappedRecords.receive()
         } else {
             instantiateMappedRecord()

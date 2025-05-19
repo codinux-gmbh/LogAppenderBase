@@ -91,6 +91,7 @@ kotlin {
     val coroutinesVersion: String by project
 
     val kmpDateTimeVersion: String by project
+    val concurrentCollectionsVersion: String by project
     val slf4jVersion: String by project
 
     val assertKVersion: String by project
@@ -101,6 +102,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
                 api("net.dankito.datetime:kmp-datetime:$kmpDateTimeVersion")
+                implementation("net.codinux.collections:concurrent-collections:$concurrentCollectionsVersion")
             }
         }
         val commonTest by getting {
