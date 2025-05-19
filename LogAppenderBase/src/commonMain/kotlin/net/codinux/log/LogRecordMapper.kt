@@ -1,5 +1,6 @@
 package net.codinux.log
 
+import net.codinux.kotlin.concurrent.collections.ConcurrentMap
 import net.codinux.log.config.LogAppenderFieldsConfig
 import net.codinux.log.data.ProcessData
 import net.codinux.log.kubernetes.PodInfo
@@ -16,9 +17,9 @@ open class LogRecordMapper(
     open var podInfo: PodInfo? = null
 
 
-    protected open val cachedStackTraces = mutableMapOf<Int?, String>() // TODO: use thread safe Map
+    protected open val cachedStackTraces = ConcurrentMap<Int?, String>()
 
-    protected open val cachedLoggerClassNames = mutableMapOf<String, String>() // TODO: use thread safe Map
+    protected open val cachedLoggerClassNames = ConcurrentMap<String, String>()
 
     /**
      * Add fields that never change during the whole process lifetime

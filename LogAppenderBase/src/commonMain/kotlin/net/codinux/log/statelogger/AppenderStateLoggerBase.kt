@@ -1,11 +1,12 @@
 package net.codinux.log.statelogger
 
+import net.codinux.kotlin.concurrent.collections.ConcurrentMap
 import net.dankito.datetime.Instant
 import kotlin.time.Duration
 
 abstract class AppenderStateLoggerBase : AppenderStateLogger {
 
-    protected open val lastErrorCalls = mutableMapOf<String, Instant>() // TODO: use thread safe Map
+    protected open val lastErrorCalls = ConcurrentMap<String, Instant>()
 
 
     override fun error(message: String, e: Throwable?, logAtMaximumEach: Duration, category: String, addDurationToLogMessage: Boolean) {
