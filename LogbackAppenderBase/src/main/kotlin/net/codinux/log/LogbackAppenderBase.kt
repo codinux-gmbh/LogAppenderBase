@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.ThrowableProxy
 import net.codinux.log.config.LogAppenderConfig
 import net.dankito.datetime.Instant
 import net.dankito.datetime.toKmpInstant
+import kotlin.time.Duration.Companion.minutes
 
 abstract class LogbackAppenderBase(
     config: LogAppenderConfig = LogAppenderConfig()
@@ -78,7 +79,7 @@ abstract class LogbackAppenderBase(
 
             return throwable
         } catch (e: Exception) {
-            logWriter?.stateLogger?.error("Could not get Throwable from IThrowableProxy", e)
+            logWriter?.stateLogger?.error("Could not get Throwable from IThrowableProxy", e, 5.minutes)
         }
 
         return null

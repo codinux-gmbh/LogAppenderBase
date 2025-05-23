@@ -175,7 +175,7 @@ abstract class LogWriterBase<T>(
                 if (e is CancellationException) {
                     break
                 } else {
-                    stateLogger.error("Could not write batch", e)
+                    stateLogger.error("Could not write batch", e, logErrorMessagesAtMaximumOncePer)
                 }
             }
         }
