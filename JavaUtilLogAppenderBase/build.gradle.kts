@@ -3,8 +3,6 @@ plugins {
 }
 
 java {
-    withSourcesJar()
-
     toolchain {
         // we need at least Java 9 so that LogRecord has getInstance() method
         languageVersion.set(JavaLanguageVersion.of(9))

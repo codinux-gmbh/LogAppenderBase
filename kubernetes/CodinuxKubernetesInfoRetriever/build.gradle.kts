@@ -4,8 +4,6 @@ plugins {
 }
 
 java {
-    withSourcesJar()
-
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
     }
