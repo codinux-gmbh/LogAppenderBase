@@ -22,7 +22,7 @@ abstract class AppenderStateLoggerBase : AppenderStateLogger {
 
             if (addDurationToLogMessage) {
                 // TODO: later convert Duration to a nicer string, e.g. "5m" -> "5 min"
-                error("$message This message is logged only once every $logAtMaximumEach" +
+                error("$message${if (message.endsWith('.')) "" else "."} This message is logged only once every $logAtMaximumEach" +
                         (if (suppressedCalls == null) "." else " and has been suppressed $suppressedCalls times during that time."), e)
             } else {
                 error(message, e)
