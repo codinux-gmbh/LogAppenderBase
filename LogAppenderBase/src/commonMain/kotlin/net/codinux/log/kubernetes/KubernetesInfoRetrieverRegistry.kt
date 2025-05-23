@@ -9,7 +9,7 @@ open class KubernetesInfoRetrieverRegistry(
 
     companion object {
 
-        var Registry = KubernetesInfoRetrieverRegistry(StdOutStateLogger())
+        var Registry = KubernetesInfoRetrieverRegistry(StdOutStateLogger.Default)
 
         fun init(stateLogger: AppenderStateLogger) {
             Registry = KubernetesInfoRetrieverRegistry(stateLogger)

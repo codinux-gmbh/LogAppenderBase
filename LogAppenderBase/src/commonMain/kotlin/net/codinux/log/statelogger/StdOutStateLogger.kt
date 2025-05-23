@@ -4,6 +4,11 @@ import net.codinux.log.StdErr
 
 open class StdOutStateLogger : AppenderStateLoggerBase(), AppenderStateLogger {
 
+    companion object {
+        val Default = StdOutStateLogger()
+    }
+
+
     override fun debug(message: String) {
         println(message)
     }

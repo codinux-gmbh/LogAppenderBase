@@ -9,7 +9,7 @@ import java.io.File
 import java.net.InetAddress
 
 class CodinuxKubernetesInfoRetriever(
-    private val stateLogger: AppenderStateLogger = StdOutStateLogger()
+    private val stateLogger: AppenderStateLogger = StdOutStateLogger.Default
 ) : KubernetesInfoRetriever {
 
     companion object {

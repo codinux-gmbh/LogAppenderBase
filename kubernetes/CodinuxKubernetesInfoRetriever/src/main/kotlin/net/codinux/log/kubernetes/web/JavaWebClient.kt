@@ -13,7 +13,7 @@ import java.net.http.HttpResponse
 open class JavaWebClient(
     accessToken: String,
     kubeApiCertificate: String? = null,
-    protected val stateLogger: AppenderStateLogger = StdOutStateLogger()
+    protected val stateLogger: AppenderStateLogger = StdOutStateLogger.Default
 ) : WebClient {
 
     protected val client = HttpClient.newBuilder()
