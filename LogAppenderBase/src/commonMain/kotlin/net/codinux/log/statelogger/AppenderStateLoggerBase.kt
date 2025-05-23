@@ -16,7 +16,7 @@ abstract class AppenderStateLoggerBase : AppenderStateLogger {
         val lastErrorCall = lastErrorCalls[category]
 
         if (lastErrorCall == null || minimumTimeElapsed(lastErrorCall, logAtMaximumEach)) {
-            lastErrorCalls[category] = Instant.now()
+            lastErrorCalls[category] = getCurrentTime()
             val suppressedCalls = countSuppressedCalls[category]?.get()
             countSuppressedCalls[category] = AtomicInt(0)
 
@@ -33,9 +33,12 @@ abstract class AppenderStateLoggerBase : AppenderStateLogger {
     }
 
     protected open fun minimumTimeElapsed(lastErrorCall: Instant, logAtMaximumEach: Duration): Boolean {
-        val now = Instant.now()
+        val now = getCurrentTime()
 
         return lastErrorCall.toEpochMilliseconds() + logAtMaximumEach.inWholeMilliseconds < now.toEpochMilliseconds()
     }
+
+    // so that it's overridable in unit tests
+    protected open fun getCurrentTime() = Instant.now()
 
 }
