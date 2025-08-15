@@ -22,6 +22,11 @@ public class QuarkusConfigMapper {
 
     public static void mapConfigTo(QuarkusLogAppenderConfigBase config, LogAppenderConfig mappedConfig) {
         mappedConfig.setEnabled(config.enable());
+
+        mappedConfig.setHostUrl(config.hostUrl());
+        mappedConfig.setUsername(mapNullableString(config.username()));
+        mappedConfig.setPassword(mapNullableString(config.password()));
+
         mappedConfig.setStateLoggerName(mapNullableString(config.stateLoggerName()));
 
         mappedConfig.setWriter(mapWriterConfig(config));
@@ -31,10 +36,6 @@ public class QuarkusConfigMapper {
 
     public static WriterConfig mapWriterConfig(QuarkusLogAppenderConfigBase config) {
         WriterConfig mappedConfig = new WriterConfig();
-
-        mappedConfig.setHostUrl(config.hostUrl());
-        mappedConfig.setUsername(mapNullableString(config.username()));
-        mappedConfig.setPassword(mapNullableString(config.password()));
 
         mappedConfig.setMaxBufferedLogRecords(config.maxBufferedLogRecords());
         mappedConfig.setMaxLogRecordsPerBatch(config.maxLogRecordsPerBatch());

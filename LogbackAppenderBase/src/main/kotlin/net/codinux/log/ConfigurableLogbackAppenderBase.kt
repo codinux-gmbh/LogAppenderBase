@@ -28,15 +28,15 @@ abstract class ConfigurableLogbackAppenderBase(
   /*    Writer Config      */
 
   open fun setHostUrl(hostUrl: String) {
-    config.writer.hostUrl = hostUrl
+    config.hostUrl = hostUrl
   }
 
   open fun setUsername(username: String?) {
-    config.writer.username = username
+    config.username = username
   }
 
   open fun setPassword(password: String?) {
-    config.writer.password = password
+    config.password = password
   }
 
   open fun setMaxBufferedLogRecords(maxBufferedLogRecords: Int) {
