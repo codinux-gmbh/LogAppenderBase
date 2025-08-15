@@ -1,7 +1,7 @@
 package net.codinux.log
 
 import io.mockk.*
-import net.codinux.log.config.LoggedEventFields
+import net.codinux.log.config.CostlyFieldsConfig
 import net.dankito.datetime.Instant
 import net.dankito.datetime.toJavaInstant
 import org.assertj.core.api.Assertions.assertThat
@@ -12,7 +12,7 @@ class LogbackAppenderBaseTest {
 
     private val logWriterMock = mockk<LogWriter> {
         every { this@mockk.isEnabled } returns true
-        every { this@mockk.loggedEventFields } returns LoggedEventFields.All
+        every { this@mockk.costlyFields } returns CostlyFieldsConfig.All
     }
 
     private val underTest = object : LogbackAppenderBase() {

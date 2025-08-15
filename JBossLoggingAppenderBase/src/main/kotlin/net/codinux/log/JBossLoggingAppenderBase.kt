@@ -9,7 +9,7 @@ open class JBossLoggingAppenderBase(
     protected open val logWriter: LogWriter
 ) : ExtHandler() {
 
-    protected open val config = logWriter.loggedEventFields
+    protected open val costlyFields = logWriter.costlyFields
 
     init {
         formatter = object : ExtFormatter() {
@@ -23,17 +23,17 @@ open class JBossLoggingAppenderBase(
     override fun doPublish(record: ExtLogRecord?) {
         if (logWriter.isEnabled && record != null) {
             val message = formatter.formatMessage(record)
-            val ndc = if (config.logsNdc && record.ndc.isNullOrBlank() == false) record.ndc else null
+            val ndc = if (costlyFields.logsNdc && record.ndc.isNullOrBlank() == false) record.ndc else null
 
             logWriter.writeRecord(
                 record.instant.toKmpInstant(),
                 record.level.name,
                 message,
-                if (config.logsLoggerName) record.loggerName else null,
-                if (config.logsThreadName) record.threadName else null,
-                if (config.logsException) record.thrown else null,
-                if (config.logsMdc) record.mdcCopy else null,
-                if (config.logsMarker) record.marker?.toString() else null,
+                if (costlyFields.logsLoggerName) record.loggerName else null,
+                if (costlyFields.logsThreadName) record.threadName else null,
+                if (costlyFields.logsException) record.thrown else null,
+                if (costlyFields.logsMdc) record.mdcCopy else null,
+                if (costlyFields.logsMarker) record.marker?.toString() else null,
                 ndc
             )
         }

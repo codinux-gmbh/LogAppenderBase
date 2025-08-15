@@ -6,7 +6,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
 import net.codinux.kotlin.concurrent.atomic.AtomicBoolean
 import net.codinux.log.config.LogAppenderConfig
-import net.codinux.log.config.LoggedEventFields
+import net.codinux.log.config.CostlyFieldsConfig
 import net.codinux.log.data.*
 import net.codinux.log.extensions.cancelSafely
 import net.codinux.log.extensions.isNotEmpty
@@ -28,8 +28,8 @@ abstract class LogWriterBase<T>(
 
     override val isEnabled: Boolean = config.enabled
 
-    override val loggedEventFields: LoggedEventFields = config.fields
-    
+    override val costlyFields: CostlyFieldsConfig = config.fields
+
 
     protected abstract fun instantiateMappedRecord(): LogRecord<T>
 

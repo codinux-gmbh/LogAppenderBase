@@ -53,7 +53,7 @@ open class LogAppenderFieldsConfig(
 
     open var kubernetesFields: KubernetesFieldsConfig = KubernetesFieldsConfig(),
 
-) : LoggedEventFields {
+) : CostlyFieldsConfig {
 
     override val logsLoggerName: Boolean
         get() = includeLoggerName || includeLoggerClassName

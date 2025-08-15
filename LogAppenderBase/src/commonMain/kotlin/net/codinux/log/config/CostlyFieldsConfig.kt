@@ -1,6 +1,6 @@
 package net.codinux.log.config
 
-interface LoggedEventFields {
+interface CostlyFieldsConfig {
 
     val logsLoggerName: Boolean
 
@@ -16,7 +16,7 @@ interface LoggedEventFields {
 
 
     companion object {
-        val None: LoggedEventFields = object : LoggedEventFields {
+        val None: CostlyFieldsConfig = object : CostlyFieldsConfig {
             override val logsLoggerName: Boolean = false
             override val logsThreadName: Boolean = false
             override val logsException: Boolean = false
@@ -25,7 +25,7 @@ interface LoggedEventFields {
             override val logsNdc: Boolean = false
         }
 
-        val All: LoggedEventFields = object : LoggedEventFields {
+        val All: CostlyFieldsConfig = object : CostlyFieldsConfig {
             override val logsLoggerName: Boolean = true
             override val logsThreadName: Boolean = true
             override val logsException: Boolean = true

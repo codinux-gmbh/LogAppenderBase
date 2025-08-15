@@ -10,7 +10,7 @@ open class Log4j2LogAppenderBase(
     protected open val logWriter: LogWriter
 ): AbstractAppender(appenderName, null, null, true, Property.EMPTY_ARRAY) {
 
-    protected open val config = logWriter.loggedEventFields
+    protected open val costlyFields = logWriter.costlyFields
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from log4j 2.11 LogEvent has a getInstant() method
@@ -27,11 +27,11 @@ open class Log4j2LogAppenderBase(
                 if (eventSupportsInstant) convertInstant(event.instant) else Instant.ofEpochMilli(event.timeMillis),
                 event.level.name(),
                 event.message.formattedMessage,
-                if (config.logsLoggerName) event.loggerName else null,
-                if (config.logsThreadName) event.threadName else null,
-                if (config.logsException) event.thrown else null,
-                if (config.logsMdc) event.contextData.toMap() else null,
-                if (config.logsMarker) event.marker?.name else null
+                if (costlyFields.logsLoggerName) event.loggerName else null,
+                if (costlyFields.logsThreadName) event.threadName else null,
+                if (costlyFields.logsException) event.thrown else null,
+                if (costlyFields.logsMdc) event.contextData.toMap() else null,
+                if (costlyFields.logsMarker) event.marker?.name else null
             )
         }
     }

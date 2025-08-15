@@ -1,7 +1,6 @@
 package net.codinux.log
 
 import ch.qos.logback.classic.spi.ILoggingEvent
-import net.codinux.log.config.LoggedEventFields
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory

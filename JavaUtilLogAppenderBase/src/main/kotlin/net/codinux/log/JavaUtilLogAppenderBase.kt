@@ -7,7 +7,7 @@ open class JavaUtilLogAppenderBase(
     protected open val logWriter: LogWriter
 ) : Handler() {
 
-    protected open val config = logWriter.loggedEventFields
+    protected open val costlyFields = logWriter.costlyFields
 
     override fun publish(record: java.util.logging.LogRecord?) {
         if (logWriter.isEnabled && record != null && isLoggable(record)) {
@@ -22,9 +22,9 @@ open class JavaUtilLogAppenderBase(
                 record.instant.toKmpInstant(),
                 record.level.name,
                 message,
-                if (config.logsLoggerName) record.loggerName else null,
-                if (config.logsThreadName) threadName else null,
-                if (config.logsException) record.thrown else null
+                if (costlyFields.logsLoggerName) record.loggerName else null,
+                if (costlyFields.logsThreadName) threadName else null,
+                if (costlyFields.logsException) record.thrown else null
             )
         }
     }

@@ -5,7 +5,6 @@ import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
 import ch.qos.logback.core.UnsynchronizedAppenderBase
 import net.codinux.log.config.LogAppenderConfig
-import net.codinux.log.config.LoggedEventFields
 import net.dankito.datetime.Instant
 import net.dankito.datetime.toKmpInstant
 import kotlin.time.Duration.Companion.minutes
@@ -55,7 +54,7 @@ abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>()
     }
 
     protected open fun appendEvent(logWriter: LogWriter, event: ILoggingEvent) {
-        val fields = logWriter.loggedEventFields
+        val fields = logWriter.costlyFields
 
         logWriter.writeRecord(
             if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
