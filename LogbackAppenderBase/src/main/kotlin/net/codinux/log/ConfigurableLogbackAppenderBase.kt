@@ -1,17 +1,19 @@
 package net.codinux.log
 
-import ch.qos.logback.classic.spi.ILoggingEvent
-import ch.qos.logback.core.UnsynchronizedAppenderBase
 import net.codinux.log.config.LogAppenderConfig
+import net.codinux.log.config.LoggedEventFields
 
 
 /**
  * As Logback sets configuration directly on appender class and LogAppenderConfig has a lot of settings, this class
  * wraps all settings and applies them to [config] property.
  */
-abstract class ConfigurableUnsynchronizedAppenderBase(
+abstract class ConfigurableLogbackAppenderBase(
     protected open val config: LogAppenderConfig
-) : UnsynchronizedAppenderBase<ILoggingEvent>() {
+) : LogbackAppenderBase() {
+
+  override fun getLoggedEventFields(): LoggedEventFields? = fields
+
 
   protected open val fields = config.fields
 

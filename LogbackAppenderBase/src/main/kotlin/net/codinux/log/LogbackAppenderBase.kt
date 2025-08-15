@@ -3,19 +3,45 @@ package net.codinux.log
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.IThrowableProxy
 import ch.qos.logback.classic.spi.ThrowableProxy
+import ch.qos.logback.core.UnsynchronizedAppenderBase
 import net.codinux.log.config.LogAppenderConfig
+import net.codinux.log.config.LoggedEventFields
 import net.dankito.datetime.Instant
 import net.dankito.datetime.toKmpInstant
 import kotlin.time.Duration.Companion.minutes
 
-abstract class LogbackAppenderBase(
-    config: LogAppenderConfig = LogAppenderConfig()
-) : ConfigurableUnsynchronizedAppenderBase(config) {
+/**
+ * Base class for Logback appenders that delegate writing to a [LogWriter].
+ *
+ * Logback sets configuration directly on Appender class. So i turned the logic around:
+ * I freed this class from config specific methods, so that its only dependency is `LogWriter`.
+ *
+ * If you're fine with default [LogAppenderConfig], simply derive your class from [ConfigurableLogbackAppenderBase].
+ * If you have a custom configuration class, derive directly from this class and provide
+ * setters for your config class fields.
+ */
+abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>() {
 
-    abstract fun createLogWriter(config: LogAppenderConfig): LogWriter
+    /**
+     * Return null if this appender is not enabled. Nothing gets logged then.
+     */
+    abstract fun createLogWriter(): LogWriter?
+
+    /**
+     * Detailed configuration if more resource intensive fields should be logged.
+     *
+     * Return `null` or [LoggedEventFields.None] if none of the more resource intensive
+     * fields (logger name, thread name, exception, MDC, marker, NDC) should get logged.
+     *
+     * Be aware that timestamp, message and log level are assumed to always be logged.
+     * If you do not want that any messages get logged, return null for [createLogWriter].
+     */
+    abstract fun getLoggedEventFields(): LoggedEventFields?
 
 
     protected var logWriter: LogWriter? = null
+
+    protected var loggedFields: LoggedEventFields = LoggedEventFields.None
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
@@ -28,7 +54,8 @@ abstract class LogbackAppenderBase(
 
     override fun start() {
         // config is now loaded -> LogWriter can be created / started (if enabled)
-        this.logWriter = createLogWriter(config)
+        this.logWriter = createLogWriter()
+        this.loggedFields = getLoggedEventFields() ?: LoggedEventFields.None
 
         super.start()
     }
@@ -39,11 +66,11 @@ abstract class LogbackAppenderBase(
                 if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
                 event.level.levelStr,
                 event.formattedMessage,
-                if (fields.logsLoggerName) event.loggerName else null,
-                if (fields.logsThreadName) event.threadName else null,
-                if (fields.logsException) getThrowable(event) else null,
-                if (fields.logsMdc) event.mdcPropertyMap else null,
-                if (fields.logsMarker) event.marker?.name else null
+                if (loggedFields.logsLoggerName) event.loggerName else null,
+                if (loggedFields.logsThreadName) event.threadName else null,
+                if (loggedFields.logsException) getThrowable(event) else null,
+                if (loggedFields.logsMdc) event.mdcPropertyMap else null,
+                if (loggedFields.logsMarker) event.marker?.name else null
             )
         }
     }

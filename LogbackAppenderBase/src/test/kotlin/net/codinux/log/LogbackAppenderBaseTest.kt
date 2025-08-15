@@ -18,8 +18,8 @@ class LogbackAppenderBaseTest {
         every { this@mockk.config } returns this@LogbackAppenderBaseTest.config
     }
 
-    private val underTest = object : LogbackAppenderBase(config) {
-        override fun createLogWriter(config: LogAppenderConfig) = logWriterMock
+    private val underTest = object : ConfigurableLogbackAppenderBase(config) {
+        override fun createLogWriter() = logWriterMock
     }.apply {
         this.start()
     }
