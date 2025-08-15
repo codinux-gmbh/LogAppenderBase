@@ -5,7 +5,8 @@ import assertk.assertions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
-import net.codinux.log.config.LogAppenderConfig
+import net.codinux.log.config.CostlyFieldsConfig
+import net.codinux.log.config.LogWriterBaseConfig
 import net.codinux.log.config.WriterConfig
 import net.dankito.datetime.Instant
 import kotlin.js.JsName
@@ -164,7 +165,7 @@ class LogWriterBaseTest {
     ) = "$timestamp $level $loggerName [$threadName] $message"
 
     private fun createConfig(sendPeriod: Long) =
-        LogAppenderConfig(writer = WriterConfig(sendLogRecordsPeriodMillis = sendPeriod))
+        LogWriterBaseConfig(true, CostlyFieldsConfig.All, WriterConfig(sendLogRecordsPeriodMillis = sendPeriod))
 
     private fun createRecord(message: String = "Test message"): LogRecord<String> {
         return LogRecord(message)

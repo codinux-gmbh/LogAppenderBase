@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.toList
 import net.codinux.kotlin.concurrent.atomic.AtomicBoolean
-import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.config.CostlyFieldsConfig
 import net.codinux.log.config.LogWriterBaseConfig
 import net.codinux.log.data.*
@@ -20,11 +19,10 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 abstract class LogWriterBase<T>(
-    protected val appenderConfig: LogAppenderConfig,
+    protected val config: LogWriterBaseConfig,
     override val stateLogger: AppenderStateLogger = StdOutStateLogger.Default,
     processData: ProcessData? = null,
     protected val logErrorMessagesAtMaximumOncePer: Duration = 5.minutes,
-    protected val config: LogWriterBaseConfig = appenderConfig.toLogWriterBaseConfig(),
 ) : LogWriter {
 
     override val isEnabled: Boolean = config.isEnabled
@@ -250,8 +248,3 @@ abstract class LogWriterBase<T>(
     }
 
 }
-
-
-private fun LogAppenderConfig.toLogWriterBaseConfig() = LogWriterBaseConfig(
-    this.enabled, this.fields, this.writer, this.fields.includeKubernetesInfo
-)
