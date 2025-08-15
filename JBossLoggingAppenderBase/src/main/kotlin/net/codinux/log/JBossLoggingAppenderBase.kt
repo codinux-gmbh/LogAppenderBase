@@ -9,9 +9,7 @@ open class JBossLoggingAppenderBase(
     protected open val logWriter: LogWriter
 ) : ExtHandler() {
 
-    protected open val isAppenderEnabled = logWriter.config.enabled
-
-    protected open val config = logWriter.config.fields
+    protected open val config = logWriter.loggedEventFields
 
     init {
         formatter = object : ExtFormatter() {
@@ -23,7 +21,7 @@ open class JBossLoggingAppenderBase(
 
 
     override fun doPublish(record: ExtLogRecord?) {
-        if (isAppenderEnabled && record != null) {
+        if (logWriter.isEnabled && record != null) {
             val message = formatter.formatMessage(record)
             val ndc = if (config.logsNdc && record.ndc.isNullOrBlank() == false) record.ndc else null
 

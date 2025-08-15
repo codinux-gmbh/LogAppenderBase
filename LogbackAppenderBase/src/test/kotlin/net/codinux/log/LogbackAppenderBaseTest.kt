@@ -14,7 +14,8 @@ class LogbackAppenderBaseTest {
     private val config = LogAppenderConfig()
 
     private val logWriterMock = mockk<LogWriter> {
-        every { this@mockk.config } returns this@LogbackAppenderBaseTest.config
+        every { this@mockk.isEnabled } returns true
+        every { this@mockk.loggedEventFields } returns LoggedEventFields.All
     }
 
     private val underTest = object : LogbackAppenderBase() {

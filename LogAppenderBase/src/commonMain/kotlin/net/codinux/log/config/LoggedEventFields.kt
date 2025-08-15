@@ -24,6 +24,15 @@ interface LoggedEventFields {
             override val logsMarker: Boolean = false
             override val logsNdc: Boolean = false
         }
+
+        val All: LoggedEventFields = object : LoggedEventFields {
+            override val logsLoggerName: Boolean = true
+            override val logsThreadName: Boolean = true
+            override val logsException: Boolean = true
+            override val logsMdc: Boolean = true
+            override val logsMarker: Boolean = true
+            override val logsNdc: Boolean = true
+        }
     }
 
 }

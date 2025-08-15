@@ -10,9 +10,7 @@ open class Log4j2LogAppenderBase(
     protected open val logWriter: LogWriter
 ): AbstractAppender(appenderName, null, null, true, Property.EMPTY_ARRAY) {
 
-    protected open val isAppenderEnabled = logWriter.config.enabled
-
-    protected open val config = logWriter.config.fields
+    protected open val config = logWriter.loggedEventFields
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from log4j 2.11 LogEvent has a getInstant() method
@@ -24,7 +22,7 @@ open class Log4j2LogAppenderBase(
 
 
     override fun append(event: LogEvent?) {
-        if (isAppenderEnabled && event != null) {
+        if (logWriter.isEnabled && event != null) {
             logWriter.writeRecord(
                 if (eventSupportsInstant) convertInstant(event.instant) else Instant.ofEpochMilli(event.timeMillis),
                 event.level.name(),

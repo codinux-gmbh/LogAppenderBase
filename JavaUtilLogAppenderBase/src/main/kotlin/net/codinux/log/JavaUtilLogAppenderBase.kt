@@ -7,12 +7,10 @@ open class JavaUtilLogAppenderBase(
     protected open val logWriter: LogWriter
 ) : Handler() {
 
-    protected open val isAppenderEnabled = logWriter.config.enabled
-
-    protected open val config = logWriter.config.fields
+    protected open val config = logWriter.loggedEventFields
 
     override fun publish(record: java.util.logging.LogRecord?) {
-        if (isAppenderEnabled && record != null && isLoggable(record)) {
+        if (logWriter.isEnabled && record != null && isLoggable(record)) {
             var message = if (record.message == null) "" else record.message
             val threadName = Thread.currentThread().name
 

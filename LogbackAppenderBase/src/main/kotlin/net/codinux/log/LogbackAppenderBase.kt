@@ -61,8 +61,8 @@ abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>()
     }
 
     override fun append(event: ILoggingEvent?) {
-        if (event != null) {
-            logWriter?.let { writer ->
+        logWriter?.let { writer ->
+            if (writer.isEnabled && event != null) {
                 appendEvent(writer, event)
             }
         }

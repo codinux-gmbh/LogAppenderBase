@@ -1,10 +1,16 @@
 package net.codinux.log
 
 import net.codinux.log.config.LogAppenderConfig
+import net.codinux.log.config.LoggedEventFields
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.dankito.datetime.Instant
 
 interface LogWriter {
+
+    val isEnabled: Boolean
+
+    val loggedEventFields: LoggedEventFields
+
 
     val config: LogAppenderConfig
 
