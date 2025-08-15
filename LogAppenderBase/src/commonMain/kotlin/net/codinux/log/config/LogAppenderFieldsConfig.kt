@@ -53,24 +53,24 @@ open class LogAppenderFieldsConfig(
 
     open var kubernetesFields: KubernetesFieldsConfig = KubernetesFieldsConfig(),
 
-) {
+) : LoggedEventFields {
 
-    open val logsLoggerName: Boolean
+    override val logsLoggerName: Boolean
         get() = includeLoggerName || includeLoggerClassName
 
-    open val logsThreadName: Boolean
+    override val logsThreadName: Boolean
         get() = includeThreadName
 
-    open val logsException: Boolean
+    override val logsException: Boolean
         get() = includeStacktrace
 
-    open val logsMdc: Boolean
+    override val logsMdc: Boolean
         get() = includeMdc
 
-    open val logsMarker: Boolean
+    override val logsMarker: Boolean
         get() = includeMarker
 
-    open val logsNdc: Boolean
+    override val logsNdc: Boolean
         get() = includeNdc
 
 
