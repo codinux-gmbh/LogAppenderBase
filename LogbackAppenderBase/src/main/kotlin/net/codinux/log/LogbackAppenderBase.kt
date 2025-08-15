@@ -12,30 +12,29 @@ abstract class LogbackAppenderBase(
     config: LogAppenderConfig = LogAppenderConfig()
 ) : ConfigurableUnsynchronizedAppenderBase(config) {
 
+    abstract fun createLogWriter(config: LogAppenderConfig): LogWriter
+
+
     protected var logWriter: LogWriter? = null
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
         ILoggingEvent::class.java.getDeclaredMethod("getInstant")
         true
-    } catch (ignored: Exception) {
+    } catch (_: Throwable) {
         false
     }
 
 
-    abstract fun createLogWriter(config: LogAppenderConfig): LogWriter
-
     override fun start() {
-        // config is now loaded -> LogWriter can be created / started
-        if (config.enabled) {
-            this.logWriter = createLogWriter(config)
-        }
+        // config is now loaded -> LogWriter can be created / started (if enabled)
+        this.logWriter = createLogWriter(config)
 
         super.start()
     }
 
     override fun append(event: ILoggingEvent?) {
-        if (config.enabled && event != null) {
+        if (logWriter != null && event != null) {
             logWriter?.writeRecord(
                 if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
                 event.level.levelStr,
