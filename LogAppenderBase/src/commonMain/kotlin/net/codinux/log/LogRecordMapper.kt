@@ -28,10 +28,11 @@ open class LogRecordMapper(
      * Add fields that never change during the whole process lifetime
      */
     open fun mapStaticFields(fields: MutableMap<String, String?>) {
-        mapField(fields, config.includeHostName, config.hostNameFieldName, processData.hostName)
         mapField(fields, config.includeAppName, config.appNameFieldName, config.appName)
         mapField(fields, config.includeAppVersion, config.appVersionFieldName, config.appVersion)
         mapField(fields, config.includeJobName, config.jobNameFieldName, config.jobName)
+        mapField(fields, config.includeHostName, config.hostNameFieldName, processData.hostName)
+        mapField(fields, config.includeHostIp, config.hostIpFieldName, processData.hostIp)
 
         mapPodInfoFields(fields)
     }
@@ -40,6 +41,9 @@ open class LogRecordMapper(
         mapField(fields, config.includeLogLevel, config.logLevelFieldName, record.level)
         mapField(fields, config.includeLoggerName, config.loggerNameFieldName, record.loggerName)
         mapField(fields, config.includeLoggerClassName, config.loggerClassNameFieldName) { record.loggerName?.let { extractLoggerClassName(it) } }
+        mapField(fields, config.includeThreadName, config.threadNameFieldName, record.threadName)
+
+        mapDynamicFieldIfNotNull(fields, config.includeStacktrace, config.stacktraceFieldName, record.exception?.let { getStacktrace(it) })
 
         mapMdcFields(record, fields, config.includeMdc && record.mdc != null, record.mdc)
         mapDynamicFieldIfNotNull(fields, config.includeMarker, config.markerFieldName, record.marker)
