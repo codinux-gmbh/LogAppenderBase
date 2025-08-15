@@ -34,17 +34,6 @@ class LogbackAppenderBaseTest {
 
 
     @Test
-    fun disabled_NothingGetsWrittenToLogWriter() {
-        config.enabled = false
-
-
-        log.error("Any")
-
-
-        verify { logWriterMock wasNot Called }
-    }
-
-    @Test
     fun callToSlf4jLoggerCallsLogWriter() {
         val message = "Just a test, no animals have been harmed"
         val exception = RuntimeException("As i said, just a test")

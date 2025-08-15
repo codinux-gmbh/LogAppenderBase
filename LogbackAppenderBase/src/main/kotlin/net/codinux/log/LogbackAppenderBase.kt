@@ -61,18 +61,24 @@ abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>()
     }
 
     override fun append(event: ILoggingEvent?) {
-        if (logWriter != null && event != null) {
-            logWriter?.writeRecord(
-                if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
-                event.level.levelStr,
-                event.formattedMessage,
-                if (loggedFields.logsLoggerName) event.loggerName else null,
-                if (loggedFields.logsThreadName) event.threadName else null,
-                if (loggedFields.logsException) getThrowable(event) else null,
-                if (loggedFields.logsMdc) event.mdcPropertyMap else null,
-                if (loggedFields.logsMarker) event.marker?.name else null
-            )
+        if (event != null) {
+            logWriter?.let { writer ->
+                appendEvent(writer, event)
+            }
         }
+    }
+
+    protected open fun appendEvent(logWriter: LogWriter, event: ILoggingEvent) {
+        logWriter.writeRecord(
+            if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
+            event.level.levelStr,
+            event.formattedMessage,
+            if (loggedFields.logsLoggerName) event.loggerName else null,
+            if (loggedFields.logsThreadName) event.threadName else null,
+            if (loggedFields.logsException) getThrowable(event) else null,
+            if (loggedFields.logsMdc) event.mdcPropertyMap else null,
+            if (loggedFields.logsMarker) event.marker?.name else null
+        )
     }
 
 
