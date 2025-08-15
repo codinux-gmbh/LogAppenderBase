@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.toList
 import net.codinux.kotlin.concurrent.atomic.AtomicBoolean
 import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.config.CostlyFieldsConfig
+import net.codinux.log.config.LogWriterBaseConfig
 import net.codinux.log.data.*
 import net.codinux.log.extensions.cancelSafely
 import net.codinux.log.extensions.isNotEmpty
@@ -19,16 +20,17 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 abstract class LogWriterBase<T>(
-    override val config: LogAppenderConfig,
+    override val appenderConfig: LogAppenderConfig,
+    protected val config: LogWriterBaseConfig = appenderConfig.toLogWriterBaseConfig(),
     override val stateLogger: AppenderStateLogger = StdOutStateLogger.Default,
-    protected open val mapper: LogRecordMapper = LogRecordMapper(config.fields),
+    protected open val mapper: LogRecordMapper = LogRecordMapper(appenderConfig.fields),
     processData: ProcessData? = null,
     protected val logErrorMessagesAtMaximumOncePer: Duration = 5.minutes,
 ) : LogWriter {
 
-    override val isEnabled: Boolean = config.enabled
+    override val isEnabled: Boolean = config.isEnabled
 
-    override val costlyFields: CostlyFieldsConfig = config.fields
+    override val costlyFields: CostlyFieldsConfig = config.costlyFields
 
 
     protected abstract fun instantiateMappedRecord(): LogRecord<T>
@@ -38,7 +40,7 @@ abstract class LogWriterBase<T>(
     protected abstract suspend fun writeRecords(records: List<LogRecord<T>>): List<LogRecord<T>>
 
 
-    protected open val writerConfig = config.writer
+    protected open val writerConfig = config.writerConfig
 
     protected open val cachedMappedRecords = Channel<LogRecord<T>>(writerConfig.maxBufferedLogRecords)
 
@@ -57,7 +59,7 @@ abstract class LogWriterBase<T>(
         protected set
 
     init {
-        if (config.enabled) {
+        if (config.isEnabled) {
             initializeWriter(processData)
         }
     }
@@ -66,7 +68,7 @@ abstract class LogWriterBase<T>(
         receiverScope.async {
             mapper.processData = processData ?: retrieveProcessData()
 
-            if (config.fields.includeKubernetesInfo) {
+            if (config.logsKubernetesFields) {
                 mapper.podInfo = retrievePodInfo()
             }
 
@@ -99,6 +101,7 @@ abstract class LogWriterBase<T>(
             null
         }
     }
+
 
     override fun writeRecord(
         timestamp: Instant,
@@ -236,3 +239,8 @@ abstract class LogWriterBase<T>(
     }
 
 }
+
+
+private fun LogAppenderConfig.toLogWriterBaseConfig() = LogWriterBaseConfig(
+    this.enabled, this.fields, this.writer, this.fields.includeKubernetesInfo
+)

@@ -12,7 +12,7 @@ interface LogWriter {
     val costlyFields: CostlyFieldsConfig
 
 
-    val config: LogAppenderConfig
+    val appenderConfig: LogAppenderConfig // TODO: get rid of this
 
     val stateLogger: AppenderStateLogger
 
