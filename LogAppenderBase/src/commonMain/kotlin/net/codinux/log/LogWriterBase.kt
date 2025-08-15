@@ -20,12 +20,12 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 abstract class LogWriterBase<T>(
-    override val appenderConfig: LogAppenderConfig,
-    protected val config: LogWriterBaseConfig = appenderConfig.toLogWriterBaseConfig(),
+    protected val appenderConfig: LogAppenderConfig,
     override val stateLogger: AppenderStateLogger = StdOutStateLogger.Default,
     protected open val mapper: LogRecordMapper = LogRecordMapper(appenderConfig.fields),
     processData: ProcessData? = null,
     protected val logErrorMessagesAtMaximumOncePer: Duration = 5.minutes,
+    protected val config: LogWriterBaseConfig = appenderConfig.toLogWriterBaseConfig(),
 ) : LogWriter {
 
     override val isEnabled: Boolean = config.isEnabled

@@ -1,6 +1,5 @@
 package net.codinux.log
 
-import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.config.CostlyFieldsConfig
 import net.codinux.log.statelogger.AppenderStateLogger
 import net.dankito.datetime.Instant
@@ -11,8 +10,6 @@ interface LogWriter {
 
     val costlyFields: CostlyFieldsConfig
 
-
-    val appenderConfig: LogAppenderConfig // TODO: get rid of this
 
     val stateLogger: AppenderStateLogger
 
