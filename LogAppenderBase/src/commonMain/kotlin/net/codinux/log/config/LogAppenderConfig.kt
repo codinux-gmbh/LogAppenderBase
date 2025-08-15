@@ -1,5 +1,8 @@
 package net.codinux.log.config
 
+import net.codinux.log.auth.Authentication
+import net.codinux.log.auth.BasicAuthAuthentication
+
 open class LogAppenderConfig(
     open var enabled: Boolean = EnabledDefaultValue,
 
@@ -32,5 +35,13 @@ open class LogAppenderConfig(
         const val StateLoggerNotSetString = "null"
 
     }
+
+
+    open fun getAuthentication(): Authentication? =
+        if (username != UsernameNotSet && password != PasswordNotSet) {
+            BasicAuthAuthentication(username!!, password!!)
+        } else {
+            null
+        }
 
 }
