@@ -13,7 +13,6 @@ class DisabledLogbackAppenderBaseTest {
 
     private val underTest = object : LogbackAppenderBase() {
         override fun createLogWriter(): LogWriter? = null
-        override fun getLoggedEventFields(): LoggedEventFields? = null
 
         override fun appendEvent(logWriter: LogWriter, event: ILoggingEvent) {
             countCalls.incrementAndGet()

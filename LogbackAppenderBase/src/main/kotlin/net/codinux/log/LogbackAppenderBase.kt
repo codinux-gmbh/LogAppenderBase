@@ -27,21 +27,8 @@ abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>()
      */
     abstract fun createLogWriter(): LogWriter?
 
-    /**
-     * Detailed configuration if more resource intensive fields should be logged.
-     *
-     * Return `null` or [LoggedEventFields.None] if none of the more resource intensive
-     * fields (logger name, thread name, exception, MDC, marker, NDC) should get logged.
-     *
-     * Be aware that timestamp, message and log level are assumed to always be logged.
-     * If you do not want that any messages get logged, return null for [createLogWriter].
-     */
-    abstract fun getLoggedEventFields(): LoggedEventFields?
-
 
     protected var logWriter: LogWriter? = null
-
-    protected var loggedFields: LoggedEventFields = LoggedEventFields.None
 
     protected open val eventSupportsInstant: Boolean = try {
         // starting from Logback 1.3.x ILoggingEvent has an instant field / getInstant() method
@@ -55,7 +42,6 @@ abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>()
     override fun start() {
         // config is now loaded -> LogWriter can be created / started (if enabled)
         this.logWriter = createLogWriter()
-        this.loggedFields = getLoggedEventFields() ?: LoggedEventFields.None
 
         super.start()
     }
@@ -69,15 +55,17 @@ abstract class LogbackAppenderBase : UnsynchronizedAppenderBase<ILoggingEvent>()
     }
 
     protected open fun appendEvent(logWriter: LogWriter, event: ILoggingEvent) {
+        val fields = logWriter.loggedEventFields
+
         logWriter.writeRecord(
             if (eventSupportsInstant) event.instant.toKmpInstant() else Instant.ofEpochMilli(event.timeStamp),
             event.level.levelStr,
             event.formattedMessage,
-            if (loggedFields.logsLoggerName) event.loggerName else null,
-            if (loggedFields.logsThreadName) event.threadName else null,
-            if (loggedFields.logsException) getThrowable(event) else null,
-            if (loggedFields.logsMdc) event.mdcPropertyMap else null,
-            if (loggedFields.logsMarker) event.marker?.name else null
+            if (fields.logsLoggerName) event.loggerName else null,
+            if (fields.logsThreadName) event.threadName else null,
+            if (fields.logsException) getThrowable(event) else null,
+            if (fields.logsMdc) event.mdcPropertyMap else null,
+            if (fields.logsMarker) event.marker?.name else null
         )
     }
 

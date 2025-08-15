@@ -1,7 +1,6 @@
 package net.codinux.log
 
 import net.codinux.log.config.LogAppenderConfig
-import net.codinux.log.config.LoggedEventFields
 
 
 /**
@@ -11,9 +10,6 @@ import net.codinux.log.config.LoggedEventFields
 abstract class ConfigurableLogbackAppenderBase(
     protected open val config: LogAppenderConfig
 ) : LogbackAppenderBase() {
-
-  override fun getLoggedEventFields(): LoggedEventFields? = fields
-
 
   protected open val fields = config.fields
 

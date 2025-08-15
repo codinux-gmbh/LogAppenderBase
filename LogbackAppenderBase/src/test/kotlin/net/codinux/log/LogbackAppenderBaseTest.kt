@@ -1,7 +1,6 @@
 package net.codinux.log
 
 import io.mockk.*
-import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.config.LoggedEventFields
 import net.dankito.datetime.Instant
 import net.dankito.datetime.toJavaInstant
@@ -11,8 +10,6 @@ import org.slf4j.LoggerFactory
 
 class LogbackAppenderBaseTest {
 
-    private val config = LogAppenderConfig()
-
     private val logWriterMock = mockk<LogWriter> {
         every { this@mockk.isEnabled } returns true
         every { this@mockk.loggedEventFields } returns LoggedEventFields.All
@@ -20,7 +17,6 @@ class LogbackAppenderBaseTest {
 
     private val underTest = object : LogbackAppenderBase() {
         override fun createLogWriter() = logWriterMock
-        override fun getLoggedEventFields(): LoggedEventFields? = config.fields
     }.apply {
         this.start()
     }
