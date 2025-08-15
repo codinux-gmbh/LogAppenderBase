@@ -22,7 +22,6 @@ import kotlin.time.Duration.Companion.minutes
 abstract class LogWriterBase<T>(
     protected val appenderConfig: LogAppenderConfig,
     override val stateLogger: AppenderStateLogger = StdOutStateLogger.Default,
-    protected open val mapper: LogRecordMapper = LogRecordMapper(appenderConfig.fields),
     processData: ProcessData? = null,
     protected val logErrorMessagesAtMaximumOncePer: Duration = 5.minutes,
     protected val config: LogWriterBaseConfig = appenderConfig.toLogWriterBaseConfig(),
@@ -41,6 +40,11 @@ abstract class LogWriterBase<T>(
 
 
     protected open val writerConfig = config.writerConfig
+
+    protected open lateinit var processData: ProcessData
+
+    protected open var podInfo: PodInfo? = null
+
 
     protected open val cachedMappedRecords = Channel<LogRecord<T>>(writerConfig.maxBufferedLogRecords)
 
@@ -65,11 +69,13 @@ abstract class LogWriterBase<T>(
     }
 
     protected open fun initializeWriter(processData: ProcessData?) {
+        val writer = this
+
         receiverScope.async {
-            mapper.processData = processData ?: retrieveProcessData()
+            writer.processData = processData ?: retrieveProcessData()
 
             if (config.logsKubernetesFields) {
-                mapper.podInfo = retrievePodInfo()
+                writer.podInfo = retrievePodInfo()
             }
 
             PlatformFunctions.addShutdownHook {
@@ -78,6 +84,8 @@ abstract class LogWriterBase<T>(
 
             isFullyInitialized.set(true)
 
+            writerInitialized(writer.processData, writer.podInfo)
+
             // pre-cache mapped record objects
             for (i in 0 until min(1_000, writerConfig.maxBufferedLogRecords / 2)) {
                 cachedMappedRecords.send(instantiateMappedRecord())
@@ -85,6 +93,10 @@ abstract class LogWriterBase<T>(
 
             asyncWriteLoop(writerConfig.sendLogRecordsPeriodMillis)
         }
+    }
+
+    protected open fun writerInitialized(processData: ProcessData, podInfo: PodInfo?) {
+        // may be overwritten in sub class
     }
 
     protected open fun retrieveProcessData() =
