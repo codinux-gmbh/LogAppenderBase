@@ -87,11 +87,11 @@ abstract class LogWriterBase<T>(
         }
     }
 
-    protected open suspend fun retrieveProcessData() =
+    protected open fun retrieveProcessData() =
         ProcessDataRetriever(stateLogger).retrieveProcessData()
 
-    protected open suspend fun retrievePodInfo(): PodInfo? {
-        return try {
+    protected open suspend fun retrievePodInfo(): PodInfo? =
+        try {
             KubernetesInfoRetrieverRegistry.init(stateLogger)
 
             KubernetesInfoRetrieverRegistry.Registry.retrieveCurrentPodInfo()
@@ -100,7 +100,6 @@ abstract class LogWriterBase<T>(
 
             null
         }
-    }
 
 
     override fun writeRecord(
