@@ -4,12 +4,15 @@ import net.codinux.kotlin.concurrent.collections.ConcurrentMap
 import net.codinux.log.config.LogAppenderFieldsConfig
 import net.codinux.log.data.ProcessData
 import net.codinux.log.kubernetes.PodInfo
+import net.codinux.log.stacktrace.StackTraceFormatter
+import net.codinux.log.stacktrace.StackTraceFormatterOptions
 
 open class LogRecordMapper(
     protected open val config: LogAppenderFieldsConfig,
     // Loki does not allow null values in Stream / fields
     open var allowNullAsFieldValue: Boolean = true,
-    open var escapeControlCharacters: Boolean = true
+    open var escapeControlCharacters: Boolean = true,
+    open var stackTraceFormatter: StackTraceFormatter = StackTraceFormatter.Default
 ) {
 
     open lateinit var processData: ProcessData
@@ -177,15 +180,8 @@ open class LogRecordMapper(
         }
     }
 
-    protected open fun extractStacktrace(exception: Throwable): String {
-        val stackTrace = exception.stackTraceToString()
-
-        return if (stackTrace.length > config.stacktraceMaxFieldLength) {
-            stackTrace.substring(0, config.stacktraceMaxFieldLength)
-        } else {
-            stackTrace
-        }
-    }
+    protected open fun extractStacktrace(exception: Throwable): String =
+        stackTraceFormatter.format(exception, StackTraceFormatterOptions(maxStackTraceStringLength = config.stacktraceMaxFieldLength))
 
     protected open fun getExceptionHashCode(exception: Throwable): Int {
         var hashCode = exception::class.hashCode()

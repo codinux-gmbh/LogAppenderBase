@@ -91,6 +91,7 @@ kotlin {
     val coroutinesVersion: String by project
 
     val kmpDateTimeVersion: String by project
+    val logFormatterVersion: String by project
     val concurrentCollectionsVersion: String by project
     val slf4jVersion: String by project
 
@@ -102,6 +103,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
                 api("net.dankito.datetime:kmp-datetime:$kmpDateTimeVersion")
+                api("net.codinux.log:log-formatter:$logFormatterVersion")
                 implementation("net.codinux.collections:concurrent-collections:$concurrentCollectionsVersion")
             }
         }
