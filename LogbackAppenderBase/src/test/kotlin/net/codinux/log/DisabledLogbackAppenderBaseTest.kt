@@ -1,7 +1,5 @@
 package net.codinux.log
 
-import ch.qos.logback.classic.Logger
-import ch.qos.logback.classic.LoggerContext
 import ch.qos.logback.classic.spi.ILoggingEvent
 import net.codinux.log.config.LoggedEventFields
 import org.assertj.core.api.Assertions.assertThat
@@ -27,9 +25,7 @@ class DisabledLogbackAppenderBaseTest {
     private val log = LoggerFactory.getLogger(DisabledLogbackAppenderBaseTest::class.java)
 
     init {
-        (LoggerFactory.getILoggerFactory() as? LoggerContext)?.let { context ->
-            context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(underTest)
-        }
+        LoggerFactory.getILoggerFactory().addAppenderToRootLogger(underTest)
     }
 
 

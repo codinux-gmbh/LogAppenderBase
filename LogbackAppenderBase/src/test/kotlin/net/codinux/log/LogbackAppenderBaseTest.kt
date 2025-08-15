@@ -1,7 +1,5 @@
 package net.codinux.log
 
-import ch.qos.logback.classic.Logger
-import ch.qos.logback.classic.LoggerContext
 import io.mockk.*
 import net.codinux.log.config.LogAppenderConfig
 import net.codinux.log.config.LoggedEventFields
@@ -29,9 +27,7 @@ class LogbackAppenderBaseTest {
     private val log = LoggerFactory.getLogger(LogbackAppenderBaseTest::class.java)
 
     init {
-        (LoggerFactory.getILoggerFactory() as? LoggerContext)?.let { context ->
-            context.getLogger(Logger.ROOT_LOGGER_NAME).addAppender(underTest)
-        }
+        LoggerFactory.getILoggerFactory().addAppenderToRootLogger(underTest)
     }
 
 
