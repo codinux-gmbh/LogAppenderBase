@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.LoggerContext
 import io.mockk.*
 import net.codinux.log.config.LogAppenderConfig
+import net.codinux.log.config.LoggedEventFields
 import net.dankito.datetime.Instant
 import net.dankito.datetime.toJavaInstant
 import org.assertj.core.api.Assertions.assertThat
@@ -18,8 +19,9 @@ class LogbackAppenderBaseTest {
         every { this@mockk.config } returns this@LogbackAppenderBaseTest.config
     }
 
-    private val underTest = object : ConfigurableLogbackAppenderBase(config) {
+    private val underTest = object : LogbackAppenderBase() {
         override fun createLogWriter() = logWriterMock
+        override fun getLoggedEventFields(): LoggedEventFields? = config.fields
     }.apply {
         this.start()
     }
