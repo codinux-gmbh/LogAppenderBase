@@ -1,9 +1,9 @@
-package net.codinux.log
+package net.codinux.log.mapper
 
 import net.codinux.kotlin.concurrent.collections.ConcurrentMap
+import net.codinux.log.LogRecord
 import net.codinux.log.config.KubernetesFieldsConfig
 import net.codinux.log.kubernetes.PodInfo
-import net.codinux.log.mapper.FieldEscaper
 import net.codinux.log.stacktrace.StackTraceFormatter
 import net.codinux.log.stacktrace.StackTraceFormatterOptions
 
