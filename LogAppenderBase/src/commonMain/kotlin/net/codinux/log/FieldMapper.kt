@@ -3,14 +3,16 @@ package net.codinux.log
 import net.codinux.kotlin.concurrent.collections.ConcurrentMap
 import net.codinux.log.config.KubernetesFieldsConfig
 import net.codinux.log.kubernetes.PodInfo
+import net.codinux.log.mapper.FieldEscaper
 import net.codinux.log.stacktrace.StackTraceFormatter
 import net.codinux.log.stacktrace.StackTraceFormatterOptions
 
 open class FieldMapper(
     // Loki does not allow null values in Stream / fields
-    open var allowNullAsFieldValue: Boolean = true,
-    open var escapeControlCharacters: Boolean = true,
-    open var stackTraceFormatter: StackTraceFormatter = StackTraceFormatter.Default
+    open val allowNullAsFieldValue: Boolean = true,
+    open val escapeControlCharacters: Boolean = true,
+    open val fieldEscaper: FieldEscaper? = null,
+    open val stackTraceFormatter: StackTraceFormatter = StackTraceFormatter.Default
 ) {
 
     protected open val cachedStackTraces = ConcurrentMap<Int?, String>()
@@ -65,8 +67,8 @@ open class FieldMapper(
         }
     }
 
-    // so that subclasses are able to do some Log storage specific escaping
-    protected open fun escapeDynamicLabelName(key: String): String = key
+    protected open fun escapeDynamicLabelName(key: String): String =
+        fieldEscaper?.escapeFieldName(key) ?: key
 
     open fun mapPodInfoFields(fields: MutableMap<String, String?>, includeKubernetesInfo: Boolean, podInfo: PodInfo?, kubernetesFieldsPrefix: String?, kubernetesFields: KubernetesFieldsConfig) {
         if (includeKubernetesInfo) {
