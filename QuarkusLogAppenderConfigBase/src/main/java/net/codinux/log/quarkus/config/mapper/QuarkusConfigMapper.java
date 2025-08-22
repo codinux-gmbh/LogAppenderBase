@@ -5,6 +5,7 @@ import net.codinux.log.config.LogAppenderConfig;
 import net.codinux.log.config.LogAppenderFieldsConfig;
 import net.codinux.log.config.WriterConfig;
 import net.codinux.log.quarkus.config.QuarkusLogAppenderConfigBase;
+import net.codinux.log.quarkus.config.QuarkusWriterConfig;
 import net.codinux.log.quarkus.config.fields.QuarkusLogAppenderFieldsConfig;
 import net.codinux.log.quarkus.config.fields.kubernetes.QuarkusKubernetesFieldsConfig;
 
@@ -35,6 +36,19 @@ public class QuarkusConfigMapper {
     }
 
     public static WriterConfig mapWriterConfig(QuarkusLogAppenderConfigBase config) {
+        WriterConfig mappedConfig = new WriterConfig();
+
+        mappedConfig.setMaxBufferedLogRecords(config.maxBufferedLogRecords());
+        mappedConfig.setMaxLogRecordsPerBatch(config.maxLogRecordsPerBatch());
+        mappedConfig.setSendLogRecordsPeriodMillis(config.sendLogRecordsPeriodMillis());
+
+        config.connectTimeout().ifPresent(connectTimeout -> mappedConfig.setConnectTimeoutMillis(connectTimeout.toMillis()));
+        config.requestTimeout().ifPresent(requestTimeout -> mappedConfig.setRequestTimeoutMillis(requestTimeout.toMillis()));
+
+        return mappedConfig;
+    }
+
+    public static WriterConfig mapWriterConfig(QuarkusWriterConfig config) {
         WriterConfig mappedConfig = new WriterConfig();
 
         mappedConfig.setMaxBufferedLogRecords(config.maxBufferedLogRecords());
