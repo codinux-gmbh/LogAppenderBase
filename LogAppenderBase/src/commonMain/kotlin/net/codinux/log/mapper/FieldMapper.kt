@@ -37,7 +37,7 @@ open class FieldMapper(
         }
     }
 
-    protected open fun mapFieldIfNotNull(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, value: String?) {
+    open fun mapFieldIfNotNull(fields: MutableMap<String, String?>, includeField: Boolean, fieldName: String, value: String?) {
         mapField(fields, includeField && value != null, fieldName, value)
     }
 
