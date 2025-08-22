@@ -5,7 +5,7 @@ plugins {
 java {
     toolchain {
         // we need at least Java 9 so that LogRecord has getInstance() method
-        languageVersion.set(JavaLanguageVersion.of(9))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 
