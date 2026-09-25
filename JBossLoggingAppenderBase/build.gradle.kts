@@ -17,7 +17,8 @@ val assertJVersion: String by project
 dependencies {
     api(project(":LogAppenderBase"))
 
-    api("org.jboss.logmanager:jboss-logmanager-embedded:1.0.9")
+    // 3.0.0.Final works with Quarkus 3.30+, but cannot say if it also works with older Quarkus versions
+    api("org.jboss.logmanager:jboss-logmanager:3.0.0.Final")
 
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
     testImplementation("org.junit.jupiter:junit-jupiter")
